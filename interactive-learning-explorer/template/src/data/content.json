@@ -1,0 +1,23 @@
+{
+  "sections": [
+    {
+      "id": "overview",
+      "levels": {
+        "1": "<p>This is the <strong>overview</strong> section. It introduces the topic and frames the core tension.</p><p>Think of it like a map before a journey — you see the full route before walking each segment.</p>",
+        "2": "<h3>How It Works</h3><p>At a practical level, the system operates through distinct stages, each with its own characteristics.</p>",
+        "3": "<h3>Implementation</h3><p>Real-world systems use specialized scheduling and memory management to maximize throughput.</p>",
+        "4": "<h3>Research Frontier</h3><p>Recent work explores disaggregated architectures and adaptive precision.</p>"
+      },
+      "visualization": { "type": "pipeline", "data": { "stages": [{ "label": "Input", "color": "#3b82f6" }, { "label": "Process", "color": "#6366f1", "active": true }, { "label": "Output", "color": "#22c55e" }] } },
+      "concepts": { "example-concept": { "title": "Example Concept", "body": "An expandable concept that explains a technical term inline.", "context": "In this section, it helps the reader understand the foundation.", "linkedSectionId": "foundations" } },
+      "deepDives": [{ "id": "dd-overview", "title": "Deep Dive: Example Detail", "content": "<p>This deep dive goes further into a specific aspect.</p>" }],
+      "references": [{ "id": 1, "text": "Example Author — \"Example Paper\" (2024)", "url": "https://example.com" }]
+    },
+    {
+      "id": "foundations",
+      "levels": { "1": "<p>Before diving into the core, we need foundational concepts.</p>", "2": "<h3>Practical Foundations</h3><p>These concepts form the vocabulary we use going forward.</p>", "3": "<h3>Technical Details</h3><p>Implementation-level characteristics worth understanding.</p>", "4": "<h3>Theoretical Basis</h3><p>Mathematical underpinnings from information theory.</p>" },
+      "visualization": { "type": "stat-cards", "data": { "cards": [{ "value": "175B", "unit": "Parameters", "color": "#8b5cf6" }, { "value": "96", "unit": "Layers", "color": "#6366f1" }] } },
+      "concepts": {}, "deepDives": [], "references": []
+    }
+  ]
+}

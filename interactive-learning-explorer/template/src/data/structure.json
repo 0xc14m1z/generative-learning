@@ -1,0 +1,13 @@
+{
+  "topic": "Sample Topic",
+  "coreQuestion": "How does this work?",
+  "coreTension": "Speed vs. accuracy — the fundamental trade-off.",
+  "sections": [
+    { "id": "overview", "index": 0, "title": "Overview", "subtitle": "The big picture", "phase": "orientation", "color": "#3b82f6", "icon": "◎", "concepts": ["example-concept"], "vizType": "pipeline", "bridgeTo": "Next we explore the foundations." },
+    { "id": "foundations", "index": 1, "title": "Foundations", "subtitle": "What you need to know first", "phase": "prerequisites", "color": "#8b5cf6", "icon": "◇", "concepts": [], "vizType": "stat-cards", "bridgeTo": "" }
+  ],
+  "phases": [
+    { "id": "orientation", "label": "Orientation" },
+    { "id": "prerequisites", "label": "Prerequisites" }
+  ]
+}

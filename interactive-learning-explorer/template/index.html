@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Learning Explorer</title>
+</head>
+<body class="bg-background text-foreground">
+  <div id="root"></div>
+  <script>
+    // ═══ DATA INJECTION POINT ═══
+    // These placeholders are replaced by the injection script with actual JSON data.
+    // Do not modify the marker strings.
+    window.__STRUCTURE_DATA__ = "%%STRUCTURE_DATA%%";
+    window.__CONTENT_DATA__ = "%%CONTENT_DATA%%";
+  </script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
