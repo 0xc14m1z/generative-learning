@@ -1,13 +1,160 @@
 {
-  "topic": "Sample Topic",
-  "coreQuestion": "How does this work?",
-  "coreTension": "Speed vs. accuracy — the fundamental trade-off.",
+  "topic": "How the Web Works",
+  "coreQuestion": "What really happens between typing a URL and seeing a web page?",
+  "coreTension": "Speed vs. security — every layer of the web stack trades latency for reliability, and understanding that tension unlocks real optimization.",
   "sections": [
-    { "id": "overview", "index": 0, "title": "Overview", "subtitle": "The big picture", "phase": "orientation", "color": "#3b82f6", "icon": "◎", "concepts": ["example-concept"], "vizType": "pipeline", "bridgeTo": "Next we explore the foundations." },
-    { "id": "foundations", "index": 1, "title": "Foundations", "subtitle": "What you need to know first", "phase": "prerequisites", "color": "#8b5cf6", "icon": "◇", "concepts": [], "vizType": "stat-cards", "bridgeTo": "" }
+    {
+      "id": "overview",
+      "index": 0,
+      "title": "The Web Request Lifecycle",
+      "subtitle": "From URL to pixels: the full journey of a web request",
+      "phase": "orientation",
+      "color": "#3b82f6",
+      "icon": "\u29BF",
+      "concepts": ["request-response", "client-server", "latency"],
+      "vizType": "pipeline",
+      "bridgeTo": "Before a browser can talk to a server, it needs to find the server's address. That's where DNS comes in."
+    },
+    {
+      "id": "dns",
+      "index": 1,
+      "title": "DNS: The Internet's Phone Book",
+      "subtitle": "How domain names become IP addresses",
+      "phase": "prerequisites",
+      "color": "#8b5cf6",
+      "icon": "\u260E",
+      "concepts": ["dns-resolver", "dns-record-types", "ttl"],
+      "vizType": "routing-diagram",
+      "bridgeTo": "Now that the browser knows the server's IP address, it needs a common language to request resources. Enter HTTP."
+    },
+    {
+      "id": "http",
+      "index": 2,
+      "title": "HTTP: The Language of the Web",
+      "subtitle": "The protocol that powers every web interaction",
+      "phase": "prerequisites",
+      "color": "#a855f7",
+      "icon": "\u2B55",
+      "concepts": ["http-methods", "status-codes", "http-headers"],
+      "vizType": "comparison-cards",
+      "bridgeTo": "HTTP defines what to say, but how do those messages actually travel across the network? TCP/IP handles the delivery."
+    },
+    {
+      "id": "tcp-ip",
+      "index": 3,
+      "title": "TCP/IP: Reliable Delivery",
+      "subtitle": "Breaking data into packets and reassembling them perfectly",
+      "phase": "core",
+      "color": "#6366f1",
+      "icon": "\u2702",
+      "concepts": ["tcp-handshake", "packet", "congestion-control", "ip-address"],
+      "vizType": "token-stream",
+      "bridgeTo": "Reliable delivery is essential, but so is privacy. TLS wraps TCP connections in encryption to keep data safe."
+    },
+    {
+      "id": "tls",
+      "index": 4,
+      "title": "TLS: Securing the Connection",
+      "subtitle": "Encryption, certificates, and trust on the web",
+      "phase": "core",
+      "color": "#06b6d4",
+      "icon": "\uD83D\uDD12",
+      "concepts": ["certificate", "symmetric-encryption", "tls-handshake"],
+      "vizType": "tiered-hierarchy",
+      "bridgeTo": "With a secure channel established, the request finally reaches the server. What happens when it arrives?"
+    },
+    {
+      "id": "server",
+      "index": 5,
+      "title": "Server-Side Processing",
+      "subtitle": "From incoming request to outgoing response",
+      "phase": "core",
+      "color": "#14b8a6",
+      "icon": "\uD83D\uDDA5",
+      "concepts": ["web-server", "application-server", "database-query"],
+      "vizType": "stat-cards",
+      "bridgeTo": "The server has crafted a response full of HTML, CSS, and JavaScript. Now the browser must turn those bytes into a visual page."
+    },
+    {
+      "id": "rendering",
+      "index": 6,
+      "title": "The Browser Rendering Engine",
+      "subtitle": "Parsing, layout, and painting pixels to the screen",
+      "phase": "core",
+      "color": "#22c55e",
+      "icon": "\uD83C\uDFA8",
+      "concepts": ["dom", "cssom", "render-tree", "reflow"],
+      "vizType": "animated-grid",
+      "bridgeTo": "Rendering works great for one user, but what about millions? CDNs solve the scale problem."
+    },
+    {
+      "id": "cdn",
+      "index": 7,
+      "title": "CDNs & Edge Computing",
+      "subtitle": "Bringing content closer to users worldwide",
+      "phase": "scale",
+      "color": "#84cc16",
+      "icon": "\uD83C\uDF10",
+      "concepts": ["edge-server", "origin-server", "pop"],
+      "vizType": "compute-wave",
+      "bridgeTo": "CDNs move data closer, but caching is what makes repeated access nearly instantaneous."
+    },
+    {
+      "id": "caching",
+      "index": 8,
+      "title": "Caching: Speed Through Memory",
+      "subtitle": "Storing responses to avoid redundant work",
+      "phase": "optimization",
+      "color": "#eab308",
+      "icon": "\u26A1",
+      "concepts": ["browser-cache", "cache-invalidation", "etag"],
+      "vizType": "utilization-bars",
+      "bridgeTo": "Caching is one optimization strategy, but there is a whole toolkit of techniques to make the web feel instant."
+    },
+    {
+      "id": "performance",
+      "index": 9,
+      "title": "Web Performance Optimization",
+      "subtitle": "Measuring and improving what users actually experience",
+      "phase": "optimization",
+      "color": "#f97316",
+      "icon": "\uD83D\uDE80",
+      "concepts": ["core-web-vitals", "critical-rendering-path", "lazy-loading"],
+      "vizType": "tabbed-view",
+      "bridgeTo": "Performance tooling lives inside browsers. Understanding browser engines reveals why different browsers behave differently."
+    },
+    {
+      "id": "browsers",
+      "index": 10,
+      "title": "Browser Engines & Standards",
+      "subtitle": "The software that interprets the web",
+      "phase": "ecosystem",
+      "color": "#ef4444",
+      "icon": "\u2699",
+      "concepts": ["blink-engine", "web-standards", "w3c"],
+      "vizType": "inline-svg",
+      "bridgeTo": "With every layer explored, we can now see the full picture of how the web works as an integrated system."
+    },
+    {
+      "id": "synthesis",
+      "index": 11,
+      "title": "The Complete Picture",
+      "subtitle": "Integrating every layer into a unified mental model",
+      "phase": "synthesis",
+      "color": "#ec4899",
+      "icon": "\u2728",
+      "concepts": ["end-to-end-latency", "web-stack"],
+      "vizType": "pipeline",
+      "bridgeTo": ""
+    }
   ],
   "phases": [
     { "id": "orientation", "label": "Orientation" },
-    { "id": "prerequisites", "label": "Prerequisites" }
+    { "id": "prerequisites", "label": "Prerequisites" },
+    { "id": "core", "label": "Core Mechanism" },
+    { "id": "scale", "label": "Scale & Complexity" },
+    { "id": "optimization", "label": "Optimization" },
+    { "id": "ecosystem", "label": "Ecosystem" },
+    { "id": "synthesis", "label": "Synthesis" }
   ]
 }

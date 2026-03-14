@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { structure, content } from './data/loader'
-import { SectionView } from './types'
+import { structure as defaultStructure, content as defaultContent, loadDevData } from './data/loader'
+import { StructureData, ContentData, SectionView } from './types'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import SectionRenderer from './components/SectionRenderer'
 import BottomNav from './components/BottomNav'
 
 export default function App() {
+  const [structureData, setStructureData] = useState<StructureData>(defaultStructure)
+  const [contentData, setContentData] = useState<ContentData>(defaultContent)
   const [currentStep, setCurrentStep] = useState(0)
   const [depthLevel, setDepthLevel] = useState(1)
   const [autoPlay, setAutoPlay] = useState(false)
@@ -15,16 +17,27 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [dark, setDark] = useState(true)
 
+  // In dev mode, load external data from public/dev-data/ if available
+  useEffect(() => {
+    loadDevData().then(data => {
+      if (data) {
+        setStructureData(data.structure)
+        setContentData(data.content)
+        setCurrentStep(0)
+      }
+    })
+  }, [])
+
   const sections: SectionView[] = useMemo(() =>
-    structure.sections.map(meta => ({
+    structureData.sections.map(meta => ({
       ...meta,
-      content: content.sections.find(c => c.id === meta.id) ?? {
+      content: contentData.sections.find(c => c.id === meta.id) ?? {
         id: meta.id, levels: { '1': '<p>Content pending.</p>' },
         visualization: { type: 'stat-cards', data: { cards: [] } },
         concepts: {}, deepDives: [], references: []
       }
     }))
-  , [])
+  , [structureData, contentData])
 
   const section = sections[currentStep]!
 
@@ -76,12 +89,12 @@ export default function App() {
     return () => clearInterval(t)
   }, [autoPlay, sections.length])
 
-  useEffect(() => { document.title = `${structure.topic} — Interactive Learning Explorer` }, [])
+  useEffect(() => { document.title = `${structureData.topic} — Interactive Learning Explorer` }, [structureData.topic])
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar sections={sections} phases={structure.phases} currentStep={currentStep}
-        goToSection={goToSection} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} topic={structure.topic} />
+      <Sidebar sections={sections} phases={structureData.phases} currentStep={currentStep}
+        goToSection={goToSection} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} topic={structureData.topic} />
 
       <main className="flex-1 flex flex-col md:ml-72">
         <Header section={section} depthLevel={depthLevel} setDepthLevel={setDepthLevel}

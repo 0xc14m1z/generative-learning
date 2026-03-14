@@ -3,21 +3,659 @@
     {
       "id": "overview",
       "levels": {
-        "1": "<p>This is the <strong>overview</strong> section. It introduces the topic and frames the core tension.</p><p>Think of it like a map before a journey — you see the full route before walking each segment.</p>",
-        "2": "<h3>How It Works</h3><p>At a practical level, the system operates through distinct stages, each with its own characteristics.</p>",
-        "3": "<h3>Implementation</h3><p>Real-world systems use specialized scheduling and memory management to maximize throughput.</p>",
-        "4": "<h3>Research Frontier</h3><p>Recent work explores disaggregated architectures and adaptive precision.</p>"
+        "1": "<p>Every time you type a URL and press Enter, a remarkable chain of events unfolds in milliseconds. Your browser doesn't just \"go to a website\" — it orchestrates a complex <span class=\"concept-trigger\" data-concept=\"request-response\">request-response</span> dance across dozens of systems.</p><p>Think of it like ordering food at a restaurant. You (the <span class=\"concept-trigger\" data-concept=\"client-server\">client</span>) place an order (request) with the waiter, who carries it to the kitchen (server), which prepares the dish (response) and sends it back. The web works the same way — but your \"waiter\" crosses continents in under 100ms, and <span class=\"concept-trigger\" data-concept=\"latency\">latency</span> is everything.</p><p>The journey has roughly six stages: DNS lookup, TCP connection, TLS handshake, HTTP request, server processing, and browser rendering. Each adds latency, each can be optimized, and understanding them transforms how you think about the web.</p>",
+        "2": "<h3>The Six Stages</h3><p>When you navigate to <code>https://example.com/page</code>, the browser first checks if it already has a cached copy. If not, it begins the full pipeline:</p><ul><li><strong>DNS Resolution</strong> — Convert the domain name to an IP address (typically 20-120ms) <a class=\"citation\" href=\"#ref-overview-1\">[1]</a></li><li><strong>TCP Handshake</strong> — Establish a reliable connection (one round-trip)</li><li><strong>TLS Handshake</strong> — Negotiate encryption (one to two additional round-trips)</li><li><strong>HTTP Request/Response</strong> — Send the request and receive the first bytes</li><li><strong>Server Processing</strong> — The server builds the response (database queries, templates, computation)</li><li><strong>Browser Rendering</strong> — Parse HTML, load resources, paint pixels</li></ul><p>Each stage involves distinct protocols and trade-offs. The total time for a first visit to a new site averages 1-3 seconds on a desktop connection, but can exceed 10 seconds on a slow mobile network <a class=\"citation\" href=\"#ref-overview-2\">[2]</a>.</p>",
+        "3": "<h3>Measuring the Pipeline</h3><p>The Navigation Timing API exposes every stage of this pipeline programmatically:</p><table><tr><th>Metric</th><th>Measures</th><th>Typical Range</th></tr><tr><td><code>domainLookupEnd - domainLookupStart</code></td><td>DNS resolution</td><td>0-150ms</td></tr><tr><td><code>connectEnd - connectStart</code></td><td>TCP + TLS</td><td>50-300ms</td></tr><tr><td><code>responseStart - requestStart</code></td><td>Server response (TTFB)</td><td>100-800ms</td></tr><tr><td><code>domContentLoadedEventEnd</code></td><td>DOM ready</td><td>500-3000ms</td></tr></table><p>You can access these via <code>performance.getEntriesByType('navigation')</code>. Chrome DevTools' Network panel visualizes the same waterfall. The key insight: most latency comes from <strong>round trips</strong>, not data transfer. A 50KB page and a 5KB page take almost the same time on the first load because the network handshakes dominate.</p><p>HTTP/2's multiplexing and HTTP/3's 0-RTT handshake specifically target this round-trip bottleneck.</p>",
+        "4": "<h3>Historical Context</h3><p>Tim Berners-Lee's original 1989 proposal described a system with three components: HTML for content, URLs for addressing, and HTTP for transport. This triad remains the foundation of the web today, though each has evolved dramatically.</p><p>The early web had no encryption (HTTPS arrived in 1994 with Netscape's SSL), no persistent connections (HTTP/1.0 opened a new TCP connection per request), and no sophisticated rendering (early browsers were essentially document viewers). The evolution from those simple beginnings to today's complex pipeline reflects decades of engineering trade-offs between performance, security, and backwards compatibility.</p><p>Key papers in this evolution include Berners-Lee's original proposal (CERN, 1989), the HTTP/1.1 specification (RFC 2616, 1999), and the QUIC protocol paper (Google, 2017) which reimagined the transport layer for the modern web.</p>"
       },
-      "visualization": { "type": "pipeline", "data": { "stages": [{ "label": "Input", "color": "#3b82f6" }, { "label": "Process", "color": "#6366f1", "active": true }, { "label": "Output", "color": "#22c55e" }] } },
-      "concepts": { "example-concept": { "title": "Example Concept", "body": "An expandable concept that explains a technical term inline.", "context": "In this section, it helps the reader understand the foundation.", "linkedSectionId": "foundations" } },
-      "deepDives": [{ "id": "dd-overview", "title": "Deep Dive: Example Detail", "content": "<p>This deep dive goes further into a specific aspect.</p>" }],
-      "references": [{ "id": 1, "text": "Example Author — \"Example Paper\" (2024)", "url": "https://example.com" }]
+      "visualization": {
+        "type": "pipeline",
+        "data": {
+          "stages": [
+            { "label": "DNS Lookup", "color": "#8b5cf6" },
+            { "label": "TCP Connect", "color": "#6366f1", "active": true },
+            { "label": "TLS Handshake", "color": "#06b6d4" },
+            { "label": "HTTP Request", "color": "#3b82f6", "active": true },
+            { "label": "Server Process", "color": "#14b8a6" },
+            { "label": "Render", "color": "#22c55e" }
+          ]
+        }
+      },
+      "concepts": {
+        "request-response": {
+          "title": "Request-Response Model",
+          "body": "The fundamental communication pattern of the web. A client sends a request message to a server, which processes it and returns a response. Every web page load involves dozens to hundreds of request-response cycles — one for the HTML, and additional ones for CSS, JavaScript, images, fonts, and API calls.",
+          "context": "This model shapes everything: caching strategies, error handling, and performance optimization all revolve around making request-response cycles faster or less frequent.",
+          "linkedSectionId": "http"
+        },
+        "client-server": {
+          "title": "Client-Server Architecture",
+          "body": "A distributed computing model where the client (your browser) requests services and the server provides them. The browser handles presentation and user interaction; the server handles data storage, business logic, and authentication. This separation allows the server to serve millions of different clients simultaneously.",
+          "context": "Understanding this split is essential because optimization strategies differ dramatically between client-side and server-side.",
+          "linkedSectionId": "server"
+        },
+        "latency": {
+          "title": "Network Latency",
+          "body": "The time it takes for a data packet to travel from source to destination. Measured in milliseconds, latency is bounded by the speed of light through fiber optic cables — roughly 200,000 km/s. A round trip from New York to London takes at minimum ~56ms just from physics, before any processing time.",
+          "context": "Latency is the web's fundamental constraint. Unlike bandwidth (which keeps increasing), latency has hard physical limits. This is why CDNs and caching exist.",
+          "linkedSectionId": "cdn"
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-overview-1",
+          "title": "Deep Dive: Why Round Trips Matter More Than Bandwidth",
+          "content": "<p>Intuitively, you might think a faster internet connection means faster page loads. But research consistently shows that <strong>latency</strong> (round-trip time) has a far greater impact than <strong>bandwidth</strong> (data transfer rate) for typical web pages.</p><p>A study by Google found that reducing latency by 100ms improved page load times more than doubling bandwidth. This is because a typical page requires 10-50 sequential round trips (DNS, TCP, TLS, then resource discovery and loading), and each round trip adds the full latency delay. In contrast, most web pages are small enough that even modest bandwidth can transfer them quickly once the connection is established.</p><p>This insight drives nearly every modern web optimization: HTTP/2 multiplexing (fewer connections), HTTP/3 0-RTT (fewer handshakes), CDNs (shorter physical distance), and prefetching (eliminating round trips entirely).</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Grigorik — \"High Performance Browser Networking\" (O'Reilly, 2013)", "url": "https://hpbn.co" },
+        { "id": 2, "text": "HTTP Archive — \"State of the Web Report\" (2024)", "url": "https://httparchive.org/reports/state-of-the-web" }
+      ]
     },
     {
-      "id": "foundations",
-      "levels": { "1": "<p>Before diving into the core, we need foundational concepts.</p>", "2": "<h3>Practical Foundations</h3><p>These concepts form the vocabulary we use going forward.</p>", "3": "<h3>Technical Details</h3><p>Implementation-level characteristics worth understanding.</p>", "4": "<h3>Theoretical Basis</h3><p>Mathematical underpinnings from information theory.</p>" },
-      "visualization": { "type": "stat-cards", "data": { "cards": [{ "value": "175B", "unit": "Parameters", "color": "#8b5cf6" }, { "value": "96", "unit": "Layers", "color": "#6366f1" }] } },
-      "concepts": {}, "deepDives": [], "references": []
+      "id": "dns",
+      "levels": {
+        "1": "<p>Before your browser can talk to any server, it needs an address — and humans don't remember <code>142.250.80.46</code>. The Domain Name System is the web's <span class=\"concept-trigger\" data-concept=\"dns-resolver\">phone book</span>: you give it a name like <code>google.com</code>, and it returns the numeric IP address of the server hosting that site.</p><p>DNS is a massive distributed database — there's no single \"master list.\" Instead, the lookup bounces through a hierarchy of servers: your local <span class=\"concept-trigger\" data-concept=\"dns-resolver\">resolver</span>, root name servers, top-level domain servers, and finally the authoritative server for the domain. Each server either knows the answer or knows who to ask next. The result is cached for a period defined by the <span class=\"concept-trigger\" data-concept=\"ttl\">TTL</span>, so repeat lookups are instant.</p>",
+        "2": "<h3>The Lookup Chain</h3><p>A full DNS resolution involves up to four types of servers <a class=\"citation\" href=\"#ref-dns-1\">[1]</a>:</p><ol><li><strong>Recursive resolver</strong> — Usually your ISP or a public service like <code>8.8.8.8</code> (Google) or <code>1.1.1.1</code> (Cloudflare). It does the heavy lifting.</li><li><strong>Root name servers</strong> — 13 logical servers (operated by organizations like ICANN and Verisign) that know where to find TLD servers.</li><li><strong>TLD servers</strong> — Handle <code>.com</code>, <code>.org</code>, <code>.dev</code>, etc. They point to the domain's authoritative server.</li><li><strong>Authoritative name server</strong> — The final source of truth. Returns the actual IP address.</li></ol><p>Most lookups never reach all four levels because caching kicks in. Your browser caches DNS results, your OS caches them, your router caches them, and the resolver caches them. A popular domain like <code>google.com</code> is almost always cached <a class=\"citation\" href=\"#ref-dns-2\">[2]</a>.</p><p>There are several <span class=\"concept-trigger\" data-concept=\"dns-record-types\">record types</span> beyond simple address lookups — <code>CNAME</code> for aliases, <code>MX</code> for email routing, and <code>TXT</code> for verification.</p>",
+        "3": "<h3>DNS Performance</h3><p>DNS resolution typically takes 20-120ms but can spike to 500ms+ when the full hierarchy must be traversed. Here's what affects it:</p><table><tr><th>Factor</th><th>Impact</th><th>Mitigation</th></tr><tr><td>Resolver distance</td><td>+10-50ms per hop</td><td>Use nearby resolver (1.1.1.1, 8.8.8.8)</td></tr><tr><td>Cold cache</td><td>+100-300ms</td><td>DNS prefetch: <code>&lt;link rel=\"dns-prefetch\"&gt;</code></td></tr><tr><td>DNSSEC validation</td><td>+20-100ms</td><td>Pre-signed zones reduce overhead</td></tr><tr><td>Multiple CNAME chains</td><td>+50ms per chain</td><td>Minimize CNAME hops</td></tr></table><p>Chrome's built-in DNS-over-HTTPS (DoH) encrypts queries to prevent ISP snooping but adds a TLS handshake overhead. DNS-over-QUIC (DoQ) aims to solve this with 0-RTT connections.</p>",
+        "4": "<h3>The DNS Origin Story</h3><p>Before DNS existed (pre-1983), every computer on the internet maintained a local <code>HOSTS.TXT</code> file — a flat text file mapping names to addresses. Stanford Research Institute (SRI) maintained the master copy and distributed it periodically. This system obviously couldn't scale.</p><p>Paul Mockapetris designed DNS in 1983 (RFC 882 and RFC 883, later superseded by RFC 1034/1035). The key insight was a hierarchical, distributed database that could scale indefinitely by delegating authority. This design has proven remarkably durable — the core protocol is largely unchanged 40+ years later.</p><p>Modern challenges include DNS privacy (solved by DoH/DoT, RFC 8484), DNSSEC for authentication (RFC 4033-4035), and the tension between DNS caching and fast failover for CDNs.</p>"
+      },
+      "visualization": {
+        "type": "routing-diagram",
+        "data": {
+          "inputs": [
+            { "label": "Browser", "color": "#3b82f6" },
+            { "label": "OS Cache", "color": "#6366f1" },
+            { "label": "Router", "color": "#8b5cf6" }
+          ],
+          "router": { "label": "Recursive Resolver", "sublabel": "8.8.8.8 / 1.1.1.1" },
+          "outputs": [
+            { "label": "Root (.)", "active": true },
+            { "label": "TLD (.com)", "active": true },
+            { "label": "Authoritative (example.com)", "active": true },
+            { "label": "Response: 93.184.216.34", "active": false }
+          ],
+          "color": "#8b5cf6"
+        }
+      },
+      "concepts": {
+        "dns-resolver": {
+          "title": "DNS Recursive Resolver",
+          "body": "A server that receives DNS queries from clients and does the work of chasing down the answer. It queries root servers, TLD servers, and authoritative servers on your behalf, then caches the result. Most people use their ISP's resolver by default, but public resolvers like Google (8.8.8.8) and Cloudflare (1.1.1.1) are popular alternatives.",
+          "context": "The resolver is the starting point for every DNS lookup your browser makes.",
+          "linkedSectionId": null
+        },
+        "dns-record-types": {
+          "title": "DNS Record Types",
+          "body": "DNS stores different types of records: A records map names to IPv4 addresses, AAAA records map to IPv6, CNAME records create aliases, MX records define email servers, and TXT records store arbitrary text (often used for domain verification and email authentication like SPF/DKIM).",
+          "context": "Understanding record types helps diagnose DNS issues and configure domains correctly.",
+          "linkedSectionId": null
+        },
+        "ttl": {
+          "title": "Time to Live (TTL)",
+          "body": "A value (in seconds) attached to every DNS record that tells resolvers how long to cache the result. A TTL of 3600 means 'cache this for one hour.' Low TTLs (60-300s) enable fast failover but increase DNS traffic. High TTLs (3600-86400s) reduce load but make changes slow to propagate. CDNs often use very low TTLs to enable dynamic traffic steering.",
+          "context": "TTL is a direct trade-off between DNS performance (caching) and agility (fast updates).",
+          "linkedSectionId": "caching"
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-dns-1",
+          "title": "Deep Dive: DNS-over-HTTPS and Privacy",
+          "content": "<p>Traditional DNS queries are sent in plaintext over UDP port 53, meaning your ISP (and anyone on the network path) can see every domain you visit. DNS-over-HTTPS (DoH) wraps DNS queries inside encrypted HTTPS connections, hiding them from network observers.</p><p>Firefox was the first major browser to enable DoH by default (2020), routing queries through Cloudflare. Chrome followed with a more conservative approach, upgrading existing DNS connections to HTTPS when the resolver supports it. The trade-off: DoH improves privacy but can break corporate network monitoring and content filtering.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Mockapetris — RFC 1034: Domain Names - Concepts and Facilities (1987)", "url": "https://datatracker.ietf.org/doc/html/rfc1034" },
+        { "id": 2, "text": "Cloudflare — \"DNS Performance: How Fast Is Your DNS?\" (2023)", "url": "https://www.cloudflare.com/dns/dns-performance/" }
+      ]
+    },
+    {
+      "id": "http",
+      "levels": {
+        "1": "<p>HTTP — Hypertext Transfer Protocol — is the language browsers and servers speak. Every link you click, every image that loads, every API call your app makes uses HTTP. It's a simple protocol at heart: the client sends a request with a <span class=\"concept-trigger\" data-concept=\"http-methods\">method</span> (like GET or POST), and the server replies with a <span class=\"concept-trigger\" data-concept=\"status-codes\">status code</span> and the requested data.</p><p>Think of HTTP like sending postcards. Each one is independent, self-contained, and includes all the information needed to deliver it — the address (URL), the instructions (<span class=\"concept-trigger\" data-concept=\"http-headers\">headers</span>), and the message (body). The server doesn't remember your previous postcards unless you include a reminder (cookies).</p>",
+        "2": "<h3>HTTP Evolution</h3><p>HTTP has evolved through four major versions, each solving problems created by the web's growth <a class=\"citation\" href=\"#ref-http-1\">[1]</a>:</p><ul><li><strong>HTTP/1.0</strong> (1996) — One request per TCP connection. Simple but slow.</li><li><strong>HTTP/1.1</strong> (1997) — Added persistent connections and pipelining. The workhorse for 15+ years.</li><li><strong>HTTP/2</strong> (2015) — Multiplexing: multiple requests over one connection. Binary framing, header compression, server push.</li><li><strong>HTTP/3</strong> (2022) — Replaces TCP with QUIC (UDP-based). Eliminates head-of-line blocking at the transport layer <a class=\"citation\" href=\"#ref-http-2\">[2]</a>.</li></ul><p>Each version maintains backwards compatibility — an HTTP/3 server can still serve HTTP/1.1 clients. The negotiation happens via ALPN (Application-Layer Protocol Negotiation) during the TLS handshake.</p>",
+        "3": "<h3>HTTP/2 vs HTTP/3 in Practice</h3><p>The key difference is the transport layer:</p><table><tr><th>Feature</th><th>HTTP/2 (TCP)</th><th>HTTP/3 (QUIC)</th></tr><tr><td>Connection setup</td><td>TCP + TLS: 2-3 RTTs</td><td>QUIC 0-RTT: 0-1 RTT</td></tr><tr><td>Head-of-line blocking</td><td>TCP level: yes</td><td>Per-stream: no</td></tr><tr><td>Connection migration</td><td>IP change = reconnect</td><td>Connection ID persists</td></tr><tr><td>Packet loss recovery</td><td>Retransmit + wait</td><td>Per-stream recovery</td></tr></table><p>Cloudflare reports that HTTP/3 reduces connection times by 12.4% on average, with larger improvements on high-latency mobile networks. As of 2024, approximately 30% of web traffic uses HTTP/3.</p>",
+        "4": "<h3>The Standards Process</h3><p>HTTP is standardized by the IETF (Internet Engineering Task Force). HTTP/1.1 was defined in RFC 2616 (1999), later revised as RFCs 7230-7235 (2014). HTTP/2 is RFC 7540, and HTTP/3 is RFC 9114.</p><p>The shift from TCP to QUIC in HTTP/3 was driven by Google's experimental SPDY protocol (2009) and subsequent QUIC deployment (2013). Google's ability to deploy QUIC across Chrome and their servers simultaneously allowed real-world testing at scale before standardization — a controversial but effective approach to protocol evolution.</p><p>Open questions include how HTTP/3 interacts with network middleboxes (firewalls, load balancers) that expect TCP, and whether the performance gains justify the increased complexity of the QUIC stack.</p>"
+      },
+      "visualization": {
+        "type": "comparison-cards",
+        "data": {
+          "cards": [
+            {
+              "title": "HTTP/1.1",
+              "color": "#a855f7",
+              "rows": [
+                { "label": "Transport", "value": "TCP" },
+                { "label": "Multiplexing", "value": "No", "badge": "Slow" },
+                { "label": "Header format", "value": "Text" },
+                { "label": "Server push", "value": "No" }
+              ]
+            },
+            {
+              "title": "HTTP/2",
+              "color": "#6366f1",
+              "rows": [
+                { "label": "Transport", "value": "TCP" },
+                { "label": "Multiplexing", "value": "Yes", "badge": "Fast" },
+                { "label": "Header format", "value": "Binary (HPACK)" },
+                { "label": "Server push", "value": "Yes" }
+              ]
+            },
+            {
+              "title": "HTTP/3",
+              "color": "#3b82f6",
+              "rows": [
+                { "label": "Transport", "value": "QUIC (UDP)" },
+                { "label": "Multiplexing", "value": "Yes + no HOL", "badge": "Fastest" },
+                { "label": "Header format", "value": "Binary (QPACK)" },
+                { "label": "Server push", "value": "Yes" }
+              ]
+            }
+          ]
+        }
+      },
+      "concepts": {
+        "http-methods": {
+          "title": "HTTP Methods",
+          "body": "The verb in an HTTP request that tells the server what action to perform. GET retrieves data, POST sends data, PUT replaces a resource, PATCH partially updates it, and DELETE removes it. GET and HEAD are considered 'safe' (no side effects) and 'idempotent' (repeating them has the same effect). Understanding methods matters for API design and caching — only GET responses are cached by default.",
+          "context": "Methods define the semantics of every web interaction.",
+          "linkedSectionId": null
+        },
+        "status-codes": {
+          "title": "HTTP Status Codes",
+          "body": "Three-digit numbers in the response that indicate the outcome. 2xx means success (200 OK, 201 Created), 3xx means redirection (301 Moved, 304 Not Modified), 4xx means client error (404 Not Found, 403 Forbidden), and 5xx means server error (500 Internal, 503 Unavailable). Status codes are the server's way of communicating what happened without the client needing to parse the response body.",
+          "context": "Status codes drive browser behavior: 301 triggers automatic redirect, 304 uses the cache, 503 may trigger retry logic.",
+          "linkedSectionId": null
+        },
+        "http-headers": {
+          "title": "HTTP Headers",
+          "body": "Key-value metadata attached to both requests and responses. Headers control caching (Cache-Control, ETag), content negotiation (Accept, Content-Type), authentication (Authorization), security (Content-Security-Policy), and connection behavior (Keep-Alive, Transfer-Encoding). There are over 100 standard headers, and servers can define custom ones.",
+          "context": "Headers are the mechanism through which browsers and servers negotiate nearly everything beyond the raw content.",
+          "linkedSectionId": "caching"
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-http-1",
+          "title": "Deep Dive: Head-of-Line Blocking",
+          "content": "<p>Head-of-line (HOL) blocking is one of the most important performance problems in web protocols. In HTTP/1.1, if you send six requests over one connection, they must be processed in order — if request #1 is slow, requests #2-6 are stuck waiting.</p><p>HTTP/2 solved this at the <em>application</em> layer by multiplexing streams, but TCP still has HOL blocking at the <em>transport</em> layer: if a single TCP packet is lost, all streams on that connection stall until the packet is retransmitted. HTTP/3 (QUIC) solves this by giving each stream independent delivery — a lost packet for stream A doesn't block stream B.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Fielding et al. — RFC 9110: HTTP Semantics (2022)", "url": "https://datatracker.ietf.org/doc/html/rfc9110" },
+        { "id": 2, "text": "Bishop — RFC 9114: HTTP/3 (2022)", "url": "https://datatracker.ietf.org/doc/html/rfc9114" }
+      ]
+    },
+    {
+      "id": "tcp-ip",
+      "levels": {
+        "1": "<p>HTTP tells the browser <em>what</em> to say, but TCP/IP handles <em>how</em> it gets there. The Internet Protocol (IP) is like the postal system — it addresses <span class=\"concept-trigger\" data-concept=\"packet\">packets</span> and routes them across networks. TCP is like certified mail — it guarantees every packet arrives, in order, with nothing missing.</p><p>When you send data over TCP, it gets sliced into small packets (typically ~1,460 bytes each), each given a sequence number. The receiver acknowledges every packet. If one goes missing, TCP detects the gap and retransmits. This is the <span class=\"concept-trigger\" data-concept=\"tcp-handshake\">three-way handshake</span> and <span class=\"concept-trigger\" data-concept=\"congestion-control\">congestion control</span> working together to deliver reliable communication over an inherently unreliable network.</p>",
+        "2": "<h3>How TCP Ensures Reliability</h3><p>TCP provides four key guarantees <a class=\"citation\" href=\"#ref-tcp-ip-1\">[1]</a>:</p><ul><li><strong>Ordering</strong> — Sequence numbers ensure packets are reassembled correctly, even if they arrive out of order.</li><li><strong>Completeness</strong> — ACKnowledgments confirm receipt. Missing ACKs trigger retransmission.</li><li><strong>Flow control</strong> — The receiver advertises how much data it can buffer (receive window), preventing overflow.</li><li><strong>Congestion control</strong> — TCP starts slow (slow start), probing network capacity, then ramps up. On packet loss, it backs off dramatically.</li></ul><p>The three-way handshake (SYN → SYN-ACK → ACK) takes one full round trip before any data flows. This is why connection reuse (keep-alive) matters so much — you pay the handshake cost once and amortize it across many requests <a class=\"citation\" href=\"#ref-tcp-ip-2\">[2]</a>.</p>",
+        "3": "<h3>TCP Performance Tuning</h3><p>The initial congestion window (initcwnd) limits how much data TCP sends before getting an ACK. Linux defaults to 10 segments (~14KB). Google's research showed that increasing initcwnd from 3 to 10 reduced page load times by 10% on average.</p><table><tr><th>Parameter</th><th>Default</th><th>Impact</th></tr><tr><td>Initial window</td><td>10 segments (14KB)</td><td>Larger = faster first render</td></tr><tr><td>Slow start threshold</td><td>Infinity (probe)</td><td>Affects ramp-up speed</td></tr><tr><td>Retransmit timeout</td><td>1 second (min)</td><td>Affects loss recovery</td></tr><tr><td>Keep-alive timeout</td><td>2 hours</td><td>Connection reuse window</td></tr></table><p>For the web, TCP's conservative congestion control is the main bottleneck. A new TCP connection can only send ~14KB before waiting for acknowledgment — which is why the critical CSS and HTML for first render should fit in that budget.</p>",
+        "4": "<h3>Beyond TCP: QUIC and the Future</h3><p>TCP was designed in 1974 (RFC 675) by Vint Cerf and Bob Kahn. Its congestion control algorithms have evolved — from the original Tahoe to Reno, CUBIC (Linux default), and Google's BBR — but the fundamental protocol remains a single ordered byte stream.</p><p>QUIC (RFC 9000, 2021) reimagines transport for the modern web: multiple independent streams, integrated encryption, connection migration, and improved loss recovery. Google deployed QUIC experimentally in 2013 and it now carries over 35% of Google's traffic.</p><p>The key research question is whether QUIC's userspace implementation can match TCP's decades of kernel-level optimization. Early benchmarks show QUIC uses 2-3x more CPU than TCP for the same throughput, though this gap is narrowing as implementations mature.</p>"
+      },
+      "visualization": {
+        "type": "token-stream",
+        "data": {
+          "tokens": ["SYN", "SYN-ACK", "ACK", "DATA[1]", "DATA[2]", "DATA[3]", "ACK[3]", "DATA[4]", "DATA[5]", "ACK[5]", "FIN", "FIN-ACK"],
+          "activeIndex": 3,
+          "color": "#6366f1"
+        }
+      },
+      "concepts": {
+        "tcp-handshake": {
+          "title": "Three-Way Handshake",
+          "body": "The process that establishes a TCP connection. The client sends a SYN (synchronize) packet, the server responds with SYN-ACK (synchronize-acknowledge), and the client confirms with ACK. This takes one full round trip and happens before any application data can flow. For HTTPS, a TLS handshake follows, adding 1-2 more round trips.",
+          "context": "The handshake is pure overhead — it's the 'cost of admission' for reliable communication. This is why reducing round trips is so critical for web performance.",
+          "linkedSectionId": "tls"
+        },
+        "packet": {
+          "title": "Network Packet",
+          "body": "A small unit of data transmitted over a network. A typical TCP packet on the web carries about 1,460 bytes of payload (limited by the common 1,500-byte Ethernet MTU minus 40 bytes of TCP/IP headers). Large responses are split across many packets, and TCP ensures they're reassembled correctly.",
+          "context": "Packet size and count directly affect performance — fewer, larger packets are more efficient, but there are physical limits.",
+          "linkedSectionId": null
+        },
+        "congestion-control": {
+          "title": "Congestion Control",
+          "body": "TCP's mechanism for avoiding network overload. TCP starts sending slowly (slow start), doubling the send rate each round trip until it detects packet loss. On loss, it reduces the rate dramatically (multiplicative decrease). Modern algorithms like BBR use bandwidth estimation instead of loss detection, achieving better throughput on lossy networks.",
+          "context": "Congestion control is why new TCP connections are slow — the algorithm needs time to probe the network's capacity.",
+          "linkedSectionId": null
+        },
+        "ip-address": {
+          "title": "IP Address",
+          "body": "A numerical label assigned to every device on the internet. IPv4 uses 32 bits (e.g., 192.168.1.1), providing about 4.3 billion addresses — now exhausted. IPv6 uses 128 bits (e.g., 2001:db8::1), providing effectively unlimited addresses. The transition from IPv4 to IPv6 has been ongoing for over 20 years.",
+          "context": "IP addresses are how packets find their destination. DNS converts human-readable names into these addresses.",
+          "linkedSectionId": "dns"
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-tcp-1",
+          "title": "Deep Dive: Why TCP Slow Start Matters for Web Performance",
+          "content": "<p>TCP slow start means a brand-new connection can only send a small amount of data (typically 14KB) before waiting for acknowledgment. For a web page, this means the critical HTML, CSS, and JavaScript for the initial render must fit within this budget — or the browser will stall waiting for more data.</p><p>This is why performance engineers obsess over keeping the critical rendering path under 14KB compressed. Techniques like inlining critical CSS, deferring non-essential scripts, and minimizing HTML bloat all target this TCP bottleneck. After several round trips, TCP ramps up to full speed, but by then the user has already formed their first impression of the page's performance.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Stevens — \"TCP/IP Illustrated, Volume 1\" (Addison-Wesley, 1994)", "url": "https://www.oreilly.com/library/view/tcpip-illustrated-volume/9780132808200/" },
+        { "id": 2, "text": "Dukkipati et al. — \"An Argument for Increasing TCP's Initial Congestion Window\" (2010)", "url": "https://datatracker.ietf.org/doc/html/rfc6928" }
+      ]
+    },
+    {
+      "id": "tls",
+      "levels": {
+        "1": "<p>When you see the padlock icon in your browser's address bar, TLS (Transport Layer Security) is at work. It's the technology that turns HTTP into HTTPS — wrapping your connection in encryption so that nobody between you and the server can read or tamper with the data.</p><p>TLS works through a clever two-step process. First, during the <span class=\"concept-trigger\" data-concept=\"tls-handshake\">handshake</span>, the server proves its identity with a <span class=\"concept-trigger\" data-concept=\"certificate\">digital certificate</span> and both sides agree on a shared secret. Then, all subsequent data is encrypted with fast <span class=\"concept-trigger\" data-concept=\"symmetric-encryption\">symmetric encryption</span> using that secret. It's like meeting a stranger, verifying their passport, then speaking in a private code only you both know.</p>",
+        "2": "<h3>The TLS Handshake</h3><p>TLS 1.3 (the current version) simplified the handshake to a single round trip <a class=\"citation\" href=\"#ref-tls-1\">[1]</a>:</p><ol><li><strong>Client Hello</strong> — The browser sends supported cipher suites and a key share.</li><li><strong>Server Hello</strong> — The server selects a cipher, sends its certificate, and completes the key exchange.</li><li><strong>Finished</strong> — Both sides derive the session keys and begin encrypted communication.</li></ol><p>TLS 1.2 required two round trips. TLS 1.3 also supports <strong>0-RTT resumption</strong> — if you've connected to the server before, you can send encrypted data in the very first packet, eliminating the handshake entirely for repeat visits <a class=\"citation\" href=\"#ref-tls-2\">[2]</a>.</p><p>The certificate chain is verified against a set of trusted Certificate Authorities (CAs) bundled with your browser and OS. Let's Encrypt has made certificates free and automated, driving HTTPS adoption from 40% to over 95% of web traffic since 2015.</p>",
+        "3": "<h3>Cipher Suites and Performance</h3><p>A cipher suite defines the algorithms used for key exchange, authentication, and encryption. TLS 1.3 reduced the number of supported suites from dozens to just five:</p><table><tr><th>Cipher Suite</th><th>Key Exchange</th><th>Encryption</th></tr><tr><td>TLS_AES_128_GCM_SHA256</td><td>ECDHE</td><td>AES-128-GCM</td></tr><tr><td>TLS_AES_256_GCM_SHA384</td><td>ECDHE</td><td>AES-256-GCM</td></tr><tr><td>TLS_CHACHA20_POLY1305_SHA256</td><td>ECDHE</td><td>ChaCha20-Poly1305</td></tr></table><p>AES-GCM is fastest on CPUs with hardware AES acceleration (most modern x86 and ARM chips). ChaCha20 is faster on devices without AES hardware (older mobile phones). Modern implementations use about 1-2ms for the full handshake on desktop hardware.</p>",
+        "4": "<h3>Evolution of Web Encryption</h3><p>SSL was created by Netscape in 1994. SSL 2.0 had critical flaws, SSL 3.0 (1996) was the first usable version, and TLS 1.0 (1999, RFC 2246) was essentially SSL 3.1. Each version fixed vulnerabilities: BEAST, CRIME, POODLE, Heartbleed — each a reminder that cryptographic protocols need continuous scrutiny.</p><p>TLS 1.3 (RFC 8446, 2018) was the most significant overhaul, removing insecure algorithms (RSA key exchange, CBC mode, RC4, SHA-1), mandating forward secrecy, and encrypting more of the handshake. The design took four years and 28 drafts, reflecting the difficulty of getting cryptographic protocols right.</p><p>Current research focuses on post-quantum cryptography — TLS will need to migrate to quantum-resistant algorithms before large-scale quantum computers become practical. Chrome has already begun experimenting with hybrid key exchange (X25519Kyber768) to prepare.</p>"
+      },
+      "visualization": {
+        "type": "tiered-hierarchy",
+        "data": {
+          "tiers": [
+            { "label": "Application Data", "detail": "Encrypted HTTP request/response", "color": "#22c55e", "width": 100 },
+            { "label": "TLS Record Layer", "detail": "Encryption, MAC, fragmentation", "color": "#06b6d4", "width": 85 },
+            { "label": "TLS Handshake", "detail": "Key exchange, certificate verify", "color": "#3b82f6", "width": 70 },
+            { "label": "TCP Transport", "detail": "Reliable, ordered byte stream", "color": "#6366f1", "width": 55 },
+            { "label": "IP Network", "detail": "Packet routing across networks", "color": "#8b5cf6", "width": 40 }
+          ]
+        }
+      },
+      "concepts": {
+        "certificate": {
+          "title": "Digital Certificate (X.509)",
+          "body": "An electronic document that proves a server's identity. Contains the server's public key, the domain name, the issuing Certificate Authority (CA), and a digital signature. Browsers verify the certificate chain back to a trusted root CA. Let's Encrypt issues free certificates via the ACME protocol, automating the process that once cost hundreds of dollars per year.",
+          "context": "Certificates are the trust foundation of HTTPS — without them, encryption would be useless because you couldn't verify who you're talking to.",
+          "linkedSectionId": null
+        },
+        "symmetric-encryption": {
+          "title": "Symmetric Encryption",
+          "body": "An encryption method where the same key encrypts and decrypts data. Much faster than asymmetric encryption (public/private key pairs), which is why TLS uses asymmetric crypto only during the handshake to establish a shared secret, then switches to symmetric crypto (AES or ChaCha20) for the actual data transfer.",
+          "context": "The handshake's purpose is ultimately to establish symmetric keys — they're what actually protects your data.",
+          "linkedSectionId": null
+        },
+        "tls-handshake": {
+          "title": "TLS Handshake",
+          "body": "The negotiation process at the start of every HTTPS connection. The client and server agree on a protocol version, select cipher suites, verify the server's certificate, and derive shared encryption keys. TLS 1.3 completes this in one round trip (vs. two for TLS 1.2) and supports 0-RTT resumption for repeat connections.",
+          "context": "The handshake adds latency to every new connection — optimizing it has been a major focus of protocol evolution.",
+          "linkedSectionId": "tcp-ip"
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-tls-1",
+          "title": "Deep Dive: Forward Secrecy",
+          "content": "<p>Forward secrecy (also called perfect forward secrecy) ensures that even if a server's private key is compromised in the future, past recorded traffic cannot be decrypted. This is achieved by using <strong>ephemeral</strong> key exchange — each connection generates a unique, temporary key pair that's discarded after the session ends.</p><p>TLS 1.3 mandates forward secrecy by requiring ECDHE (Elliptic Curve Diffie-Hellman Ephemeral) key exchange. TLS 1.2 allowed RSA key exchange, where the same server key could decrypt all past sessions if compromised. This distinction became critical after the Snowden revelations showed that intelligence agencies were recording encrypted traffic for future decryption.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Rescorla — RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3 (2018)", "url": "https://datatracker.ietf.org/doc/html/rfc8446" },
+        { "id": 2, "text": "Let's Encrypt — \"Stats: Percentage of Web Pages Loaded by Firefox Using HTTPS\" (2024)", "url": "https://letsencrypt.org/stats/" }
+      ]
+    },
+    {
+      "id": "server",
+      "levels": {
+        "1": "<p>The request has arrived. After DNS lookup, TCP connection, and TLS handshake, your HTTP request finally reaches the <span class=\"concept-trigger\" data-concept=\"web-server\">web server</span>. But the \"server\" is rarely a single program — it's typically a pipeline of software working together.</p><p>First, a web server like Nginx accepts the connection and routes the request. Then an <span class=\"concept-trigger\" data-concept=\"application-server\">application server</span> runs your code — Node.js, Django, Rails, Spring, whatever the stack. The app often needs data, so it fires <span class=\"concept-trigger\" data-concept=\"database-query\">database queries</span>, hits caches, or calls other services. Finally, it assembles the HTML response and sends it back. The time this all takes — Time To First Byte (TTFB) — is a key performance metric.</p>",
+        "2": "<h3>The Server Pipeline</h3><p>A modern web server handles requests through multiple layers <a class=\"citation\" href=\"#ref-server-1\">[1]</a>:</p><ul><li><strong>Reverse proxy</strong> (Nginx/Caddy) — Terminates TLS, serves static files, load balances across application instances.</li><li><strong>Application runtime</strong> — Executes business logic, handles authentication, processes templates.</li><li><strong>Data layer</strong> — Databases (PostgreSQL, MySQL), caches (Redis, Memcached), search engines (Elasticsearch).</li><li><strong>External services</strong> — Payment APIs, email providers, third-party integrations.</li></ul><p>The application runtime is typically the bottleneck. A database query might take 1-5ms, but the application code making 10 sequential queries and rendering a template can take 50-500ms <a class=\"citation\" href=\"#ref-server-2\">[2]</a>. This is where frameworks, ORM optimization, and caching strategies make the biggest difference.</p>",
+        "3": "<h3>Scaling Patterns</h3><p>Servers scale in two dimensions:</p><table><tr><th>Strategy</th><th>How</th><th>When</th></tr><tr><td>Vertical scaling</td><td>Bigger machine (more CPU/RAM)</td><td>Simple, up to hardware limits</td></tr><tr><td>Horizontal scaling</td><td>More machines + load balancer</td><td>Beyond single machine capacity</td></tr><tr><td>Caching layers</td><td>Redis/Varnish in front of app</td><td>Read-heavy workloads</td></tr><tr><td>Static generation</td><td>Pre-render HTML at build time</td><td>Content that changes infrequently</td></tr></table><p>A single Nginx instance can handle 10,000+ concurrent connections (using the epoll/kqueue event loop). A typical Node.js server handles 1,000-5,000 requests/second. A Redis cache returns values in under 0.1ms. The art is in combining these layers to serve the fastest possible response.</p>",
+        "4": "<h3>Architecture Evolution</h3><p>Early web servers (NCSA HTTPd, Apache 1.x) used a process-per-request model — simple but memory-intensive. The C10K problem (handling 10,000 concurrent connections, posed by Dan Kegel in 1999) drove the development of event-driven architectures: Nginx (2004), Node.js (2009), and Go's goroutines (2009).</p><p>The trend has shifted from monolithic servers to distributed microservices and, more recently, toward serverless/edge computing where code runs at CDN nodes closest to the user. Cloudflare Workers, Deno Deploy, and Vercel Edge Functions represent this evolution — trading server control for reduced latency and simpler operations.</p>"
+      },
+      "visualization": {
+        "type": "stat-cards",
+        "data": {
+          "cards": [
+            { "value": "~50ms", "unit": "Avg TTFB", "color": "#14b8a6" },
+            { "value": "10K+", "unit": "Concurrent Conn (Nginx)", "color": "#06b6d4" },
+            { "value": "<1ms", "unit": "Redis Cache Lookup", "color": "#22c55e" },
+            { "value": "1-5ms", "unit": "Database Query", "color": "#8b5cf6" }
+          ]
+        }
+      },
+      "concepts": {
+        "web-server": {
+          "title": "Web Server",
+          "body": "Software that accepts HTTP connections and serves responses. Nginx and Apache are the most common web servers, handling TLS termination, static file serving, and reverse proxying to application servers. Nginx uses an event-driven architecture that handles thousands of concurrent connections with minimal memory.",
+          "context": "The web server is the front door — it decides whether to serve a cached response instantly or pass the request to the application for processing.",
+          "linkedSectionId": null
+        },
+        "application-server": {
+          "title": "Application Server",
+          "body": "The runtime that executes your application code. Examples include Node.js (JavaScript), Gunicorn/uWSGI (Python), Puma (Ruby), and Spring Boot (Java). The application server receives requests from the web server, runs business logic, queries databases, and generates HTML or JSON responses.",
+          "context": "Application servers are where most of the server-side latency comes from — optimizing their code and data access patterns has the biggest impact on TTFB.",
+          "linkedSectionId": null
+        },
+        "database-query": {
+          "title": "Database Query",
+          "body": "A request to retrieve or modify data in a database. Simple queries (fetch one row by primary key) complete in under 1ms. Complex queries (joins across tables, aggregations, full-text search) can take 10-1000ms. The number of queries per page load (the N+1 problem) is often more important than any single query's performance.",
+          "context": "Databases are often the server's bottleneck — caching query results and optimizing access patterns are among the most impactful server-side optimizations.",
+          "linkedSectionId": "caching"
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-server-1",
+          "title": "Deep Dive: The N+1 Query Problem",
+          "content": "<p>One of the most common server-side performance issues is the N+1 query problem. It happens when code fetches a list of items (1 query), then fetches related data for each item individually (N queries). For example: fetch 50 blog posts, then fetch the author for each post one at a time = 51 queries instead of 2.</p><p>ORMs (Object-Relational Mappers) often mask this problem because the N queries happen implicitly through lazy loading. A page that seems simple can generate hundreds of database queries. The fix is <strong>eager loading</strong> — using JOIN queries or batch fetches to get all related data in one go. Most frameworks provide tools for this: Rails has <code>includes()</code>, Django has <code>select_related()</code>, and SQLAlchemy has <code>joinedload()</code>.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Nginx — \"Inside NGINX: How We Designed for Performance & Scale\" (2015)", "url": "https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/" },
+        { "id": 2, "text": "Google — \"Web Server Performance Comparison\" (Chrome DevRel, 2023)", "url": "https://web.dev/articles/ttfb" }
+      ]
+    },
+    {
+      "id": "rendering",
+      "levels": {
+        "1": "<p>The HTML has arrived in the browser. Now comes the most visible part of the journey: turning raw text into the visual page you see. The browser's rendering engine parses HTML into a <span class=\"concept-trigger\" data-concept=\"dom\">DOM tree</span>, parses CSS into a <span class=\"concept-trigger\" data-concept=\"cssom\">CSSOM tree</span>, combines them into a <span class=\"concept-trigger\" data-concept=\"render-tree\">render tree</span>, calculates the geometry of every element (layout), and finally paints pixels to the screen.</p><p>Think of it like building a house from blueprints. The HTML is the structural blueprint (walls, rooms, doors), the CSS is the interior design plan (colors, sizes, positions), and the render tree is the builder's working plan that combines both. A <span class=\"concept-trigger\" data-concept=\"reflow\">reflow</span> is like having to recalculate room sizes because you moved a wall.</p>",
+        "2": "<h3>The Rendering Pipeline</h3><p>The browser rendering pipeline has five main stages <a class=\"citation\" href=\"#ref-rendering-1\">[1]</a>:</p><ol><li><strong>Parse</strong> — HTML → DOM tree, CSS → CSSOM tree. Done incrementally as bytes arrive.</li><li><strong>Style</strong> — Compute the final styles for every DOM element (cascade, specificity, inheritance).</li><li><strong>Layout</strong> — Calculate the exact position and size of every element. This is where percentage widths, flexbox, and grid are resolved.</li><li><strong>Paint</strong> — Generate draw commands for each element (text, borders, shadows, images).</li><li><strong>Composite</strong> — Combine painted layers into the final image. GPU-accelerated.</li></ol><p>JavaScript can interrupt this pipeline at any stage. A <code>&lt;script&gt;</code> tag blocks HTML parsing by default (because the script might modify the DOM). This is why <code>defer</code> and <code>async</code> attributes exist — they tell the browser it's safe to continue parsing <a class=\"citation\" href=\"#ref-rendering-2\">[2]</a>.</p>",
+        "3": "<h3>Avoiding Costly Reflows</h3><p>Reflow (layout recalculation) is the most expensive rendering operation. It's triggered whenever the geometry of the page changes:</p><table><tr><th>Trigger</th><th>Cost</th><th>Alternative</th></tr><tr><td>Reading <code>offsetWidth</code> after write</td><td>Forces sync layout</td><td>Batch reads before writes</td></tr><tr><td>Animating <code>width</code>/<code>height</code></td><td>Reflow every frame</td><td>Use <code>transform: scale()</code></td></tr><tr><td>Adding DOM nodes in a loop</td><td>Reflow per insertion</td><td>Use DocumentFragment</td></tr><tr><td>Changing <code>font-size</code></td><td>Reflows entire subtree</td><td>Minimize dynamic font changes</td></tr></table><p>The golden rule: <strong>only animate composite properties</strong> (<code>transform</code> and <code>opacity</code>). These skip layout and paint entirely, running on the GPU compositor at 60fps. Everything else triggers layout or paint, which runs on the main thread and can cause jank.</p>",
+        "4": "<h3>Rendering Engine Architecture</h3><p>Modern rendering engines (Blink in Chrome, WebKit in Safari, Gecko in Firefox) share similar architectures but differ in implementation. All three have moved toward multi-threaded rendering: the main thread handles JavaScript and DOM manipulation, while dedicated threads handle compositing, raster (painting pixels), and input handling.</p><p>Chrome's RenderingNG architecture (2021) introduced a compositor thread that can scroll and animate independently of the main thread. This is why CSS animations remain smooth even when JavaScript is busy — they run entirely on the compositor thread.</p><p>The rendering pipeline is the subject of active research: Servo (initially from Mozilla, now Linux Foundation) explored parallelizing layout across CPU cores. Google's LayoutNG project rebuilt Chrome's layout engine for better performance with complex CSS features like grid and subgrid.</p>"
+      },
+      "visualization": {
+        "type": "animated-grid",
+        "data": {
+          "rows": 5,
+          "cols": 10,
+          "activePattern": "columns",
+          "activeCols": [0, 1, 2, 3, 4],
+          "color": "#22c55e",
+          "label": "DOM Nodes → Render Tree → Painted Pixels"
+        }
+      },
+      "concepts": {
+        "dom": {
+          "title": "Document Object Model (DOM)",
+          "body": "A tree-structured representation of an HTML document. Every element, text node, and comment becomes a node in the tree. JavaScript can read and modify the DOM, which triggers the rendering pipeline to update the visual output. The DOM is the bridge between HTML content and the visual page — and the most common source of performance bottlenecks in web applications.",
+          "context": "The DOM is the central data structure of the browser's rendering engine. Everything flows through it.",
+          "linkedSectionId": null
+        },
+        "cssom": {
+          "title": "CSS Object Model (CSSOM)",
+          "body": "The CSS equivalent of the DOM — a tree that represents all the CSS rules that apply to the document. The browser constructs the CSSOM from all stylesheets (linked, inline, browser defaults). Unlike the DOM, the CSSOM is not incrementally constructed — the browser blocks rendering until the entire CSSOM is ready, which is why CSS is 'render-blocking.'",
+          "context": "The CSSOM must be fully constructed before any rendering can happen, which is why optimizing CSS delivery is critical for performance.",
+          "linkedSectionId": "performance"
+        },
+        "render-tree": {
+          "title": "Render Tree",
+          "body": "The combination of the DOM and CSSOM that represents only the visible content. Elements with display:none are excluded. Pseudo-elements (::before, ::after) are included. The render tree is what the layout algorithm operates on — it's the browser's 'working blueprint' for painting the page.",
+          "context": "The render tree is where structure (DOM) and presentation (CSSOM) merge into the visual page.",
+          "linkedSectionId": null
+        },
+        "reflow": {
+          "title": "Reflow (Layout Recalculation)",
+          "body": "The process of recalculating the position and size of all affected elements when the page geometry changes. Reflow is expensive because it's recursive — changing one element's size can cascade through its children and siblings. Forced synchronous layout (reading a layout property immediately after modifying the DOM) is the most common performance pitfall.",
+          "context": "Avoiding unnecessary reflows is the single most impactful rendering optimization. Animate only transform and opacity.",
+          "linkedSectionId": "performance"
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-rendering-1",
+          "title": "Deep Dive: How CSS Animations Bypass the Main Thread",
+          "content": "<p>When you animate <code>transform</code> or <code>opacity</code>, the browser promotes the element to its own <strong>compositing layer</strong> — a GPU texture that can be moved, scaled, or faded independently. The compositor thread (separate from the main JavaScript thread) handles these animations at 60fps, even if the main thread is busy.</p><p>This is why <code>transform: translateX(100px)</code> is silky smooth while <code>left: 100px</code> causes jank — the former runs on the GPU compositor, the latter triggers layout on the main thread. Tools like Chrome's Layers panel let you visualize which elements have their own compositing layers and why.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Google — \"How Browsers Work: Behind the Scenes\" (web.dev, 2023)", "url": "https://web.dev/articles/howbrowserswork" },
+        { "id": 2, "text": "Google — \"Render-Blocking Resources\" (web.dev, 2023)", "url": "https://web.dev/articles/render-blocking-resources" }
+      ]
+    },
+    {
+      "id": "cdn",
+      "levels": {
+        "1": "<p>A website hosted in a single data center works fine for local users, but what about someone on the other side of the world? The speed of light imposes a hard minimum on latency — a round trip from Tokyo to New York takes at least 70ms just from physics.</p><p>Content Delivery Networks (CDNs) solve this by placing copies of your content on <span class=\"concept-trigger\" data-concept=\"edge-server\">edge servers</span> around the globe. When a user in Paris requests your site, the CDN serves it from Frankfurt (10ms away) instead of San Francisco (150ms away). The <span class=\"concept-trigger\" data-concept=\"origin-server\">origin server</span> still holds the master copy, but most users never talk to it — they're served by the nearest <span class=\"concept-trigger\" data-concept=\"pop\">Point of Presence</span>.</p>",
+        "2": "<h3>How CDNs Work</h3><p>CDNs operate on a simple principle: move data closer to users <a class=\"citation\" href=\"#ref-cdn-1\">[1]</a>.</p><ul><li><strong>Static caching</strong> — Images, CSS, JavaScript, and fonts are cached at edge servers. These resources account for 60-80% of typical page weight.</li><li><strong>Dynamic acceleration</strong> — Even dynamic content benefits: CDNs maintain optimized, persistent connections between edge and origin, reducing handshake overhead.</li><li><strong>DNS-based routing</strong> — The CDN's DNS resolves the same domain to different IPs based on the user's location, directing them to the nearest edge.</li></ul><p>Major CDN providers include Cloudflare (operates 300+ data centers in 100+ countries), Akamai (the original CDN, serving 30% of global web traffic), and AWS CloudFront. Modern CDNs have evolved beyond simple caching to offer DDoS protection, WAF, edge compute, and image optimization <a class=\"citation\" href=\"#ref-cdn-2\">[2]</a>.</p>",
+        "3": "<h3>CDN Performance Impact</h3><p>The performance improvement from a CDN depends on the user's distance from the origin:</p><table><tr><th>User Location</th><th>Without CDN (US origin)</th><th>With CDN</th><th>Improvement</th></tr><tr><td>US East Coast</td><td>30ms RTT</td><td>5ms RTT</td><td>6x</td></tr><tr><td>Europe</td><td>90ms RTT</td><td>10ms RTT</td><td>9x</td></tr><tr><td>Asia Pacific</td><td>180ms RTT</td><td>15ms RTT</td><td>12x</td></tr></table><p>For a page requiring 10 round trips, a CDN can reduce total load time from 1.8 seconds (Asia to US) to 150ms (Asia to nearest edge). The further the user from the origin, the bigger the benefit.</p>",
+        "4": "<h3>The Edge Computing Revolution</h3><p>CDNs started as passive caches in the late 1990s (Akamai was founded in 1998 by MIT researchers). The key innovation was using DNS and anycast routing to direct users to the nearest server automatically.</p><p>The latest evolution is edge computing: running application logic on CDN nodes, not just caching static files. Cloudflare Workers (2017) pioneered this with a V8-isolate model that boots in under 5ms. Deno Deploy and Vercel Edge Functions followed. This enables dynamic personalization and API logic at the edge, blurring the line between CDN and application server.</p><p>Research challenges include cache consistency (how quickly do edge nodes reflect origin changes?), cold start latency for serverless functions, and the economic model of distributing compute globally.</p>"
+      },
+      "visualization": {
+        "type": "compute-wave",
+        "data": {
+          "barCount": 16,
+          "color": "#84cc16",
+          "speed": 1.5,
+          "label": "Edge servers processing requests globally"
+        }
+      },
+      "concepts": {
+        "edge-server": {
+          "title": "Edge Server",
+          "body": "A server in a CDN's network that's geographically close to end users. Edge servers cache copies of content from the origin and serve it locally, dramatically reducing latency. Major CDNs operate hundreds of edge locations worldwide, often colocated in internet exchange points for minimal hop distance.",
+          "context": "Edge servers are the reason a CDN can make a global site feel local — they eliminate the long-distance round trips.",
+          "linkedSectionId": null
+        },
+        "origin-server": {
+          "title": "Origin Server",
+          "body": "The authoritative source of a website's content. When a CDN edge server doesn't have a cached copy (a 'cache miss'), it fetches from the origin. Origin servers handle dynamic content generation, database access, and authentication. The CDN shields the origin from most traffic, often reducing its load by 90%+.",
+          "context": "The origin is the source of truth — CDNs exist to reduce how often users need to talk to it.",
+          "linkedSectionId": "server"
+        },
+        "pop": {
+          "title": "Point of Presence (PoP)",
+          "body": "A physical data center location where a CDN has servers. A PoP typically contains multiple servers, networking equipment, and caching infrastructure. Cloudflare has 300+ PoPs, Akamai has 4,000+. PoPs are strategically placed at internet exchange points and in major metropolitan areas to minimize the physical distance to users.",
+          "context": "More PoPs mean lower latency for more users — it's the CDN's fundamental scaling strategy.",
+          "linkedSectionId": null
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-cdn-1",
+          "title": "Deep Dive: Anycast Routing",
+          "content": "<p>How does a CDN route you to the nearest server? The answer is <strong>anycast</strong> — a networking technique where the same IP address is announced from multiple locations simultaneously. Internet routers naturally direct packets to the closest announcement, which is the nearest edge server.</p><p>This is transparent to the user and the application — the same DNS response (same IP) works for users worldwide, but each user reaches a different physical server. Anycast also provides automatic failover: if an edge server goes down, traffic is automatically rerouted to the next closest one. Cloudflare and Google both use anycast extensively for their global networks.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Nygren et al. — \"The Akamai Network: A Platform for High-Performance Internet Applications\" (SIGOPS, 2010)", "url": "https://dl.acm.org/doi/10.1145/1842733.1842736" },
+        { "id": 2, "text": "Cloudflare — \"How Cloudflare Works\" (2024)", "url": "https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" }
+      ]
+    },
+    {
+      "id": "caching",
+      "levels": {
+        "1": "<p>The fastest request is the one that never happens. Caching stores previously fetched resources so they can be reused, skipping the entire network round trip. Your <span class=\"concept-trigger\" data-concept=\"browser-cache\">browser cache</span> stores CSS, JavaScript, images, and even API responses locally on your device.</p><p>But caching creates a fundamental problem: <span class=\"concept-trigger\" data-concept=\"cache-invalidation\">how do you know when the cached copy is stale?</span> This is famously one of the \"two hard problems in computer science\" (along with naming things). HTTP headers like <code>Cache-Control</code> and <span class=\"concept-trigger\" data-concept=\"etag\">ETags</span> provide the mechanism for browsers and servers to negotiate freshness.</p>",
+        "2": "<h3>The Caching Hierarchy</h3><p>Web content passes through multiple cache layers <a class=\"citation\" href=\"#ref-caching-1\">[1]</a>:</p><ul><li><strong>Browser memory cache</strong> — In-memory, fastest, cleared on tab close.</li><li><strong>Browser disk cache</strong> — Persists between sessions, typically 100-500MB.</li><li><strong>Service Worker cache</strong> — Programmable, can implement custom strategies (cache-first, network-first, stale-while-revalidate).</li><li><strong>CDN cache</strong> — Shared across all users, controlled by response headers.</li><li><strong>Application cache</strong> — Redis/Memcached on the server, caching database query results.</li></ul><p>The <code>Cache-Control</code> header is the primary control mechanism. <code>Cache-Control: max-age=31536000, immutable</code> tells the browser to cache for one year and never revalidate — used for versioned assets like <code>app.a1b2c3.js</code> <a class=\"citation\" href=\"#ref-caching-2\">[2]</a>.</p>",
+        "3": "<h3>Cache Strategies in Practice</h3><p>The right caching strategy depends on the content type:</p><table><tr><th>Content Type</th><th>Strategy</th><th>Cache-Control</th></tr><tr><td>Versioned assets (JS/CSS with hash)</td><td>Immutable, long-lived</td><td><code>max-age=31536000, immutable</code></td></tr><tr><td>HTML pages</td><td>Revalidate every time</td><td><code>no-cache</code> (or <code>max-age=0, must-revalidate</code>)</td></tr><tr><td>API responses</td><td>Short-lived or private</td><td><code>private, max-age=60</code></td></tr><tr><td>Images</td><td>Medium-lived with ETag</td><td><code>max-age=86400</code></td></tr></table><p>The <code>stale-while-revalidate</code> directive is a powerful pattern: serve the cached copy immediately while fetching a fresh copy in the background. The user gets instant response times, and the cache stays fresh.</p>",
+        "4": "<h3>The Invalidation Problem</h3><p>Phil Karlton's famous quip — \"There are only two hard things in computer science: cache invalidation and naming things\" — captures a real engineering challenge. How do you ensure users get updated content without sacrificing cache performance?</p><p>The web's solution is <strong>content-addressed caching</strong>: include a hash of the file's content in its URL (e.g., <code>app.3f2a1c.js</code>). When the content changes, the URL changes, and the old cache entry is simply abandoned. This pattern allows aggressive caching (max-age=1 year) with instant updates.</p><p>HTTP's conditional request mechanism (ETags and If-None-Match, RFC 7232) provides a fallback: the browser sends the cached version's ETag, and the server responds with either 304 Not Modified (use cache) or 200 with new content. This adds a round trip but no data transfer for unchanged resources.</p>"
+      },
+      "visualization": {
+        "type": "utilization-bars",
+        "data": {
+          "bars": [
+            { "label": "Browser Memory Cache", "value": 95, "color": "#22c55e" },
+            { "label": "Browser Disk Cache", "value": 80, "color": "#84cc16" },
+            { "label": "CDN Edge Cache", "value": 70, "color": "#eab308" },
+            { "label": "Application Cache (Redis)", "value": 60, "color": "#f97316" },
+            { "label": "Database Query Cache", "value": 40, "color": "#ef4444" }
+          ],
+          "legend": "Cache Hit Rate (%)"
+        }
+      },
+      "concepts": {
+        "browser-cache": {
+          "title": "Browser Cache",
+          "body": "A local storage mechanism in the browser that saves downloaded resources (HTML, CSS, JS, images) to disk. When you revisit a page, the browser checks its cache before making network requests. A warm cache can eliminate 80-95% of network requests on repeat visits. Chrome's cache can be inspected at chrome://cache.",
+          "context": "The browser cache is the single most impactful caching layer for end users — it eliminates network latency entirely for cached resources.",
+          "linkedSectionId": null
+        },
+        "cache-invalidation": {
+          "title": "Cache Invalidation",
+          "body": "The challenge of knowing when a cached copy is outdated and needs to be refreshed. Too aggressive invalidation wastes bandwidth fetching unchanged resources. Too conservative invalidation serves stale content. The web's solution combines time-based expiration (max-age), content addressing (filename hashing), and conditional requests (ETags).",
+          "context": "Getting invalidation right is the difference between a fast site with fresh content and either a slow site or a stale one.",
+          "linkedSectionId": null
+        },
+        "etag": {
+          "title": "ETag (Entity Tag)",
+          "body": "A unique identifier for a specific version of a resource, sent by the server in the ETag response header. On subsequent requests, the browser sends this value in an If-None-Match request header. If the resource hasn't changed, the server returns 304 Not Modified (no body), saving bandwidth. ETags are typically a hash of the file content or a version number.",
+          "context": "ETags enable efficient cache validation — the browser can check if a resource has changed without re-downloading it.",
+          "linkedSectionId": null
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-caching-1",
+          "title": "Deep Dive: Stale-While-Revalidate Pattern",
+          "content": "<p>The <code>stale-while-revalidate</code> Cache-Control directive (RFC 5861) is a game-changer for performance. It says: \"if the cached content is stale, serve it immediately anyway, but fetch a fresh copy in the background for next time.\"</p><p>For example, <code>Cache-Control: max-age=60, stale-while-revalidate=3600</code> means: content is fresh for 60 seconds. After that, serve the stale version instantly while revalidating in the background for up to 1 hour. The user always gets an instant response, and the cache stays reasonably fresh. This pattern is ideal for content that changes periodically but where milliseconds of staleness are acceptable — like news feeds, product listings, or dashboards.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Fielding et al. — RFC 9111: HTTP Caching (2022)", "url": "https://datatracker.ietf.org/doc/html/rfc9111" },
+        { "id": 2, "text": "Google — \"HTTP Caching\" (web.dev, 2023)", "url": "https://web.dev/articles/http-cache" }
+      ]
+    },
+    {
+      "id": "performance",
+      "levels": {
+        "1": "<p>Web performance isn't just about speed — it's about <em>perceived</em> speed. A page that shows meaningful content in 1 second feels fast even if it takes 3 seconds to fully load. Google's <span class=\"concept-trigger\" data-concept=\"core-web-vitals\">Core Web Vitals</span> measure what users actually experience: how fast content appears, how quickly the page becomes interactive, and how stable the layout is.</p><p>The <span class=\"concept-trigger\" data-concept=\"critical-rendering-path\">critical rendering path</span> is the sequence of steps between receiving HTML and painting the first pixels. Optimizing this path — and deferring everything else via techniques like <span class=\"concept-trigger\" data-concept=\"lazy-loading\">lazy loading</span> — is the art of web performance.</p>",
+        "2": "<h3>Core Web Vitals</h3><p>Google defines three key metrics that affect both user experience and search rankings <a class=\"citation\" href=\"#ref-performance-1\">[1]</a>:</p><ul><li><strong>Largest Contentful Paint (LCP)</strong> — When the largest visible element renders. Target: under 2.5 seconds.</li><li><strong>Interaction to Next Paint (INP)</strong> — Responsiveness to user input. Target: under 200ms.</li><li><strong>Cumulative Layout Shift (CLS)</strong> — Visual stability. Target: under 0.1.</li></ul><p>These metrics are measured on real user devices via the Chrome User Experience Report (CrUX). Sites that meet all three thresholds get a boost in Google search rankings <a class=\"citation\" href=\"#ref-performance-2\">[2]</a>. The shift from lab metrics to field metrics has changed how developers think about performance — what matters is the 75th percentile experience across all your real users.</p>",
+        "3": "<h3>Optimization Techniques</h3><p>The most impactful performance optimizations, ranked by typical improvement:</p><table><tr><th>Technique</th><th>Typical Impact</th><th>Effort</th></tr><tr><td>CDN for static assets</td><td>-50% LCP</td><td>Low</td></tr><tr><td>Image optimization (WebP, AVIF, sizing)</td><td>-30% page weight</td><td>Low</td></tr><tr><td>Code splitting + lazy loading</td><td>-40% initial JS</td><td>Medium</td></tr><tr><td>Inline critical CSS</td><td>-200ms LCP</td><td>Medium</td></tr><tr><td>Preconnect/preload hints</td><td>-100ms LCP</td><td>Low</td></tr><tr><td>Server-side rendering (SSR)</td><td>-500ms LCP</td><td>High</td></tr></table><p>The general principle: load what's visible first, defer everything else. The browser's <code>&lt;link rel=\"preload\"&gt;</code>, <code>&lt;link rel=\"preconnect\"&gt;</code>, and <code>loading=\"lazy\"</code> attributes are the main tools.</p>",
+        "4": "<h3>The Science of Perceived Performance</h3><p>Research from Nielsen Norman Group and Google shows that user perception follows distinct thresholds: 100ms feels instant, 1 second maintains focus, 10 seconds is the limit of sustained attention. Jakob Nielsen described these thresholds in 1993, and they remain accurate because they're rooted in human cognition, not technology.</p><p>Google's RAIL model (Response, Animation, Idle, Load) provides a framework: respond to input within 100ms, render animations at 60fps (16ms per frame), use idle time for deferred work, and deliver meaningful content within 1 second. The Interaction to Next Paint (INP) metric, which replaced First Input Delay in 2024, better captures the full spectrum of interactivity.</p><p>Emerging techniques include speculative loading (Chrome's Speculation Rules API), priority hints for resource loading, and the View Transitions API for smoother page navigations.</p>"
+      },
+      "visualization": {
+        "type": "tabbed-view",
+        "data": {
+          "tabs": [
+            {
+              "label": "Loading",
+              "content": "<p><strong>Preconnect</strong> to critical origins<br><code>&lt;link rel=\"preconnect\" href=\"https://cdn.example.com\"&gt;</code></p><p><strong>Preload</strong> critical resources<br><code>&lt;link rel=\"preload\" href=\"/font.woff2\" as=\"font\"&gt;</code></p><p><strong>Defer</strong> non-critical JS<br><code>&lt;script defer src=\"analytics.js\"&gt;&lt;/script&gt;</code></p>"
+            },
+            {
+              "label": "Rendering",
+              "content": "<p><strong>Inline critical CSS</strong> in the <code>&lt;head&gt;</code></p><p><strong>Avoid layout shifts</strong> by setting explicit dimensions on images and embeds</p><p><strong>Use <code>content-visibility: auto</code></strong> to skip rendering of off-screen content</p>"
+            },
+            {
+              "label": "Images",
+              "content": "<p><strong>Use modern formats</strong>: WebP (30% smaller than JPEG), AVIF (50% smaller)</p><p><strong>Responsive images</strong> with <code>srcset</code> and <code>sizes</code></p><p><strong>Lazy load</strong> below-fold images: <code>&lt;img loading=\"lazy\"&gt;</code></p>"
+            }
+          ],
+          "color": "#f97316"
+        }
+      },
+      "concepts": {
+        "core-web-vitals": {
+          "title": "Core Web Vitals",
+          "body": "Three specific metrics that Google uses to measure real-world user experience: LCP (loading speed — when the largest content element renders), INP (interactivity — how fast the page responds to input), and CLS (visual stability — how much the layout shifts during loading). Meeting the 'good' thresholds for all three is a Google search ranking factor.",
+          "context": "Core Web Vitals transformed performance from an engineering concern to a business priority by tying it directly to search rankings.",
+          "linkedSectionId": null
+        },
+        "critical-rendering-path": {
+          "title": "Critical Rendering Path",
+          "body": "The minimum sequence of steps the browser must complete to render the first pixel: parse HTML, build DOM, parse CSS, build CSSOM, create render tree, layout, paint. Optimizing this path means minimizing the number and size of render-blocking resources (CSS, synchronous JS) that must be processed before the first paint.",
+          "context": "The critical rendering path determines how quickly users see content — every optimization should prioritize shortening it.",
+          "linkedSectionId": "rendering"
+        },
+        "lazy-loading": {
+          "title": "Lazy Loading",
+          "body": "A technique that defers loading of non-critical resources until they're needed. The most common form is image lazy loading — images below the viewport aren't loaded until the user scrolls near them. HTML's native <code>loading=\"lazy\"</code> attribute makes this trivial. Code splitting is lazy loading for JavaScript — splitting the bundle into chunks that load on demand.",
+          "context": "Lazy loading directly improves initial load time by loading only what's immediately visible.",
+          "linkedSectionId": null
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-perf-1",
+          "title": "Deep Dive: Why CLS Is So Hard to Fix",
+          "content": "<p>Cumulative Layout Shift measures how much the page's visual content moves around during loading. A CLS of 0 means nothing shifted; above 0.25 is considered poor. Common causes: images without dimensions (browser doesn't know the size until loaded), dynamically injected ads or banners, web fonts that render differently than the fallback (FOIT/FOUT).</p><p>The challenge is that CLS happens from the interaction of multiple systems: the HTML structure, CSS loading order, JavaScript execution timing, network conditions, and third-party scripts. Fixing one source of shift can reveal others. The most robust solution is to reserve space for all dynamic content upfront — explicit dimensions on images, min-height on ad containers, and <code>font-display: optional</code> for web fonts.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Google — \"Web Vitals\" (web.dev, 2024)", "url": "https://web.dev/articles/vitals" },
+        { "id": 2, "text": "Google — \"Interaction to Next Paint (INP)\" (web.dev, 2024)", "url": "https://web.dev/articles/inp" }
+      ]
+    },
+    {
+      "id": "browsers",
+      "levels": {
+        "1": "<p>Behind every browser is an engine — the software that actually interprets HTML, CSS, and JavaScript. Today, three engines power virtually all web browsing: <span class=\"concept-trigger\" data-concept=\"blink-engine\">Blink</span> (Chrome, Edge, Opera, Brave), WebKit (Safari), and Gecko (Firefox).</p><p>These engines implement <span class=\"concept-trigger\" data-concept=\"web-standards\">web standards</span> defined by organizations like the <span class=\"concept-trigger\" data-concept=\"w3c\">W3C</span> and WHATWG. When all engines implement the same standard, your site works everywhere. When they don't — or when they implement it differently — you get browser compatibility issues.</p>",
+        "2": "<h3>The Engine Landscape</h3><p>The browser engine landscape has consolidated significantly <a class=\"citation\" href=\"#ref-browsers-1\">[1]</a>:</p><ul><li><strong>Blink</strong> (2013-) — Forked from WebKit by Google. Powers Chrome, Edge, Opera, Brave, Samsung Internet, and most Android browsers. Approximately 65% of global usage.</li><li><strong>WebKit</strong> (2001-) — Originally forked from KHTML by Apple. Powers Safari on macOS and iOS (Apple requires all iOS browsers to use WebKit).</li><li><strong>Gecko</strong> (1997-) — Mozilla's engine. Powers Firefox. The only major non-Chromium engine besides WebKit.</li></ul><p>This consolidation is both a blessing (better compatibility) and a risk (less diversity, more power for Google). The EU's Digital Markets Act may require Apple to allow alternative engines on iOS, which would be a significant shift <a class=\"citation\" href=\"#ref-browsers-2\">[2]</a>.</p>",
+        "3": "<h3>JavaScript Engines</h3><p>Each browser has a separate JavaScript engine:</p><table><tr><th>Engine</th><th>Browser</th><th>Key Innovation</th></tr><tr><td>V8</td><td>Chrome/Edge</td><td>JIT compilation, hidden classes</td></tr><tr><td>JavaScriptCore (Nitro)</td><td>Safari</td><td>LLInt + DFG + FTL tiered compilation</td></tr><tr><td>SpiderMonkey</td><td>Firefox</td><td>First JS engine (1995), Warp JIT</td></tr></table><p>All three use Just-In-Time (JIT) compilation: JavaScript is first interpreted for fast startup, then hot functions are compiled to optimized machine code. V8's Turbofan compiler generates code that can rival C++ for tight numeric loops, but this optimization takes time and memory — there's an inherent trade-off between startup speed and peak performance.</p>",
+        "4": "<h3>The Standards Process</h3><p>Web standards follow a multi-stage process. The W3C develops HTML and CSS specifications through Working Groups. WHATWG (founded in 2004 by Apple, Mozilla, and Opera) maintains a \"Living Standard\" for HTML that's continuously updated. TC39 (Ecma International) standardizes JavaScript through a proposal process (Stage 0-4).</p><p>The tension between standards and implementation is real: browsers often ship experimental features behind flags before the standard is finalized, and developers adopt them, creating de facto standards. The <code>-webkit-</code> CSS prefix era (2009-2015) showed how this can fragment the platform.</p><p>Current standards efforts include CSS Container Queries (responsive components), the Popover API, CSS Nesting (now shipping in all browsers), and WebGPU for high-performance graphics. The pace of standards has accelerated — Interop 2024 saw all three engines commit to implementing the same set of features simultaneously.</p>"
+      },
+      "visualization": {
+        "type": "inline-svg",
+        "data": {
+          "svg": "<svg viewBox=\"0 0 500 280\" xmlns=\"http://www.w3.org/2000/svg\"><style>text{font-family:system-ui;fill:currentColor}.box{rx:8;stroke:currentColor;stroke-width:1.5;fill-opacity:0.1}.label{font-size:13px;font-weight:600}.sub{font-size:10px;opacity:0.7}</style><rect class=\"box\" x=\"10\" y=\"10\" width=\"150\" height=\"120\" fill=\"#ef4444\" stroke=\"#ef4444\"/><text class=\"label\" x=\"85\" y=\"35\" text-anchor=\"middle\" fill=\"#ef4444\">Blink</text><text class=\"sub\" x=\"85\" y=\"55\" text-anchor=\"middle\">Chrome, Edge, Opera</text><text class=\"sub\" x=\"85\" y=\"70\" text-anchor=\"middle\">Brave, Samsung</text><rect x=\"30\" y=\"82\" width=\"110\" height=\"36\" rx=\"6\" fill=\"#ef4444\" fill-opacity=\"0.15\" stroke=\"#ef4444\" stroke-width=\"1\"/><text class=\"sub\" x=\"85\" y=\"105\" text-anchor=\"middle\" fill=\"#ef4444\">V8 (JavaScript)</text><rect class=\"box\" x=\"175\" y=\"10\" width=\"150\" height=\"120\" fill=\"#3b82f6\" stroke=\"#3b82f6\"/><text class=\"label\" x=\"250\" y=\"35\" text-anchor=\"middle\" fill=\"#3b82f6\">WebKit</text><text class=\"sub\" x=\"250\" y=\"55\" text-anchor=\"middle\">Safari (macOS, iOS)</text><text class=\"sub\" x=\"250\" y=\"70\" text-anchor=\"middle\">All iOS browsers</text><rect x=\"195\" y=\"82\" width=\"110\" height=\"36\" rx=\"6\" fill=\"#3b82f6\" fill-opacity=\"0.15\" stroke=\"#3b82f6\" stroke-width=\"1\"/><text class=\"sub\" x=\"250\" y=\"105\" text-anchor=\"middle\" fill=\"#3b82f6\">JSCore (JavaScript)</text><rect class=\"box\" x=\"340\" y=\"10\" width=\"150\" height=\"120\" fill=\"#f97316\" stroke=\"#f97316\"/><text class=\"label\" x=\"415\" y=\"35\" text-anchor=\"middle\" fill=\"#f97316\">Gecko</text><text class=\"sub\" x=\"415\" y=\"55\" text-anchor=\"middle\">Firefox</text><text class=\"sub\" x=\"415\" y=\"70\" text-anchor=\"middle\">Thunderbird</text><rect x=\"360\" y=\"82\" width=\"110\" height=\"36\" rx=\"6\" fill=\"#f97316\" fill-opacity=\"0.15\" stroke=\"#f97316\" stroke-width=\"1\"/><text class=\"sub\" x=\"415\" y=\"105\" text-anchor=\"middle\" fill=\"#f97316\">SpiderMonkey (JS)</text><rect class=\"box\" x=\"60\" y=\"160\" width=\"380\" height=\"50\" fill=\"#8b5cf6\" stroke=\"#8b5cf6\"/><text class=\"label\" x=\"250\" y=\"190\" text-anchor=\"middle\" fill=\"#8b5cf6\">Web Standards (W3C / WHATWG / TC39)</text><line x1=\"85\" y1=\"130\" x2=\"150\" y2=\"160\" stroke=\"currentColor\" stroke-width=\"1\" opacity=\"0.3\"/><line x1=\"250\" y1=\"130\" x2=\"250\" y2=\"160\" stroke=\"currentColor\" stroke-width=\"1\" opacity=\"0.3\"/><line x1=\"415\" y1=\"130\" x2=\"350\" y2=\"160\" stroke=\"currentColor\" stroke-width=\"1\" opacity=\"0.3\"/><rect class=\"box\" x=\"100\" y=\"230\" width=\"300\" height=\"40\" fill=\"#22c55e\" stroke=\"#22c55e\"/><text class=\"label\" x=\"250\" y=\"255\" text-anchor=\"middle\" fill=\"#22c55e\">Interop Project (cross-browser compat)</text><line x1=\"250\" y1=\"210\" x2=\"250\" y2=\"230\" stroke=\"currentColor\" stroke-width=\"1\" opacity=\"0.3\"/></svg>"
+        }
+      },
+      "concepts": {
+        "blink-engine": {
+          "title": "Blink Rendering Engine",
+          "body": "The rendering engine behind Chrome and all Chromium-based browsers. Forked from WebKit in 2013 by Google to enable faster development. Blink powers approximately 65% of global web browsing. Its dominance raises concerns about web monoculture — a single company controlling the engine that most people use to access the web.",
+          "context": "Blink's dominance means that Chrome's implementation often becomes the de facto standard, for better or worse.",
+          "linkedSectionId": null
+        },
+        "web-standards": {
+          "title": "Web Standards",
+          "body": "Formal specifications that define how web technologies should work. HTML and DOM are specified by WHATWG, CSS by the W3C CSS Working Group, and JavaScript by TC39 (ECMAScript). Standards ensure interoperability — code written to the standard should work in any compliant browser. The process involves proposals, drafts, implementation feedback, and formal recommendation.",
+          "context": "Standards are what make the web an open platform — they prevent any single company from controlling how websites work.",
+          "linkedSectionId": null
+        },
+        "w3c": {
+          "title": "World Wide Web Consortium (W3C)",
+          "body": "The main international standards organization for the web, founded by Tim Berners-Lee in 1994. The W3C develops specifications for CSS, ARIA, WebRTC, Web Audio, SVG, and many other web technologies. It operates through Working Groups that include representatives from browser vendors, web developers, and other stakeholders.",
+          "context": "The W3C provides the governance structure that keeps the web open and interoperable.",
+          "linkedSectionId": null
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-browsers-1",
+          "title": "Deep Dive: The iOS Browser Engine Restriction",
+          "content": "<p>Apple requires all browsers on iOS to use WebKit as their rendering engine. This means Chrome on iOS is essentially a WebKit browser with a Chrome UI — it doesn't use Blink or V8. This policy has significant implications: web features that Chrome supports on Android (like WebGPU, Push API quirks, and certain CSS features) may not work in Chrome on iOS because the underlying engine is WebKit.</p><p>The EU's Digital Markets Act (DMA) challenges this restriction. As of 2024, Apple has begun allowing alternative browser engines in the EU, which could lead to a more competitive browser landscape on iOS. Firefox with Gecko and Chrome with Blink on iOS would give users genuine engine choice for the first time since the App Store launched in 2008.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "StatCounter — \"Browser Market Share Worldwide\" (2024)", "url": "https://gs.statcounter.com/browser-market-share" },
+        { "id": 2, "text": "Mozilla — \"Platform Tilt\" (2024)", "url": "https://mozilla.github.io/platform-tilt/" }
+      ]
+    },
+    {
+      "id": "synthesis",
+      "levels": {
+        "1": "<p>Let's trace the complete journey one more time, with everything we've learned. You type <code>https://example.com</code> and press Enter. In the next 1-3 seconds, your browser will orchestrate DNS resolution, TCP connections, TLS encryption, HTTP messaging, server processing, and rendering — all working in concert to turn a URL into a visual, interactive page.</p><p>The <span class=\"concept-trigger\" data-concept=\"end-to-end-latency\">end-to-end latency</span> of this journey is the sum of all its parts. But it's also more than the sum — because each layer interacts with the others. Caching short-circuits DNS. HTTP/2 multiplexing reduces TCP connections. CDNs eliminate distance. The entire <span class=\"concept-trigger\" data-concept=\"web-stack\">web stack</span> is a system of systems, and understanding their interplay is what separates good web engineers from great ones.</p>",
+        "2": "<h3>The Integrated View</h3><p>Here's a realistic timing breakdown for a first visit to a well-optimized site <a class=\"citation\" href=\"#ref-synthesis-1\">[1]</a>:</p><ul><li><strong>0-50ms</strong> — DNS lookup (cached at resolver level)</li><li><strong>50-100ms</strong> — TCP + TLS handshake (TLS 1.3, 1 RTT)</li><li><strong>100-200ms</strong> — HTTP request sent, TTFB received</li><li><strong>200-400ms</strong> — HTML parsed, critical CSS and JS loaded</li><li><strong>400-800ms</strong> — First Contentful Paint (LCP candidate renders)</li><li><strong>800-1500ms</strong> — Remaining resources load, page becomes fully interactive</li></ul><p>On repeat visits, caching eliminates most of this: cached DNS (~0ms), reused TCP connection, cached assets → the page loads in under 200ms <a class=\"citation\" href=\"#ref-synthesis-2\">[2]</a>.</p><p>The key insight: <strong>the web is optimized for repeat visits</strong>. Every layer has caching, and together they can reduce a 1.5-second first load to a 100-millisecond repeat load.</p>",
+        "3": "<h3>Optimization Priorities by Layer</h3><table><tr><th>Layer</th><th>#1 Optimization</th><th>Impact</th></tr><tr><td>DNS</td><td>Preconnect to critical origins</td><td>-50ms</td></tr><tr><td>Transport</td><td>HTTP/3 + TLS 1.3</td><td>-100ms first load</td></tr><tr><td>Server</td><td>Edge computing + Redis cache</td><td>-200ms TTFB</td></tr><tr><td>Content</td><td>CDN for all static assets</td><td>-300ms global</td></tr><tr><td>Rendering</td><td>Inline critical CSS, defer JS</td><td>-200ms LCP</td></tr><tr><td>Caching</td><td>Immutable versioned assets</td><td>-90% repeat load</td></tr></table><p>The cumulative effect of applying all these optimizations can transform a 5-second page load into a sub-second one. But the order matters: fix the biggest bottleneck first. Use Lighthouse and WebPageTest to identify where your time is actually going.</p>",
+        "4": "<h3>The Future of the Web Platform</h3><p>The web continues to evolve along several fronts simultaneously. HTTP/3 and QUIC are becoming the default transport. WebAssembly brings near-native performance to the browser. WebGPU enables GPU compute for AI inference on-device. The View Transitions API makes single-page-app-like transitions possible in multi-page sites.</p><p>Privacy changes are reshaping the ecosystem: the deprecation of third-party cookies, the rise of Privacy Sandbox APIs, and stricter permissions for device access. Performance budgets and sustainability concerns are emerging as first-class engineering priorities.</p><p>The web's greatest strength remains its universality — a URL works on any device, in any browser, without installation. Understanding how each layer of the stack works, from DNS to pixels, equips you to build experiences that honor this promise while pushing the boundaries of what's possible.</p>"
+      },
+      "visualization": {
+        "type": "pipeline",
+        "data": {
+          "stages": [
+            { "label": "DNS", "color": "#8b5cf6", "active": true },
+            { "label": "TCP+TLS", "color": "#06b6d4", "active": true },
+            { "label": "HTTP", "color": "#a855f7", "active": true },
+            { "label": "Server", "color": "#14b8a6", "active": true },
+            { "label": "Render", "color": "#22c55e", "active": true },
+            { "label": "Cache", "color": "#eab308", "active": true }
+          ]
+        }
+      },
+      "concepts": {
+        "end-to-end-latency": {
+          "title": "End-to-End Latency",
+          "body": "The total time from the user's action (clicking a link) to the visible result (page rendered). It's the sum of all intermediate latencies: DNS, TCP, TLS, HTTP, server processing, and rendering. Optimizing end-to-end latency requires understanding and measuring each component, because the bottleneck shifts depending on the user's network, device, and whether resources are cached.",
+          "context": "End-to-end latency is the metric that matters most to users — it's what they feel, regardless of how it's distributed across layers.",
+          "linkedSectionId": "overview"
+        },
+        "web-stack": {
+          "title": "The Web Stack",
+          "body": "The complete set of technologies that make the web work, from physical network infrastructure through transport protocols (TCP/IP, QUIC), security (TLS), application protocols (HTTP), content formats (HTML, CSS, JS), and rendering engines. Each layer builds on the ones below it, and changes at any layer can affect all layers above.",
+          "context": "Thinking in terms of the full stack, not just your application code, is what enables the deepest optimizations.",
+          "linkedSectionId": null
+        }
+      },
+      "deepDives": [
+        {
+          "id": "dd-synthesis-1",
+          "title": "Deep Dive: The 14KB Rule",
+          "content": "<p>TCP slow start means a new connection can only send about 14KB (10 TCP segments) before waiting for acknowledgment. This creates a practical rule: <strong>everything needed for the first render should fit in 14KB compressed</strong>.</p><p>This includes the HTML document, inline critical CSS, and any synchronous JavaScript. If you exceed 14KB, the browser must wait for a second round trip before it has enough data to start rendering. On a 100ms RTT connection, that's an extra 100ms before the user sees anything. This single optimization — keeping the critical path under 14KB — often has more impact than any framework choice, build tool, or infrastructure investment.</p>"
+        }
+      ],
+      "references": [
+        { "id": 1, "text": "Grigorik — \"High Performance Browser Networking\" (O'Reilly, 2013)", "url": "https://hpbn.co" },
+        { "id": 2, "text": "Google — \"Why Performance Matters\" (web.dev, 2024)", "url": "https://web.dev/articles/why-speed-matters" }
+      ]
     }
   ]
 }

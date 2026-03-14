@@ -3,3 +3,6 @@ dist/
 .DS_Store
 *.local
 .env
+
+# Dev data preview (drop generated JSON here, don't commit)
+interactive-learning-explorer/template/public/dev-data/*.json

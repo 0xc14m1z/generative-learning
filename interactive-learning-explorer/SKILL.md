@@ -87,9 +87,38 @@ Present the file to the user. Done.
 - **Collapsible deep-dive panels** and per-section citation references
 - **Responsive layout** (sidebar collapses on mobile)
 
-## Rebuilding the shell (UI changes only)
+## Developing the UI
 
-The `template/` directory contains the full TypeScript React source. To change the UI:
+The `template/` directory contains the full TypeScript React source.
+
+### Quick start (dev server with sample data)
+
+```bash
+cd [this-skill-path]/template
+npm install
+npm run dev
+```
+
+Opens at `http://localhost:5173` with comprehensive sample data (12 sections, all viz types). Vite HMR reloads the page instantly when you edit components or sample data.
+
+### Previewing generated content
+
+To preview specific generated JSON files without rebuilding:
+
+```bash
+# Option A: use the preview script
+npm run preview:data -- /tmp/explorer-data
+npm run dev
+
+# Option B: manually copy files
+cp /tmp/explorer-data/structure.json public/dev-data/
+cp /tmp/explorer-data/content.json public/dev-data/
+npm run dev
+```
+
+The app auto-detects files in `public/dev-data/` during development and loads them instead of the built-in sample data. When `dev-data/` files change, the page auto-reloads.
+
+### Rebuilding the shell (after UI changes)
 
 ```bash
 cd [this-skill-path]/template

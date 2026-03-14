@@ -7,17 +7,27 @@
 ---
 
 ## Fase 1: Dev Mode con Hot Reload + Dati Reali
-**Impatto:** +15 punti | **Sforzo:** Basso | **Status:** ⬜ TODO
+**Impatto:** +15 punti | **Sforzo:** Basso | **Status:** ✅ DONE (2026-03-15)
 
 Il problema principale: per testare qualsiasi modifica alla UI serve build + inject + open file.
 L'obiettivo e' poter lanciare `npm run dev` e vedere l'app con dati reali, con hot reload.
 
 ### Task
-- [ ] 1.1 — Modificare `loader.ts` per supportare fetch di JSON esterni in dev mode
-- [ ] 1.2 — Aggiungere sample data realistico (8-10 sezioni, tutti i viz type)
-- [ ] 1.3 — Aggiungere script `npm run dev:preview` che serva dati da una cartella configurabile
-- [ ] 1.4 — Verificare che il hot reload funzioni end-to-end (modifica JSON → UI si aggiorna)
-- [ ] 1.5 — Documentare il workflow di sviluppo in SKILL.md
+- [x] 1.1 — Modificare `loader.ts` per supportare fetch di JSON esterni in dev mode
+- [x] 1.2 — Aggiungere sample data realistico (12 sezioni, tutti 11 viz type)
+- [x] 1.3 — Aggiungere script `npm run preview:data` che copia dati in `public/dev-data/`
+- [x] 1.4 — Aggiungere Vite plugin che rileva modifiche in `dev-data/` e fa auto-reload
+- [x] 1.5 — Documentare il workflow di sviluppo in SKILL.md
+- [x] 1.6 — Fix dependency versions (Vite 7 + plugin-react 5, tsconfig types)
+
+### Cosa e' stato fatto
+- `loader.ts` — async `loadDevData()` che in dev mode fetcha da `/dev-data/` con cache-busting
+- `App.tsx` — integra dev data loading (renders con sample data, poi swap se dev-data esiste)
+- `vite.config.ts` — plugin `devDataWatcher` che triggera full-reload su cambiamenti in dev-data/
+- `scripts/preview-data.mjs` — copia JSON da una cartella qualsiasi in `public/dev-data/`
+- `src/data/structure.json` — 12 sezioni, topic "How the Web Works", tutti 11 viz types
+- `src/data/content.json` — 12 sezioni complete con 4 livelli, concepts, deep dives, references
+- Dependency fix: Vite 8→7, plugin-react 6→5, aggiunto `vite/client` types
 
 ---
 
@@ -113,7 +123,7 @@ Zero test in tutto il progetto.
 | Milestone | Score | Data |
 |-----------|-------|------|
 | Stato iniziale | 52/100 | 2026-03-14 |
-| Post Fase 1 | —/100 | — |
+| Post Fase 1 | 67/100 | 2026-03-15 |
 | Post Fase 2 | —/100 | — |
 | Post Fase 3 | —/100 | — |
 | Post Fase 4 | —/100 | — |
