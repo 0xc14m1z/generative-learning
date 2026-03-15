@@ -164,6 +164,7 @@ function layoutGraph(
     target: e.to,
     label: e.label,
     type: 'default',
+    animated: true,
     style: { stroke: 'var(--color-muted-foreground)', strokeWidth: 1.5, opacity: 0.4 },
     labelStyle: { fontSize: 10, fill: 'var(--color-muted-foreground)' },
     labelBgStyle: { fill: 'var(--color-background)', fillOpacity: 0.8 },

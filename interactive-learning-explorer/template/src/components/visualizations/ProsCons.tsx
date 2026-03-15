@@ -11,7 +11,7 @@ export default function ProsCons({ data }: { data: Record<string, unknown> }) {
   return (
     <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(options.length, 3)}, 1fr)` }}>
       {options.map((opt, i) => (
-        <div key={i} className="bg-muted/30 rounded-xl overflow-hidden border-t-[3px]" style={{ borderColor: opt.color }}>
+        <div key={i} className="rounded-xl overflow-hidden border-[1.5px]" style={{ borderColor: opt.color, background: opt.color + '08' }}>
           <h4 className="text-[13px] font-bold uppercase tracking-wider px-4 pt-4 pb-2" style={{ color: opt.color }}>
             {opt.title}
           </h4>

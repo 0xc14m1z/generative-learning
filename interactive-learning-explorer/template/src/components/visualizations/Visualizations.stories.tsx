@@ -3,12 +3,12 @@ import Pipeline from './Pipeline'
 import ComparisonCards from './ComparisonCards'
 import UtilizationBars from './UtilizationBars'
 import TokenStream from './TokenStream'
-import AnimatedGrid from './AnimatedGrid'
+import Heatmap from './Heatmap'
 import TieredHierarchy from './TieredHierarchy'
 import RoutingDiagram from './RoutingDiagram'
 import StatCards from './StatCards'
 import TabbedView from './TabbedView'
-import ComputeWave from './ComputeWave'
+import BarChart from './BarChart'
 import Timeline from './Timeline'
 import Flowchart from './Flowchart'
 import ProsCons from './ProsCons'
@@ -19,7 +19,7 @@ const wrap = (children: React.ReactNode) => (
 
 // ─── Pipeline ───────────────────────────────────────────────────
 const pipelineMeta: Meta<typeof Pipeline> = { title: 'Visualizations/Pipeline', component: Pipeline }
-export default pipelineMeta // default for the file
+export default pipelineMeta
 
 export const PipelineBasic: StoryObj<typeof Pipeline> = {
   render: () => wrap(
@@ -110,13 +110,34 @@ export const TokenStreamBasic: StoryObj = {
   ),
 }
 
-// ─── AnimatedGrid ───────────────────────────────────────────────
-export const AnimatedGridBasic: StoryObj = {
+// ─── Heatmap (replaces AnimatedGrid) ────────────────────────────
+export const HeatmapBasic: StoryObj = {
   render: () => wrap(
-    <AnimatedGrid color="#06b6d4" data={{
-      rows: 4, cols: 8,
-      activePattern: 'columns', activeCols: [1, 3, 5, 7],
-      label: 'Active zones'
+    <Heatmap color="#06b6d4" data={{
+      xLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      yLabels: ['Morning', 'Afternoon', 'Evening'],
+      cells: [
+        [0.8, 0.9, 0.7, 0.85, 0.6, 0.3, 0.2],
+        [0.5, 0.6, 0.7, 0.5, 0.8, 0.9, 0.4],
+        [0.3, 0.2, 0.4, 0.3, 0.5, 0.7, 0.8],
+      ],
+      legend: 'Productivity level',
+    }} />
+  ),
+}
+
+export const HeatmapQuarterly: StoryObj = {
+  render: () => wrap(
+    <Heatmap color="#8b5cf6" data={{
+      xLabels: ['Q1', 'Q2', 'Q3', 'Q4'],
+      yLabels: ['Revenue', 'Costs', 'Margin', 'Growth'],
+      cells: [
+        [0.6, 0.7, 0.8, 0.9],
+        [0.4, 0.5, 0.45, 0.5],
+        [0.7, 0.65, 0.8, 0.85],
+        [0.3, 0.5, 0.6, 0.8],
+      ],
+      legend: 'Performance relative to target',
     }} />
   ),
 }
@@ -135,10 +156,10 @@ export const TieredHierarchyBasic: StoryObj = {
   ),
 }
 
-// ─── RoutingDiagram ─────────────────────────────────────────────
+// ─── RoutingDiagram (now powered by FlowGraph) ──────────────────
 export const RoutingDiagramBasic: StoryObj = {
   render: () => wrap(
-    <RoutingDiagram data={{
+    <RoutingDiagram color="#22c55e" data={{
       inputs: [
         { label: 'Email', color: '#3b82f6' },
         { label: 'Chat', color: '#8b5cf6' },
@@ -183,16 +204,40 @@ export const TabbedViewBasic: StoryObj = {
   ),
 }
 
-// ─── ComputeWave ────────────────────────────────────────────────
-export const ComputeWaveBasic: StoryObj = {
+// ─── BarChart (replaces ComputeWave) ────────────────────────────
+export const BarChartBasic: StoryObj = {
   render: () => wrap(
-    <ComputeWave color="#84cc16" data={{
-      barCount: 20, speed: 1.5, label: 'Activity over time'
+    <BarChart color="#84cc16" data={{
+      bars: [
+        { label: 'Jan', value: 42 },
+        { label: 'Feb', value: 58 },
+        { label: 'Mar', value: 35 },
+        { label: 'Apr', value: 71 },
+        { label: 'May', value: 64 },
+        { label: 'Jun', value: 89 },
+      ],
+      unit: 'Monthly sales ($K)',
     }} />
   ),
 }
 
-// ─── Timeline (NEW) ─────────────────────────────────────────────
+export const BarChartColored: StoryObj = {
+  render: () => wrap(
+    <BarChart color="#3b82f6" data={{
+      bars: [
+        { label: 'Protein', value: 120, color: '#ef4444' },
+        { label: 'Carbs', value: 250, color: '#eab308' },
+        { label: 'Fat', value: 65, color: '#f97316' },
+        { label: 'Fiber', value: 30, color: '#22c55e' },
+        { label: 'Sugar', value: 45, color: '#ec4899' },
+      ],
+      unit: 'Daily intake (grams)',
+      maxValue: 300,
+    }} />
+  ),
+}
+
+// ─── Timeline ───────────────────────────────────────────────────
 export const TimelineBasic: StoryObj = {
   render: () => wrap(
     <Timeline color="#8b5cf6" data={{
@@ -220,7 +265,7 @@ export const TimelineCompact: StoryObj = {
   ),
 }
 
-// ─── Flowchart (NEW) ────────────────────────────────────────────
+// ─── Flowchart ──────────────────────────────────────────────────
 export const FlowchartDecisionTree: StoryObj = {
   render: () => wrap(
     <Flowchart color="#3b82f6" data={{
@@ -295,7 +340,7 @@ export const FlowchartLinear: StoryObj = {
   ),
 }
 
-// ─── ProsCons (NEW) ─────────────────────────────────────────────
+// ─── ProsCons ───────────────────────────────────────────────────
 export const ProsConsBasic: StoryObj = {
   render: () => wrap(
     <ProsCons data={{

@@ -42,13 +42,13 @@ The contract between Skills 1, 2, and 3. Both JSON files must conform exactly.
 | `pipeline` | Sequential processes, lifecycles |
 | `comparison-cards` | Hardware generations, before/after |
 | `utilization-bars` | Resource usage, bottlenecks |
-| `token-stream` | Tokenization, generation |
-| `animated-grid` | GPU arrays, memory blocks, experts |
-| `tiered-hierarchy` | Memory hierarchies, stacks |
-| `routing-diagram` | MoE routing, load balancing |
-| `stat-cards` | Key metrics, specs |
-| `tabbed-view` | Comparing approaches |
-| `compute-wave` | Parallel execution |
+| `token-stream` | Tokenization, sequences, generation |
+| `heatmap` | Schedules, correlations, frequency data |
+| `tiered-hierarchy` | Hierarchies, stacks, layers |
+| `routing-diagram` | Fan-in/fan-out routing, load balancing |
+| `stat-cards` | Key metrics, specs, KPIs |
+| `tabbed-view` | Comparing approaches, multi-perspective |
+| `bar-chart` | Quantities, comparisons, distributions |
 | `inline-svg` | Custom diagrams (escape hatch) |
 | `timeline` | Historical events, milestones, evolution |
 | `flowchart` | Decision trees, branching processes, troubleshooting |
@@ -131,12 +131,12 @@ The contract between Skills 1, 2, and 3. Both JSON files must conform exactly.
 **comparison-cards:** `{ "cards": [{ "title": "str", "color": "#hex", "rows": [{ "label": "str", "value": "str", "badge?": "str" }] }] }`
 **utilization-bars:** `{ "bars": [{ "label": "str", "value": number, "color": "#hex" }], "legend?": "str" }`
 **token-stream:** `{ "tokens": ["str"], "activeIndex": number, "color": "#hex" }`
-**animated-grid:** `{ "rows": n, "cols": n, "activePattern": "all"|"sparse"|"columns", "activeCols?": [n], "color": "#hex", "label?": "str" }`
+**heatmap:** `{ "xLabels": ["str"], "yLabels": ["str"], "cells": [[number 0-1]], "color": "#hex", "legend?": "str" }`
 **tiered-hierarchy:** `{ "tiers": [{ "label": "str", "detail": "str", "color": "#hex", "width": n }] }`
 **routing-diagram:** `{ "inputs": [{ "label": "str", "color": "#hex" }], "router": { "label": "str", "sublabel?": "str" }, "outputs": [{ "label": "str", "active": bool }], "color": "#hex" }`
 **stat-cards:** `{ "cards": [{ "value": "str", "unit": "str", "color": "#hex" }] }`
 **tabbed-view:** `{ "tabs": [{ "label": "str", "content": "HTML str" }], "color": "#hex" }`
-**compute-wave:** `{ "barCount": n, "color": "#hex", "speed": n, "label?": "str" }`
+**bar-chart:** `{ "bars": [{ "label": "str", "value": number, "color?": "#hex" }], "unit?": "str", "maxValue?": number }`
 **inline-svg:** `{ "svg": "<svg>...</svg>" }`
 **timeline:** `{ "events": [{ "date": "str", "label": "str", "detail?": "str", "color": "#hex" }] }`
 **flowchart:** `{ "nodes": [{ "id": "str", "label": "str", "type": "decision"|"outcome"|"step", "color?": "#hex" }], "edges": [{ "from": "str", "to": "str", "label?": "str" }] }`
