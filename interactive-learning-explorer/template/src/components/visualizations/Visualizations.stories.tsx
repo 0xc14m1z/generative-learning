@@ -34,6 +34,37 @@ export const PipelineBasic: StoryObj<typeof Pipeline> = {
   ),
 }
 
+export const PipelineManySteps: StoryObj<typeof Pipeline> = {
+  render: () => wrap(
+    <Pipeline color="#3b82f6" data={{
+      stages: [
+        { label: 'Ideation', color: '#8b5cf6' },
+        { label: 'Research', color: '#a855f7' },
+        { label: 'Planning', color: '#6366f1' },
+        { label: 'Design', color: '#3b82f6', active: true },
+        { label: 'Development', color: '#06b6d4' },
+        { label: 'Testing', color: '#14b8a6' },
+        { label: 'Staging', color: '#22c55e' },
+        { label: 'Deployment', color: '#84cc16' },
+        { label: 'Monitoring', color: '#eab308' },
+      ]
+    }} />
+  ),
+}
+
+export const PipelineLongLabels: StoryObj<typeof Pipeline> = {
+  render: () => wrap(
+    <Pipeline color="#ef4444" data={{
+      stages: [
+        { label: 'Collect Ingredients', color: '#ef4444' },
+        { label: 'Prep & Mise en Place', color: '#f97316', active: true },
+        { label: 'Cook Main Course', color: '#eab308' },
+        { label: 'Plate & Garnish', color: '#22c55e' },
+      ]
+    }} />
+  ),
+}
+
 // ─── ComparisonCards ────────────────────────────────────────────
 export const ComparisonCardsBasic: StoryObj = {
   render: () => wrap(
@@ -211,6 +242,34 @@ export const FlowchartDecisionTree: StoryObj = {
         { from: 'cook', to: 'ingredients' },
         { from: 'ingredients', to: 'recipe', label: 'Yes' },
         { from: 'ingredients', to: 'shop', label: 'No' },
+      ]
+    }} />
+  ),
+}
+
+export const FlowchartComplex: StoryObj = {
+  render: () => wrap(
+    <Flowchart color="#6366f1" data={{
+      nodes: [
+        { id: 'goal', label: 'Financial Goal?', type: 'decision', color: '#3b82f6' },
+        { id: 'emergency', label: 'Emergency Fund?', type: 'decision', color: '#8b5cf6' },
+        { id: 'build-fund', label: 'Build 3-6 mo fund', type: 'outcome', color: '#ef4444' },
+        { id: 'debt', label: 'High-interest debt?', type: 'decision', color: '#f97316' },
+        { id: 'pay-debt', label: 'Pay debt first', type: 'outcome', color: '#ef4444' },
+        { id: 'timeline', label: 'Timeline?', type: 'decision', color: '#06b6d4' },
+        { id: 'short', label: 'Savings Account', type: 'outcome', color: '#22c55e' },
+        { id: 'medium', label: 'Index Funds', type: 'outcome', color: '#22c55e' },
+        { id: 'long', label: 'Diversified Portfolio', type: 'outcome', color: '#22c55e' },
+      ],
+      edges: [
+        { from: 'goal', to: 'emergency' },
+        { from: 'emergency', to: 'build-fund', label: 'No' },
+        { from: 'emergency', to: 'debt', label: 'Yes' },
+        { from: 'debt', to: 'pay-debt', label: 'Yes' },
+        { from: 'debt', to: 'timeline', label: 'No' },
+        { from: 'timeline', to: 'short', label: '<1 year' },
+        { from: 'timeline', to: 'medium', label: '1-5 years' },
+        { from: 'timeline', to: 'long', label: '5+ years' },
       ]
     }} />
   ),

@@ -19,12 +19,13 @@ export default function Timeline({ data, color }: { data: Record<string, unknown
           const c = event.color || fallbackColor
           return (
             <div key={i} className="relative">
-              {/* Dot on the timeline */}
+              {/* Dot on the timeline — outer ring + inner fill, both centered at left-[9px] */}
               <div
-                className="absolute -left-6 top-1 w-[18px] h-[18px] rounded-full border-2 bg-background"
+                className="absolute -left-6 top-0.5 w-[18px] h-[18px] rounded-full border-2 bg-background flex items-center justify-center"
                 style={{ borderColor: c }}
-              />
-              <div className="absolute -left-[17px] top-[7px] w-2 h-2 rounded-full" style={{ background: c }} />
+              >
+                <div className="w-2 h-2 rounded-full" style={{ background: c }} />
+              </div>
 
               {/* Content */}
               <div className="ml-2">
