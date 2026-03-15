@@ -50,6 +50,9 @@ The contract between Skills 1, 2, and 3. Both JSON files must conform exactly.
 | `tabbed-view` | Comparing approaches |
 | `compute-wave` | Parallel execution |
 | `inline-svg` | Custom diagrams (escape hatch) |
+| `timeline` | Historical events, milestones, evolution |
+| `flowchart` | Decision trees, branching processes, troubleshooting |
+| `pros-cons` | Trade-off analysis, option comparison with +/- |
 
 ## content.json
 
@@ -94,6 +97,34 @@ The contract between Skills 1, 2, and 3. Both JSON files must conform exactly.
 - Citations: `<a class="citation" href="#ref-SECTIONID-N">[N]</a>`
 - No `<script>`, no `onclick`, no JavaScript
 
+#### Callout boxes (styled via CSS)
+
+```html
+<div class="callout" data-type="insight">Key insight text here.</div>
+<div class="callout" data-type="tip">Practical tip text here.</div>
+<div class="callout" data-type="warning">Warning or common mistake.</div>
+<div class="callout" data-type="quote">"Quoted text here." — Author</div>
+```
+
+#### Do / Don't blocks
+
+```html
+<div class="do-dont">
+  <div class="do">Best practice text here.</div>
+  <div class="dont">Anti-pattern or mistake to avoid.</div>
+</div>
+```
+
+#### Styled steps (numbered, with optional time)
+
+```html
+<div class="steps">
+  <div class="step" data-time="5 min">First step description.</div>
+  <div class="step" data-time="10 min">Second step description.</div>
+  <div class="step">Third step (no time estimate).</div>
+</div>
+```
+
 ### Visualization data shapes
 
 **pipeline:** `{ "stages": [{ "label": "str", "color": "#hex", "active?": bool }] }`
@@ -107,3 +138,6 @@ The contract between Skills 1, 2, and 3. Both JSON files must conform exactly.
 **tabbed-view:** `{ "tabs": [{ "label": "str", "content": "HTML str" }], "color": "#hex" }`
 **compute-wave:** `{ "barCount": n, "color": "#hex", "speed": n, "label?": "str" }`
 **inline-svg:** `{ "svg": "<svg>...</svg>" }`
+**timeline:** `{ "events": [{ "date": "str", "label": "str", "detail?": "str", "color": "#hex" }] }`
+**flowchart:** `{ "nodes": [{ "id": "str", "label": "str", "type": "decision"|"outcome"|"step", "color?": "#hex" }], "edges": [{ "from": "str", "to": "str", "label?": "str" }] }`
+**pros-cons:** `{ "options": [{ "title": "str", "color": "#hex", "pros": ["str"], "cons": ["str"] }] }`

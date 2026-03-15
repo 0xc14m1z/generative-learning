@@ -96,3 +96,139 @@
 .level-content li { margin: 4px 0; }
 .level-content code { font-size: 0.88em; background: var(--color-muted); padding: 2px 6px; border-radius: 4px; }
 .level-content strong { color: var(--color-foreground); }
+
+/* ═══ Callout boxes ═══ */
+.level-content .callout, .deep-dive-body .callout {
+  border-left: 3px solid;
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  margin: 16px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.level-content .callout::before, .deep-dive-body .callout::before {
+  display: block;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.callout[data-type="insight"] {
+  border-color: #8b5cf6;
+  background: #8b5cf610;
+}
+.callout[data-type="insight"]::before {
+  content: "Key Insight";
+  color: #8b5cf6;
+}
+
+.callout[data-type="tip"] {
+  border-color: #22c55e;
+  background: #22c55e10;
+}
+.callout[data-type="tip"]::before {
+  content: "Tip";
+  color: #22c55e;
+}
+
+.callout[data-type="warning"] {
+  border-color: #f97316;
+  background: #f9731610;
+}
+.callout[data-type="warning"]::before {
+  content: "Warning";
+  color: #f97316;
+}
+
+.callout[data-type="quote"] {
+  border-color: #06b6d4;
+  background: #06b6d410;
+  font-style: italic;
+}
+.callout[data-type="quote"]::before {
+  content: "Quote";
+  color: #06b6d4;
+  font-style: normal;
+}
+
+/* ═══ Do / Don't ═══ */
+.level-content .do-dont, .deep-dive-body .do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.do-dont .do, .do-dont .dont {
+  border-radius: 8px;
+  padding: 12px 16px;
+  line-height: 1.6;
+}
+.do-dont .do {
+  background: #22c55e0c;
+  border: 1px solid #22c55e30;
+}
+.do-dont .do::before {
+  content: "Do";
+  display: block;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #22c55e;
+  margin-bottom: 6px;
+}
+.do-dont .dont {
+  background: #ef44440c;
+  border: 1px solid #ef444430;
+}
+.do-dont .dont::before {
+  content: "Don't";
+  display: block;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ef4444;
+  margin-bottom: 6px;
+}
+
+/* ═══ Styled steps ═══ */
+.level-content .steps, .deep-dive-body .steps {
+  counter-reset: step-counter;
+  margin: 16px 0;
+}
+.steps .step {
+  counter-increment: step-counter;
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.steps .step:last-child { border-bottom: none; }
+.steps .step::before {
+  content: counter(step-counter);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.steps .step[data-time]::after {
+  content: attr(data-time);
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--color-muted-foreground);
+  white-space: nowrap;
+  padding-top: 6px;
+}
