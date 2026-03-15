@@ -32,6 +32,10 @@ export interface FlowGraphProps {
   edges: FlowEdgeInput[]
   direction?: FlowDirection
   fallbackColor: string
+  /** Show animated dashed edges (for flow/pipeline style) */
+  animateEdges?: boolean
+  /** Show arrowhead at edge end (for directional flows) */
+  showArrows?: boolean
 }
 
 /* ── Custom node components ───────────────────────────────────── */
@@ -120,6 +124,8 @@ function layoutGraph(
   flowEdges: FlowEdgeInput[],
   fallbackColor: string,
   direction: FlowDirection,
+  animateEdges: boolean,
+  showArrows: boolean,
 ) {
   const g = new dagre.graphlib.Graph()
   g.setDefaultEdgeLabel(() => ({}))
@@ -164,7 +170,8 @@ function layoutGraph(
     target: e.to,
     label: e.label,
     type: 'default',
-    animated: true,
+    animated: animateEdges,
+    markerEnd: showArrows ? { type: 'arrowclosed' as const, color: 'var(--color-muted-foreground)' } : undefined,
     style: { stroke: 'var(--color-muted-foreground)', strokeWidth: 1.5, opacity: 0.4 },
     labelStyle: { fontSize: 10, fill: 'var(--color-muted-foreground)' },
     labelBgStyle: { fill: 'var(--color-background)', fillOpacity: 0.8 },
@@ -182,10 +189,10 @@ function layoutGraph(
 }
 
 /* ── Main component ───────────────────────────────────────────── */
-export default function FlowGraph({ nodes: flowNodes, edges: flowEdges, direction = 'TB', fallbackColor }: FlowGraphProps) {
+export default function FlowGraph({ nodes: flowNodes, edges: flowEdges, direction = 'TB', fallbackColor, animateEdges = false, showArrows = false }: FlowGraphProps) {
   const { nodes, edges, width, height } = useMemo(
-    () => layoutGraph(flowNodes, flowEdges, fallbackColor, direction),
-    [flowNodes, flowEdges, fallbackColor, direction]
+    () => layoutGraph(flowNodes, flowEdges, fallbackColor, direction, animateEdges, showArrows),
+    [flowNodes, flowEdges, fallbackColor, direction, animateEdges, showArrows]
   )
 
   // For LR layout, height is usually small; for TB, width is usually small

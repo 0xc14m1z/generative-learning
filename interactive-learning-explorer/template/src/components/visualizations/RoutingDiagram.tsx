@@ -54,5 +54,5 @@ export default function RoutingDiagram({ data, color }: { data: Record<string, u
     }
   })
 
-  return <FlowGraph nodes={nodes} edges={edges} direction="LR" fallbackColor={fallbackColor} />
+  return <FlowGraph nodes={nodes} edges={edges} direction="LR" fallbackColor={fallbackColor} animateEdges showArrows />
 }

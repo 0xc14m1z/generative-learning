@@ -21,5 +21,5 @@ export default function Pipeline({ data, color }: { data: Record<string, unknown
   // Auto-switch to vertical when there are many stages to keep them readable
   const direction = stages.length > 5 ? 'TB' : 'LR'
 
-  return <FlowGraph nodes={nodes} edges={edges} direction={direction} fallbackColor={color} />
+  return <FlowGraph nodes={nodes} edges={edges} direction={direction} fallbackColor={color} animateEdges showArrows />
 }
