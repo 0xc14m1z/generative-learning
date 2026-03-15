@@ -12,6 +12,8 @@ import BarChart from './BarChart'
 import Timeline from './Timeline'
 import Flowchart from './Flowchart'
 import ProsCons from './ProsCons'
+import CycleDiagram from './CycleDiagram'
+import QuadrantMatrix from './QuadrantMatrix'
 
 const wrap = (children: React.ReactNode) => (
   <div className="bg-card border border-border rounded-xl p-6 max-w-2xl">{children}</div>
@@ -336,6 +338,78 @@ export const FlowchartLinear: StoryObj = {
         { from: 'validate', to: 'pivot', label: 'No' },
         { from: 'build', to: 'launch' },
       ]
+    }} />
+  ),
+}
+
+// ─── CycleDiagram ───────────────────────────────────────────────
+export const CycleHabitLoop: StoryObj = {
+  render: () => wrap(
+    <CycleDiagram color="#8b5cf6" data={{
+      nodes: [
+        { label: 'Cue', detail: 'Environmental trigger', color: '#f97316' },
+        { label: 'Craving', detail: 'Desire for change', color: '#eab308' },
+        { label: 'Response', detail: 'Action taken', color: '#22c55e' },
+        { label: 'Reward', detail: 'Satisfaction gained', color: '#3b82f6' },
+      ],
+      centerLabel: 'Habit Loop',
+    }} />
+  ),
+}
+
+export const CyclePDCA: StoryObj = {
+  render: () => wrap(
+    <CycleDiagram color="#06b6d4" data={{
+      nodes: [
+        { label: 'Plan', color: '#3b82f6' },
+        { label: 'Do', color: '#22c55e' },
+        { label: 'Check', color: '#eab308' },
+        { label: 'Act', color: '#ef4444' },
+      ],
+      centerLabel: 'PDCA',
+    }} />
+  ),
+}
+
+export const CycleThreeSteps: StoryObj = {
+  render: () => wrap(
+    <CycleDiagram color="#ec4899" data={{
+      nodes: [
+        { label: 'Learn', detail: 'Acquire new knowledge', color: '#8b5cf6' },
+        { label: 'Practice', detail: 'Apply in real context', color: '#06b6d4' },
+        { label: 'Reflect', detail: 'Evaluate and adjust', color: '#f97316' },
+      ],
+    }} />
+  ),
+}
+
+// ─── QuadrantMatrix ─────────────────────────────────────────────
+export const QuadrantEisenhower: StoryObj = {
+  render: () => wrap(
+    <QuadrantMatrix data={{
+      axisX: { low: 'Not Urgent', high: 'Urgent' },
+      axisY: { low: 'Not Important', high: 'Important' },
+      quadrants: [
+        { label: 'Schedule', items: ['Strategic planning', 'Exercise', 'Learning'], color: '#3b82f6' },
+        { label: 'Do First', items: ['Deadlines', 'Crises', 'Urgent bugs'], color: '#ef4444' },
+        { label: 'Eliminate', items: ['Time wasters', 'Busywork'], color: '#64748b' },
+        { label: 'Delegate', items: ['Some emails', 'Some meetings', 'Routine tasks'], color: '#eab308' },
+      ],
+    }} />
+  ),
+}
+
+export const QuadrantEffortImpact: StoryObj = {
+  render: () => wrap(
+    <QuadrantMatrix data={{
+      axisX: { low: 'Low Effort', high: 'High Effort' },
+      axisY: { low: 'Low Impact', high: 'High Impact' },
+      quadrants: [
+        { label: 'Quick Wins', items: ['Fix typos', 'Update copy', 'Add alt text'], color: '#22c55e' },
+        { label: 'Major Projects', items: ['Redesign', 'New features', 'Platform migration'], color: '#8b5cf6' },
+        { label: 'Fill-ins', items: ['Minor refactors', 'Nice-to-haves'], color: '#64748b' },
+        { label: 'Thankless Tasks', items: ['Legacy cleanup', 'Compliance work'], color: '#f97316' },
+      ],
     }} />
   ),
 }

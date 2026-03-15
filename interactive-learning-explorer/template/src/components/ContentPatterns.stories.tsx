@@ -153,3 +153,40 @@ export const MixedContentSection: StoryObj<typeof ContentWrapper> = {
     </div>
   `} />,
 }
+
+// ─── Key Takeaway ───────────────────────────────────────────────
+export const KeyTakeaway: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <p>We covered a lot in this section about compound interest and long-term investing.</p>
+    <div class="takeaway">
+      <ul>
+        <li>Start investing as early as possible — time in the market beats timing the market</li>
+        <li>Compound interest grows exponentially: $10K at 7% becomes $76K in 30 years</li>
+        <li>Keep fees below 0.5% — high fees compound against you just like returns compound for you</li>
+      </ul>
+    </div>
+  `} />,
+}
+
+export const KeyTakeawaySingle: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <div class="takeaway">
+      The single most important principle: <strong>consistency beats intensity</strong>. 20 minutes of daily practice outperforms 3-hour weekend sessions every time.
+    </div>
+  `} />,
+}
+
+// ─── Vocabulary Grid ────────────────────────────────────────────
+export const VocabGrid: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <h3>Essential Terms</h3>
+    <div class="vocab-grid">
+      <div class="vocab-term" data-term="CAGR">Compound Annual Growth Rate — the mean annual growth rate over a period longer than one year.</div>
+      <div class="vocab-term" data-term="P/E Ratio">Price-to-Earnings Ratio — stock price divided by earnings per share. Measures how expensive a stock is.</div>
+      <div class="vocab-term" data-term="ETF">Exchange-Traded Fund — a basket of securities that trades like a single stock on an exchange.</div>
+      <div class="vocab-term" data-term="Dividend">A portion of a company's earnings paid to shareholders, usually quarterly.</div>
+      <div class="vocab-term" data-term="Bull Market">A period of rising prices, typically 20%+ gain from recent lows.</div>
+      <div class="vocab-term" data-term="Bear Market">A period of falling prices, typically 20%+ decline from recent highs.</div>
+    </div>
+  `} />,
+}

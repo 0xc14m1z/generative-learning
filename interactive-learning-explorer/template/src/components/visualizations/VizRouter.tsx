@@ -12,6 +12,8 @@ import InlineSvg from './InlineSvg'
 import Timeline from './Timeline'
 import Flowchart from './Flowchart'
 import ProsCons from './ProsCons'
+import CycleDiagram from './CycleDiagram'
+import QuadrantMatrix from './QuadrantMatrix'
 
 interface Props { type: string; data: Record<string, unknown>; color: string }
 
@@ -31,6 +33,8 @@ export default function VizRouter({ type, data, color }: Props) {
     case 'timeline': return <Timeline data={data} color={color} />
     case 'flowchart': return <Flowchart data={data} color={color} />
     case 'pros-cons': return <ProsCons data={data} />
+    case 'cycle': return <CycleDiagram data={data} color={color} />
+    case 'quadrant': return <QuadrantMatrix data={data} />
     default: return <div className="py-6 text-center text-muted-foreground italic">Visualization: {type}</div>
   }
 }

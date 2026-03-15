@@ -232,3 +232,49 @@
   white-space: nowrap;
   padding-top: 6px;
 }
+
+/* ═══ Key Takeaway box ═══ */
+.level-content .takeaway, .deep-dive-body .takeaway {
+  border: 1.5px solid var(--color-primary);
+  background: linear-gradient(135deg, oklch(from var(--color-primary) l c h / 0.06), oklch(from var(--color-primary) l c h / 0.02));
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 20px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.takeaway::before {
+  content: "Key Takeaway";
+  display: block;
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+.takeaway ul { padding-left: 18px; margin: 0; }
+.takeaway li { margin: 4px 0; }
+.takeaway li::marker { color: var(--color-primary); }
+
+/* ═══ Vocabulary grid ═══ */
+.level-content .vocab-grid, .deep-dive-body .vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin: 16px 0;
+}
+.vocab-grid .vocab-term {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.vocab-grid .vocab-term::before {
+  content: attr(data-term);
+  display: block;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--color-primary);
+  margin-bottom: 2px;
+}
