@@ -17,9 +17,9 @@ interface AxisDef {
 }
 
 const SVG_W = 600
-const BAR_Y = 50
-const BAR_H = 28
 const MARGIN_X = 30
+const BAR_H = 32
+const LABEL_AREA = 40  // space for marker labels above/below
 
 export default function ContinuumScale({ data, color }: { data: Record<string, unknown>; color: string }) {
   const axis = (data.axis ?? { label: '', min: 0, max: 100 }) as AxisDef
@@ -30,94 +30,77 @@ export default function ContinuumScale({ data, color }: { data: Record<string, u
   if (range <= 0) return null
 
   const barW = SVG_W - MARGIN_X * 2
+  const toX = (val: number) => MARGIN_X + ((val - axis.min) / range) * barW
 
-  function toX(val: number): number {
-    return MARGIN_X + ((val - axis.min) / range) * barW
-  }
+  // Layout: title (20) + gap (8) + top labels (LABEL_AREA) + bar (BAR_H) + bottom labels (LABEL_AREA) + min/max (16)
+  const titleY = 14
+  const barY = titleY + 8 + LABEL_AREA
+  const svgH = barY + BAR_H + LABEL_AREA + 20
 
-  // Determine total SVG height based on markers below
-  const hasMarkers = markers.length > 0
-  const svgH = hasMarkers ? 140 : 110
+  const clipId = 'continuum-clip'
 
   return (
     <div>
       <svg viewBox={`0 0 ${SVG_W} ${svgH}`} className="w-full" xmlns="http://www.w3.org/2000/svg">
+        {/* Clip path for rounded bar */}
+        <defs>
+          <clipPath id={clipId}>
+            <rect x={MARGIN_X} y={barY} width={barW} height={BAR_H} rx={BAR_H / 2} />
+          </clipPath>
+        </defs>
+
         {/* Axis label */}
-        <text x={SVG_W / 2} y={18} textAnchor="middle" fontSize={12} fill="currentColor" opacity={0.7} fontWeight="600">
+        <text x={SVG_W / 2} y={titleY} textAnchor="middle" fontSize={13} fill="currentColor" fontWeight="700">
           {axis.label}
         </text>
 
-        {/* Bands */}
+        {/* Bands (clipped to rounded bar) */}
+        <g clipPath={`url(#${clipId})`}>
+          {bands.map((band, i) => {
+            const c = band.color || color
+            const x1 = toX(band.from)
+            const x2 = toX(band.to)
+            return (
+              <rect key={`band-${i}`} x={x1} y={barY} width={x2 - x1} height={BAR_H} fill={c} opacity={0.65} />
+            )
+          })}
+        </g>
+
+        {/* Band labels (centered in each band) */}
         {bands.map((band, i) => {
           const c = band.color || color
           const x1 = toX(band.from)
           const x2 = toX(band.to)
           const w = x2 - x1
-          const isFirst = i === 0
-          const isLast = i === bands.length - 1
-          const rx = isFirst || isLast ? 6 : 0
-
+          if (w < 40) return null
           return (
-            <g key={`band-${i}`}>
-              <rect
-                x={x1}
-                y={BAR_Y}
-                width={w}
-                height={BAR_H}
-                fill={c}
-                opacity={0.7}
-                rx={isFirst ? rx : 0}
-                ry={isFirst ? rx : 0}
-              />
-              {/* Apply rounding for first/last via clip or overlay — simplified: use a covering rect for all and rounded outer */}
-              {isLast && (
-                <rect
-                  x={x1}
-                  y={BAR_Y}
-                  width={w}
-                  height={BAR_H}
-                  fill={c}
-                  opacity={0.7}
-                  rx={rx}
-                  ry={rx}
-                />
-              )}
-              {/* Band label centered */}
-              {w > 30 && (
-                <text
-                  x={x1 + w / 2}
-                  y={BAR_Y + BAR_H / 2}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  fontSize={10}
-                  fill="white"
-                  fontWeight="600"
-                >
-                  {band.label}
-                </text>
-              )}
-            </g>
+            <text
+              key={`blabel-${i}`}
+              x={x1 + w / 2}
+              y={barY + BAR_H / 2}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={11}
+              fill={c}
+              fontWeight="700"
+              opacity={0.9}
+            >
+              {band.label}
+            </text>
           )
         })}
 
-        {/* Outer rounded border for the full bar */}
+        {/* Rounded bar outline */}
         <rect
-          x={MARGIN_X}
-          y={BAR_Y}
-          width={barW}
-          height={BAR_H}
-          fill="none"
-          stroke="currentColor"
-          strokeOpacity={0.15}
-          rx={6}
-          ry={6}
+          x={MARGIN_X} y={barY} width={barW} height={BAR_H}
+          rx={BAR_H / 2} fill="none" stroke="currentColor" strokeOpacity={0.12} strokeWidth={1}
         />
 
         {/* Min / Max labels */}
-        <text x={MARGIN_X} y={BAR_Y + BAR_H + 16} textAnchor="start" fontSize={10} fill="currentColor" opacity={0.5}>
+        <text x={MARGIN_X} y={barY + BAR_H + 16} textAnchor="start" fontSize={10} fill="currentColor" opacity={0.4}>
           {axis.min}
         </text>
-        <text x={SVG_W - MARGIN_X} y={BAR_Y + BAR_H + 16} textAnchor="end" fontSize={10} fill="currentColor" opacity={0.5}>
+        <text x={SVG_W - MARGIN_X} y={barY + BAR_H + 16} textAnchor="end" fontSize={10} fill="currentColor" opacity={0.4}>
           {axis.max}
         </text>
 
@@ -125,45 +108,33 @@ export default function ContinuumScale({ data, color }: { data: Record<string, u
         {markers.map((marker, i) => {
           const x = toX(marker.value)
           const above = i % 2 === 0
-          const labelY = above ? BAR_Y - 8 : BAR_Y + BAR_H + 32
-          const lineY1 = above ? BAR_Y - 2 : BAR_Y + BAR_H + 2
-          const lineY2 = above ? BAR_Y : BAR_Y + BAR_H
+
+          // Tick mark on the bar edge
+          const tickTop = barY - 3
+          const tickBottom = barY + BAR_H + 3
+
+          // Label position
+          const labelY = above ? barY - 16 : barY + BAR_H + 30
+          const valueY = above ? barY - 6 : barY + BAR_H + 42
 
           return (
             <g key={`marker-${i}`}>
-              {/* Marker line through the bar */}
-              <line
-                x1={x}
-                y1={lineY1}
-                x2={x}
-                y2={lineY2}
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeOpacity={0.8}
-              />
-              {/* Diamond indicator */}
-              <circle cx={x} cy={BAR_Y + BAR_H / 2} r={4} fill="currentColor" opacity={0.9} />
+              {/* Vertical tick through bar edges */}
+              <line x1={x} y1={tickTop} x2={x} y2={tickBottom} stroke="currentColor" strokeWidth={1.5} opacity={0.5} />
+
+              {/* Small triangle indicator */}
+              {above ? (
+                <polygon points={`${x - 3},${tickTop} ${x + 3},${tickTop} ${x},${tickTop + 4}`} fill="currentColor" opacity={0.6} />
+              ) : (
+                <polygon points={`${x - 3},${tickBottom} ${x + 3},${tickBottom} ${x},${tickBottom - 4}`} fill="currentColor" opacity={0.6} />
+              )}
+
               {/* Label */}
-              <text
-                x={x}
-                y={labelY}
-                textAnchor="middle"
-                fontSize={9}
-                fill="currentColor"
-                opacity={0.7}
-                fontWeight="500"
-              >
+              <text x={x} y={labelY} textAnchor="middle" fontSize={10} fill="currentColor" opacity={0.8} fontWeight="600">
                 {marker.label}
               </text>
               {/* Value */}
-              <text
-                x={x}
-                y={above ? labelY + 11 : labelY + 11}
-                textAnchor="middle"
-                fontSize={8}
-                fill="currentColor"
-                opacity={0.45}
-              >
+              <text x={x} y={valueY} textAnchor="middle" fontSize={9} fill="currentColor" opacity={0.4}>
                 {marker.value}
               </text>
             </g>
