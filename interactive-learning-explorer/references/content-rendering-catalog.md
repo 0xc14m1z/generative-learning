@@ -159,6 +159,90 @@ Inline references linked to the section's reference list.
 <a class="citation" href="#ref-SECTIONID-N">[N]</a>
 ```
 
+### Practice Block
+
+Question with a hidden answer using native `<details>` for toggle. Use for self-check questions, recall practice, and quick quizzes.
+
+```html
+<section class="practice-block">
+  <p class="prompt">What is the time complexity of binary search?</p>
+  <details class="solution">
+    <summary>Show answer</summary>
+    <p>O(log n) — the search space halves with each comparison.</p>
+  </details>
+</section>
+```
+
+**When to use:** After explaining a concept, to let learners test their understanding before moving on. Great for retrieval practice — one of the most effective learning strategies.
+
+### Worked Example
+
+Problem with step-by-step solution, highlighted answer, and optional reasoning explanation. Walks through the full thought process.
+
+```html
+<section class="worked-example">
+  <div class="problem">Calculate compound interest on $10,000 at 5% for 3 years.</div>
+  <ol class="steps">
+    <li>Apply formula: A = P(1 + r)^t</li>
+    <li>A = 10000 × (1.05)^3</li>
+    <li>A = 10000 × 1.1576</li>
+  </ol>
+  <div class="answer">$11,576.25</div>
+  <details class="why"><summary>Why this works</summary><p>Compound interest applies the rate to the growing total, not just the principal.</p></details>
+</section>
+```
+
+**When to use:** When teaching procedures, formulas, or problem-solving methods. The step-by-step breakdown helps learners see the reasoning, not just the result. The collapsible "why" provides deeper understanding without cluttering the main flow.
+
+### Formula Card
+
+Formula with symbol definitions and usage context. A reference-style card for key equations.
+
+```html
+<figure class="formula-card">
+  <div class="formula">A = P(1 + r)<sup>t</sup></div>
+  <dl class="symbols">
+    <dt>A</dt><dd>Final amount</dd>
+    <dt>P</dt><dd>Principal (initial investment)</dd>
+    <dt>r</dt><dd>Annual interest rate (decimal)</dd>
+    <dt>t</dt><dd>Time in years</dd>
+  </dl>
+  <figcaption class="when-to-use">Use when interest compounds annually. For monthly compounding, divide r by 12 and multiply t by 12.</figcaption>
+</figure>
+```
+
+**When to use:** When introducing a key formula or equation that learners will reference repeatedly. The symbol definitions eliminate ambiguity, and the usage note provides practical context. Pair with a worked-example for maximum effect.
+
+### Misconception Clinic
+
+Common error with diagnosis and correction. Shows what's wrong, why it's wrong, and what's actually true.
+
+```html
+<section class="misconception">
+  <div class="wrong">"Muscle turns into fat when you stop exercising."</div>
+  <div class="why-wrong">Muscle and fat are different tissue types. Muscle cannot transform into fat any more than bone can transform into skin.</div>
+  <div class="fix">What actually happens: muscle atrophies (shrinks) from disuse while fat may accumulate from unchanged calorie intake. They are independent processes.</div>
+</section>
+```
+
+**When to use:** When a topic has well-known misconceptions that could block learning. Addressing errors head-on is more effective than ignoring them. Use sparingly — one or two per section maximum.
+
+### Reference Matrix
+
+Styled 2D lookup table for quick reference. Extends basic table styling with sticky row headers, colored column headers, and alternating rows.
+
+```html
+<table class="reference-matrix">
+  <thead><tr><th></th><th>Present</th><th>Past</th><th>Future</th></tr></thead>
+  <tbody>
+    <tr><th>I</th><td>am</td><td>was</td><td>will be</td></tr>
+    <tr><th>You</th><td>are</td><td>were</td><td>will be</td></tr>
+  </tbody>
+</table>
+```
+
+**When to use:** For conjugation tables, conversion charts, comparison matrices, or any data that benefits from a row/column lookup structure. The sticky first column keeps context visible when scrolling wide tables.
+
 ### Standard HTML
 
 Also available: `<p>`, `<h3>`, `<h4>`, `<strong>`, `<em>`, `<code>`, `<table>` (with `<th>`, `<tr>`, `<td>`), `<ul>`, `<ol>`, `<li>`.
@@ -206,16 +290,20 @@ For each section, aim to include:
 Level 1:
   - 1-2 concept triggers (expandable terms)
   - 1 callout (insight or tip)
+  - 1 practice-block for self-check
 
 Level 2:
   - Citations for factual claims
   - 1 callout (tip or warning)
   - 1 do-dont if applicable
+  - 1 misconception if the topic has common errors
+  - formula-card for key equations
 
 Level 3:
-  - Tables for benchmarks/specs
+  - Tables or reference-matrix for benchmarks/specs/lookup data
   - Steps for practical processes
   - Vocab grid if introducing 4+ new terms
+  - worked-example for procedures or calculations
 
 Level 4:
   - Quote callout for notable researcher/paper

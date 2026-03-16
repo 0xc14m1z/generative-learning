@@ -278,3 +278,283 @@
   color: var(--color-primary);
   margin-bottom: 2px;
 }
+
+/* ═══ Practice block ═══ */
+.level-content .practice-block, .deep-dive-body .practice-block {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.practice-block::before {
+  content: "Practice";
+  display: block;
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+.practice-block .prompt {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.practice-block .solution {
+  margin-top: 8px;
+}
+.practice-block .solution summary {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: oklch(from var(--color-primary) l c h / 0.08);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  border: none;
+  user-select: none;
+  list-style: none;
+}
+.practice-block .solution summary::-webkit-details-marker { display: none; }
+.practice-block .solution summary:hover {
+  background: oklch(from var(--color-primary) l c h / 0.14);
+}
+.practice-block .solution[open] > summary {
+  margin-bottom: 8px;
+}
+.practice-block .solution p, .practice-block .solution div {
+  background: var(--color-muted);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ═══ Worked example ═══ */
+.level-content .worked-example, .deep-dive-body .worked-example {
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.worked-example::before {
+  content: "Worked Example";
+  display: block;
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+.worked-example .problem {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.worked-example ol.steps {
+  counter-reset: we-step;
+  padding-left: 0;
+  list-style: none;
+  margin: 12px 0;
+}
+.worked-example ol.steps li {
+  counter-increment: we-step;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.worked-example ol.steps li:last-child { border-bottom: none; }
+.worked-example ol.steps li::before {
+  content: counter(we-step);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.worked-example .answer {
+  background: oklch(from var(--color-primary) l c h / 0.08);
+  border: 1px solid oklch(from var(--color-primary) l c h / 0.25);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-weight: 700;
+  font-size: 16px;
+  margin: 12px 0;
+  color: var(--color-primary);
+  text-align: center;
+}
+.worked-example .why {
+  margin-top: 8px;
+}
+.worked-example .why summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+  list-style: none;
+  user-select: none;
+}
+.worked-example .why summary::-webkit-details-marker { display: none; }
+.worked-example .why summary::before {
+  content: "▸ ";
+}
+.worked-example .why[open] summary::before {
+  content: "▾ ";
+}
+.worked-example .why p {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--color-muted-foreground);
+}
+
+/* ═══ Formula card ═══ */
+.level-content .formula-card, .deep-dive-body .formula-card {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 16px 0;
+  text-align: center;
+}
+.formula-card .formula {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  font-size: 24px;
+  font-weight: 600;
+  padding: 16px 0;
+  letter-spacing: 0.02em;
+}
+.formula-card .symbols {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 16px;
+  text-align: left;
+  max-width: 360px;
+  margin: 12px auto 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.formula-card .symbols dt {
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  color: var(--color-primary);
+}
+.formula-card .symbols dd {
+  margin: 0;
+}
+.formula-card .when-to-use {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--color-muted-foreground);
+  font-style: italic;
+}
+
+/* ═══ Misconception clinic ═══ */
+.level-content .misconception, .deep-dive-body .misconception {
+  border: 1px solid var(--color-border);
+  border-left: 4px solid #ef4444;
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.misconception::before {
+  content: "Common Misconception";
+  display: block;
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #ef4444;
+  margin-bottom: 8px;
+}
+.misconception .wrong {
+  font-style: italic;
+  color: var(--color-muted-foreground);
+  text-decoration: line-through;
+  margin-bottom: 8px;
+  padding-left: 24px;
+  position: relative;
+}
+.misconception .wrong::before {
+  content: "✕";
+  position: absolute;
+  left: 0;
+  color: #ef4444;
+  font-weight: 700;
+  font-style: normal;
+  text-decoration: none;
+}
+.misconception .why-wrong {
+  margin-bottom: 8px;
+  color: var(--color-foreground);
+}
+.misconception .fix {
+  font-weight: 500;
+  padding-left: 24px;
+  position: relative;
+}
+.misconception .fix::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #22c55e;
+  font-weight: 700;
+}
+
+/* ═══ Reference matrix ═══ */
+.level-content .reference-matrix, .deep-dive-body .reference-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.reference-matrix thead tr {
+  background: oklch(from var(--color-primary) l c h / 0.08);
+}
+.reference-matrix thead th {
+  padding: 10px 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  text-align: left;
+}
+.reference-matrix tbody th {
+  padding: 8px 14px;
+  font-weight: 700;
+  background: var(--color-muted);
+  border: 1px solid var(--color-border);
+  text-align: left;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+.reference-matrix tbody td {
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  text-align: left;
+}
+.reference-matrix tbody tr:nth-child(even) td {
+  background: oklch(from var(--color-muted) l c h / 0.5);
+}
+.reference-matrix tbody tr:nth-child(even) th {
+  background: var(--color-muted);
+}

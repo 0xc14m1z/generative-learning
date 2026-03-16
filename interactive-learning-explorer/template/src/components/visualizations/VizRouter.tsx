@@ -14,6 +14,11 @@ import Flowchart from './Flowchart'
 import ProsCons from './ProsCons'
 import CycleDiagram from './CycleDiagram'
 import QuadrantMatrix from './QuadrantMatrix'
+import XYPlot from './XYPlot'
+import ConceptMap from './ConceptMap'
+import CompositionStack from './CompositionStack'
+import ContinuumScale from './ContinuumScale'
+import SankeyFlow from './SankeyFlow'
 
 interface Props { type: string; data: Record<string, unknown>; color: string }
 
@@ -35,6 +40,11 @@ export default function VizRouter({ type, data, color }: Props) {
     case 'pros-cons': return <ProsCons data={data} />
     case 'cycle': return <CycleDiagram data={data} color={color} />
     case 'quadrant': return <QuadrantMatrix data={data} />
+    case 'xy-plot': return <XYPlot data={data} color={color} />
+    case 'concept-map': return <ConceptMap data={data} color={color} />
+    case 'composition-stack': return <CompositionStack data={data} color={color} />
+    case 'continuum-scale': return <ContinuumScale data={data} color={color} />
+    case 'sankey-flow': return <SankeyFlow data={data} color={color} />
     default: return <div className="py-6 text-center text-muted-foreground italic">Visualization: {type}</div>
   }
 }

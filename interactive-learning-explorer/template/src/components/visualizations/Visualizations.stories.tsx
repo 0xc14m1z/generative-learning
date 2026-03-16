@@ -14,6 +14,11 @@ import Flowchart from './Flowchart'
 import ProsCons from './ProsCons'
 import CycleDiagram from './CycleDiagram'
 import QuadrantMatrix from './QuadrantMatrix'
+import XYPlot from './XYPlot'
+import ConceptMap from './ConceptMap'
+import CompositionStack from './CompositionStack'
+import ContinuumScale from './ContinuumScale'
+import SankeyFlow from './SankeyFlow'
 
 const wrap = (children: React.ReactNode) => (
   <div className="bg-card border border-border rounded-xl p-6 max-w-2xl">{children}</div>
@@ -444,6 +449,154 @@ export const ProsConsThreeOptions: StoryObj = {
         { title: 'Mediterranean', color: '#22c55e', pros: ['Heart healthy', 'Sustainable', 'Varied foods'], cons: ['Slower results'] },
         { title: 'Intermittent Fasting', color: '#8b5cf6', pros: ['Simple rules', 'Flexible food'], cons: ['Hunger windows', 'Social challenges'] },
       ]
+    }} />
+  ),
+}
+
+// ─── XYPlot ────────────────────────────────────────────────────
+export const XYPlotInvestmentGrowth: StoryObj = {
+  render: () => wrap(
+    <XYPlot color="#3b82f6" data={{
+      xAxis: { label: 'Year', min: 0, max: 10 },
+      yAxis: { label: 'Portfolio Value ($K)', min: 0, max: 200 },
+      series: [
+        {
+          label: 'Aggressive',
+          color: '#ef4444',
+          mode: 'area',
+          points: [
+            { x: 0, y: 10 }, { x: 1, y: 18 }, { x: 2, y: 25 },
+            { x: 3, y: 40 }, { x: 4, y: 55 }, { x: 5, y: 72 },
+            { x: 6, y: 85 }, { x: 7, y: 110 }, { x: 8, y: 140 },
+            { x: 9, y: 165 }, { x: 10, y: 195 },
+          ],
+        },
+        {
+          label: 'Conservative',
+          color: '#22c55e',
+          mode: 'line',
+          points: [
+            { x: 0, y: 10 }, { x: 1, y: 14 }, { x: 2, y: 19 },
+            { x: 3, y: 25 }, { x: 4, y: 32 }, { x: 5, y: 40 },
+            { x: 6, y: 48 }, { x: 7, y: 57 }, { x: 8, y: 67 },
+            { x: 9, y: 78 }, { x: 10, y: 90 },
+          ],
+        },
+        {
+          label: 'Milestones',
+          color: '#8b5cf6',
+          mode: 'scatter',
+          points: [
+            { x: 3, y: 40 }, { x: 7, y: 110 },
+          ],
+        },
+      ],
+      annotations: [
+        { x: 5, label: 'Mid-review' },
+      ],
+    }} />
+  ),
+}
+
+// ─── ConceptMap ────────────────────────────────────────────────
+export const ConceptMapPsychology: StoryObj = {
+  render: () => wrap(
+    <ConceptMap color="#8b5cf6" data={{
+      nodes: [
+        { id: 'behaviorism', label: 'Behaviorism', color: '#3b82f6' },
+        { id: 'operant', label: 'Operant Conditioning', color: '#8b5cf6' },
+        { id: 'classical', label: 'Classical Conditioning', color: '#6366f1' },
+        { id: 'pos-reinf', label: 'Positive Reinforcement', color: '#22c55e' },
+        { id: 'neg-reinf', label: 'Negative Reinforcement', color: '#f97316' },
+        { id: 'punishment', label: 'Punishment', color: '#ef4444' },
+        { id: 'pavlov', label: "Pavlov's Dog", color: '#06b6d4' },
+      ],
+      edges: [
+        { from: 'behaviorism', to: 'operant', label: 'includes' },
+        { from: 'behaviorism', to: 'classical', label: 'includes' },
+        { from: 'operant', to: 'pos-reinf', label: 'type' },
+        { from: 'operant', to: 'neg-reinf', label: 'type' },
+        { from: 'operant', to: 'punishment', label: 'type' },
+        { from: 'classical', to: 'pavlov', label: 'example' },
+      ],
+    }} />
+  ),
+}
+
+// ─── CompositionStack ──────────────────────────────────────────
+export const CompositionStackBudget: StoryObj = {
+  render: () => wrap(
+    <CompositionStack color="#3b82f6" data={{
+      totalLabel: 'Monthly Budget',
+      segments: [
+        { label: 'Rent', value: 40, color: '#ef4444' },
+        { label: 'Food', value: 18, color: '#f97316' },
+        { label: 'Transport', value: 12, color: '#eab308' },
+        { label: 'Savings', value: 20, color: '#22c55e' },
+        { label: 'Other', value: 10, color: '#64748b' },
+      ],
+      unit: '%',
+    }} />
+  ),
+}
+
+// ─── ContinuumScale ────────────────────────────────────────────
+export const ContinuumScalePH: StoryObj = {
+  render: () => wrap(
+    <ContinuumScale color="#3b82f6" data={{
+      axis: { label: 'pH Level', min: 0, max: 14 },
+      bands: [
+        { from: 0, to: 6, label: 'Acidic', color: '#ef4444' },
+        { from: 6, to: 8, label: 'Neutral', color: '#22c55e' },
+        { from: 8, to: 14, label: 'Alkaline', color: '#3b82f6' },
+      ],
+      markers: [
+        { value: 2.5, label: 'Lemon juice' },
+        { value: 7, label: 'Pure water' },
+        { value: 13, label: 'Bleach' },
+      ],
+    }} />
+  ),
+}
+
+export const ContinuumScaleCoffeeRoast: StoryObj = {
+  render: () => wrap(
+    <ContinuumScale color="#92400e" data={{
+      axis: { label: 'Coffee Roast Level', min: 0, max: 100 },
+      bands: [
+        { from: 0, to: 30, label: 'Light', color: '#d4a574' },
+        { from: 30, to: 60, label: 'Medium', color: '#92400e' },
+        { from: 60, to: 100, label: 'Dark', color: '#451a03' },
+      ],
+      markers: [
+        { value: 15, label: 'Cinnamon' },
+        { value: 45, label: 'City' },
+        { value: 75, label: 'French' },
+        { value: 90, label: 'Italian' },
+      ],
+    }} />
+  ),
+}
+
+// ─── SankeyFlow ────────────────────────────────────────────────
+export const SankeyFlowHouseholdBudget: StoryObj = {
+  render: () => wrap(
+    <SankeyFlow color="#3b82f6" data={{
+      nodes: [
+        { id: 'income', label: 'Income', color: '#22c55e' },
+        { id: 'tax', label: 'Tax', color: '#ef4444' },
+        { id: 'rent', label: 'Rent', color: '#f97316' },
+        { id: 'food', label: 'Food', color: '#eab308' },
+        { id: 'savings', label: 'Savings', color: '#3b82f6' },
+        { id: 'fun', label: 'Entertainment', color: '#8b5cf6' },
+      ],
+      links: [
+        { source: 'income', target: 'tax', value: 25, label: '25%' },
+        { source: 'income', target: 'rent', value: 30, label: '30%' },
+        { source: 'income', target: 'food', value: 20, label: '20%' },
+        { source: 'income', target: 'savings', value: 15, label: '15%' },
+        { source: 'income', target: 'fun', value: 10, label: '10%' },
+      ],
     }} />
   ),
 }

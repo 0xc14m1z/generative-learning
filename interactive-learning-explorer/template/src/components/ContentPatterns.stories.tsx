@@ -190,3 +190,155 @@ export const VocabGrid: StoryObj<typeof ContentWrapper> = {
     </div>
   `} />,
 }
+
+// ─── Practice Block ────────────────────────────────────────────
+export const PracticeBlock: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <section class="practice-block">
+      <p class="prompt">You have a recipe that serves 4, but you need to serve 6. The recipe calls for 2¾ cups of flour. How much flour do you need?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <p>4⅛ cups — multiply 2¾ by 1.5 (the ratio of 6÷4). Convert: 2.75 × 1.5 = 4.125 cups, or 4⅛ cups.</p>
+      </details>
+    </section>
+  `} />,
+}
+
+export const PracticeBlockFinance: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <section class="practice-block">
+      <p class="prompt">If you invest $500/month at 7% annual return for 20 years, roughly how much will you have?</p>
+      <details class="solution">
+        <summary>Show answer</summary>
+        <p>Approximately $260,000. You contributed $120,000 total ($500 × 240 months), meaning compound growth more than doubled your money.</p>
+      </details>
+    </section>
+  `} />,
+}
+
+// ─── Worked Example ────────────────────────────────────────────
+export const WorkedExample: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <section class="worked-example">
+      <div class="problem">A sweater originally costs $80. It's marked 30% off, and you have a coupon for an additional 15% off the sale price. What do you pay?</div>
+      <ol class="steps">
+        <li>Calculate the first discount: $80 × 0.30 = $24 off</li>
+        <li>Sale price: $80 − $24 = $56</li>
+        <li>Apply the coupon: $56 × 0.15 = $8.40 off</li>
+        <li>Final price: $56 − $8.40 = $47.60</li>
+      </ol>
+      <div class="answer">$47.60</div>
+      <details class="why"><summary>Why this works</summary><p>Stacked discounts are applied sequentially, not added together. A 30% + 15% discount is not 45% off the original — the second discount applies to the already-reduced price.</p></details>
+    </section>
+  `} />,
+}
+
+export const WorkedExampleFitness: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <section class="worked-example">
+      <div class="problem">Calculate your daily calorie needs. You weigh 70 kg, are 175 cm tall, 30 years old (male), and exercise 3 days/week.</div>
+      <ol class="steps">
+        <li>Basal Metabolic Rate (Mifflin-St Jeor): 10 × 70 + 6.25 × 175 − 5 × 30 − 5</li>
+        <li>BMR = 700 + 1093.75 − 150 − 5 = 1,638.75</li>
+        <li>Apply activity multiplier (moderate = 1.55): 1,638.75 × 1.55</li>
+      </ol>
+      <div class="answer">~2,540 calories/day</div>
+      <details class="why"><summary>Why this works</summary><p>The Mifflin-St Jeor equation estimates energy burned at rest, then the activity multiplier scales it based on exercise level. It's the most accurate predictive equation for most adults.</p></details>
+    </section>
+  `} />,
+}
+
+// ─── Formula Card ──────────────────────────────────────────────
+export const FormulaCard: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <figure class="formula-card">
+      <div class="formula">A = P(1 + r)<sup>t</sup></div>
+      <dl class="symbols">
+        <dt>A</dt><dd>Final amount</dd>
+        <dt>P</dt><dd>Principal (initial investment)</dd>
+        <dt>r</dt><dd>Annual interest rate (decimal)</dd>
+        <dt>t</dt><dd>Time in years</dd>
+      </dl>
+      <figcaption class="when-to-use">Use when interest compounds annually. For monthly compounding, divide r by 12 and multiply t by 12.</figcaption>
+    </figure>
+  `} />,
+}
+
+export const FormulaCardCooking: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <figure class="formula-card">
+      <div class="formula">T<sub>adj</sub> = T<sub>orig</sub> × (V<sub>new</sub> / V<sub>orig</sub>)</div>
+      <dl class="symbols">
+        <dt>T<sub>adj</sub></dt><dd>Adjusted ingredient amount</dd>
+        <dt>T<sub>orig</sub></dt><dd>Original ingredient amount</dd>
+        <dt>V<sub>new</sub></dt><dd>Desired number of servings</dd>
+        <dt>V<sub>orig</sub></dt><dd>Original number of servings</dd>
+      </dl>
+      <figcaption class="when-to-use">Use for scaling any recipe up or down. Works for all ingredients, but note that spices and leaveners may not scale linearly at large multiples.</figcaption>
+    </figure>
+  `} />,
+}
+
+// ─── Misconception Clinic ──────────────────────────────────────
+export const MisconceptionClinic: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <section class="misconception">
+      <div class="wrong">"Muscle turns into fat when you stop exercising."</div>
+      <div class="why-wrong">Muscle and fat are different tissue types. Muscle cannot transform into fat any more than bone can transform into skin.</div>
+      <div class="fix">What actually happens: muscle atrophies (shrinks) from disuse while fat may accumulate from unchanged calorie intake. They are independent processes.</div>
+    </section>
+  `} />,
+}
+
+export const MisconceptionClinicCooking: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <section class="misconception">
+      <div class="wrong">"Searing meat seals in the juices."</div>
+      <div class="why-wrong">This was disproven in the 1930s. Seared meat actually loses slightly more moisture than meat cooked gently, because high heat causes more muscle fiber contraction.</div>
+      <div class="fix">Searing creates the Maillard reaction — a chemical browning that produces hundreds of new flavor compounds on the surface. The benefit is flavor, not moisture retention.</div>
+    </section>
+  `} />,
+}
+
+export const MisconceptionClinicFinance: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <section class="misconception">
+      <div class="wrong">"You need to pay off all debt before you start investing."</div>
+      <div class="why-wrong">Not all debt is equal. Low-interest debt (like a 3% mortgage) costs less than the historical average stock market return (~7-10%). Waiting years to invest means missing out on compound growth.</div>
+      <div class="fix">Prioritize high-interest debt (credit cards, payday loans) aggressively. For low-interest debt, balance minimum payments with investing — especially if your employer matches retirement contributions.</div>
+    </section>
+  `} />,
+}
+
+// ─── Reference Matrix ──────────────────────────────────────────
+export const ReferenceMatrix: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <h3>Spanish Verb Conjugation: Hablar (to speak)</h3>
+    <table class="reference-matrix">
+      <thead><tr><th></th><th>Present</th><th>Preterite</th><th>Future</th></tr></thead>
+      <tbody>
+        <tr><th>Yo</th><td>hablo</td><td>hablé</td><td>hablaré</td></tr>
+        <tr><th>Tú</th><td>hablas</td><td>hablaste</td><td>hablarás</td></tr>
+        <tr><th>Él/Ella</th><td>habla</td><td>habló</td><td>hablará</td></tr>
+        <tr><th>Nosotros</th><td>hablamos</td><td>hablamos</td><td>hablaremos</td></tr>
+        <tr><th>Ellos</th><td>hablan</td><td>hablaron</td><td>hablarán</td></tr>
+      </tbody>
+    </table>
+  `} />,
+}
+
+export const ReferenceMatrixCooking: StoryObj<typeof ContentWrapper> = {
+  render: () => <ContentWrapper html={`
+    <h3>Cooking Oil Smoke Points</h3>
+    <table class="reference-matrix">
+      <thead><tr><th>Oil</th><th>Smoke Point</th><th>Best For</th><th>Flavor</th></tr></thead>
+      <tbody>
+        <tr><th>Extra Virgin Olive</th><td>375°F / 190°C</td><td>Dressings, low-heat sauté</td><td>Fruity, peppery</td></tr>
+        <tr><th>Butter</th><td>350°F / 175°C</td><td>Baking, finishing</td><td>Rich, creamy</td></tr>
+        <tr><th>Coconut</th><td>350°F / 175°C</td><td>Baking, medium-heat sauté</td><td>Sweet, nutty</td></tr>
+        <tr><th>Avocado</th><td>520°F / 270°C</td><td>Searing, grilling, frying</td><td>Mild, buttery</td></tr>
+        <tr><th>Peanut</th><td>450°F / 230°C</td><td>Deep frying, stir-fry</td><td>Nutty</td></tr>
+      </tbody>
+    </table>
+  `} />,
+}
