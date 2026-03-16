@@ -61,7 +61,7 @@ export default function ContinuumScale({ data, color }: { data: Record<string, u
             const x1 = toX(band.from)
             const x2 = toX(band.to)
             return (
-              <rect key={`band-${i}`} x={x1} y={barY} width={x2 - x1} height={BAR_H} fill={c} opacity={0.65} />
+              <rect key={`band-${i}`} x={x1} y={barY} width={x2 - x1} height={BAR_H} fill={c} opacity={0.8} />
             )
           })}
         </g>
@@ -81,9 +81,8 @@ export default function ContinuumScale({ data, color }: { data: Record<string, u
               textAnchor="middle"
               dominantBaseline="central"
               fontSize={11}
-              fill={c}
+              fill="white"
               fontWeight="700"
-              opacity={0.9}
             >
               {band.label}
             </text>
