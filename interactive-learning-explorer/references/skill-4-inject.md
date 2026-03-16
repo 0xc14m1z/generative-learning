@@ -1,9 +1,9 @@
-# Skill 3: Inject & Deliver
+# Wave 4: Inject & Deliver
 
 **Input:** `structure.json` + `content.json`
 **Output:** A single self-contained HTML file
 
-This skill does NOT compile anything. The HTML shell is pre-built and shipped with the skill. This skill only injects JSON data into it.
+This wave does NOT compile anything. The HTML shell is pre-built and shipped with the skill. This wave only injects JSON data into it.
 
 ## Process
 
@@ -34,6 +34,7 @@ test -s "$FILE" && echo "✓ Created ($(ls -lh $FILE | awk '{print $5}'))" || ec
 ```
 
 ### 3. Present
+
 Present the file to the user. Done.
 
 ## When to rebuild the shell
