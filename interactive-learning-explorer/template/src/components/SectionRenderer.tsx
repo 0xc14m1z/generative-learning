@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { SectionView } from '../types'
+import ErrorBoundary from './ErrorBoundary'
 import DeepDivePanel from './DeepDivePanel'
 import References from './References'
 import VizRouter from './visualizations/VizRouter'
@@ -55,7 +56,9 @@ export default function SectionRenderer({ section, sections, depthLevel, expande
 
       {/* Visualization */}
       <div className="bg-card border border-border rounded-xl p-6 my-5 overflow-hidden">
-        <VizRouter type={section.vizType} data={content.visualization.data} color={section.color} />
+        <ErrorBoundary label={`viz:${section.vizType}`}>
+          <VizRouter type={section.vizType} data={content.visualization.data} color={section.color} />
+        </ErrorBoundary>
       </div>
 
       {/* Level 2 */}

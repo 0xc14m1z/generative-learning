@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { structure as defaultStructure, content as defaultContent, loadDevData } from './data/loader'
 import { StructureData, ContentData, SectionView } from './types'
+import ErrorBoundary from './components/ErrorBoundary'
 import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import SectionRenderer from './components/SectionRenderer'
@@ -102,9 +103,11 @@ export default function App() {
           onMenuClick={() => setSidebarOpen(true)} dark={dark} toggleTheme={toggleTheme} />
 
         <article className="w-full max-w-3xl mx-auto px-4 sm:px-8 py-8 flex-1 animate-in fade-in duration-300" key={currentStep}>
-          <SectionRenderer section={section} sections={sections} depthLevel={depthLevel}
-            expandedPanels={expandedPanels} expandedConcepts={expandedConcepts}
-            togglePanel={togglePanel} toggleConcept={toggleConcept} goToSection={goToSection} />
+          <ErrorBoundary label={`section:${section.id}`}>
+            <SectionRenderer section={section} sections={sections} depthLevel={depthLevel}
+              expandedPanels={expandedPanels} expandedConcepts={expandedConcepts}
+              togglePanel={togglePanel} toggleConcept={toggleConcept} goToSection={goToSection} />
+          </ErrorBoundary>
         </article>
 
         <BottomNav currentStep={currentStep} total={sections.length}

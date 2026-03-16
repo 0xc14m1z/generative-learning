@@ -354,14 +354,18 @@
         "4": "<h3>Rendering Engine Architecture</h3><p>Modern rendering engines (Blink in Chrome, WebKit in Safari, Gecko in Firefox) share similar architectures but differ in implementation. All three have moved toward multi-threaded rendering: the main thread handles JavaScript and DOM manipulation, while dedicated threads handle compositing, raster (painting pixels), and input handling.</p><p>Chrome's RenderingNG architecture (2021) introduced a compositor thread that can scroll and animate independently of the main thread. This is why CSS animations remain smooth even when JavaScript is busy — they run entirely on the compositor thread.</p><p>The rendering pipeline is the subject of active research: Servo (initially from Mozilla, now Linux Foundation) explored parallelizing layout across CPU cores. Google's LayoutNG project rebuilt Chrome's layout engine for better performance with complex CSS features like grid and subgrid.</p>"
       },
       "visualization": {
-        "type": "animated-grid",
+        "type": "heatmap",
         "data": {
-          "rows": 5,
-          "cols": 10,
-          "activePattern": "columns",
-          "activeCols": [0, 1, 2, 3, 4],
+          "xLabels": ["HTML", "CSS", "Layout", "Paint", "Composite"],
+          "yLabels": ["Parse", "Style", "Render", "Display"],
+          "cells": [
+            [0.9, 0.3, 0.1, 0.0, 0.0],
+            [0.2, 0.9, 0.2, 0.0, 0.0],
+            [0.1, 0.3, 0.9, 0.8, 0.2],
+            [0.0, 0.1, 0.2, 0.7, 0.9]
+          ],
           "color": "#22c55e",
-          "label": "DOM Nodes → Render Tree → Painted Pixels"
+          "legend": "Processing intensity by rendering stage"
         }
       },
       "concepts": {
@@ -411,12 +415,17 @@
         "4": "<h3>The Edge Computing Revolution</h3><p>CDNs started as passive caches in the late 1990s (Akamai was founded in 1998 by MIT researchers). The key innovation was using DNS and anycast routing to direct users to the nearest server automatically.</p><p>The latest evolution is edge computing: running application logic on CDN nodes, not just caching static files. Cloudflare Workers (2017) pioneered this with a V8-isolate model that boots in under 5ms. Deno Deploy and Vercel Edge Functions followed. This enables dynamic personalization and API logic at the edge, blurring the line between CDN and application server.</p><p>Research challenges include cache consistency (how quickly do edge nodes reflect origin changes?), cold start latency for serverless functions, and the economic model of distributing compute globally.</p>"
       },
       "visualization": {
-        "type": "compute-wave",
+        "type": "bar-chart",
         "data": {
-          "barCount": 16,
-          "color": "#84cc16",
-          "speed": 1.5,
-          "label": "Edge servers processing requests globally"
+          "bars": [
+            { "label": "US East", "value": 5, "color": "#22c55e" },
+            { "label": "Europe", "value": 10, "color": "#84cc16" },
+            { "label": "Asia", "value": 15, "color": "#eab308" },
+            { "label": "S. America", "value": 25, "color": "#f97316" },
+            { "label": "Africa", "value": 40, "color": "#ef4444" }
+          ],
+          "unit": "CDN Edge Latency (ms)",
+          "maxValue": 50
         }
       },
       "concepts": {

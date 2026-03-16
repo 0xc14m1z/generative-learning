@@ -23,7 +23,7 @@ export const SectionMeta = z.object({
   concepts: z.array(z.string()).describe('IDs of expandable concepts defined in this section. Must match keys in content.json concepts.'),
   vizType: z.enum(VIZ_TYPES as [string, ...string[]]).describe('Visualization type. See viz-types.ts for data shapes.'),
   bridgeTo: z.string().describe('Narrative bridge to the next section. Empty string for the last section.'),
-  outline: SectionOutline,
+  outline: SectionOutline.optional().describe('Per-section outline for content generation agents. Required during Wave 0 (generation), optional in the final injected structure.'),
 })
 
 export const Phase = z.object({

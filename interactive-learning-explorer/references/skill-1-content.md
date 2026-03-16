@@ -45,6 +45,8 @@ Relevant research notes:
 
 === LEVEL {LEVEL} CONSTRAINTS ===
 
+HTML content must conform to the allowed tags and patterns defined in `template/src/schemas/content.ts` → `htmlContent`.
+
 {insert level-specific constraints from below}
 
 === OUTPUT ===
@@ -96,6 +98,8 @@ Save to: /tmp/explorer-data/sections/{id}/level-{LEVEL}.json
 **Allowed HTML:** `<p>`, `<h3>`, `<strong>`, `<em>`, `<code>`, `<ul>`, `<span class="concept-trigger">`, `<a class="citation">`.
 **Allowed content patterns:** Callout (quote from notable figure), key takeaway box.
 **Tone:** Academic, nuanced, forward-looking.
+
+For the complete list of allowed HTML content patterns (callouts, practice-blocks, worked-examples, etc.), read `template/src/schemas/content.ts`.
 
 ### 3. Verify outputs
 

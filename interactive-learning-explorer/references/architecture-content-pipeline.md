@@ -33,6 +33,8 @@ For a 12-section explorer: Wave 1 runs 48 agents in parallel. Total agents: ~62.
 
 ### Enhanced structure.json
 
+This schema is defined in `template/src/schemas/structure.ts`.
+
 Each section now includes an `outline` object that guides all downstream agents:
 
 ```json

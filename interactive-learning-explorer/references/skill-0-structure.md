@@ -41,6 +41,8 @@ When in doubt: more sections, more prerequisites, more depth.
 
 **This is critical.** Each section needs an `outline` object that guides ALL downstream agents. The outline prevents content overlap between levels by giving each level a specific, exclusive angle.
 
+See `template/src/schemas/structure.ts` → `SectionOutline` for exact field requirements.
+
 For each section, write:
 
 - `core`: One sentence — the essential truth of this section
@@ -63,6 +65,8 @@ Use this palette sequentially: `#3b82f6 #8b5cf6 #a855f7 #6366f1 #06b6d4 #14b8a6 
 ### 7. Write structure.json
 
 Save to `/tmp/explorer-data/structure.json`.
+
+> **Note:** The structure.json must conform to the Zod schema in `template/src/schemas/structure.ts`. Read it for exact field constraints.
 
 Every section needs: `id`, `index`, `title`, `subtitle`, `phase`, `color`, `icon`, `concepts` (list of concept IDs), `vizType`, `bridgeTo`, `outline` (with `core`, `keyPoints`, `L1_angle`, `L2_angle`, `L3_angle`, `L4_angle`).
 

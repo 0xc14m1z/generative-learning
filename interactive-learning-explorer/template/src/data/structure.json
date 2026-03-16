@@ -84,7 +84,7 @@
       "color": "#22c55e",
       "icon": "\uD83C\uDFA8",
       "concepts": ["dom", "cssom", "render-tree", "reflow"],
-      "vizType": "animated-grid",
+      "vizType": "heatmap",
       "bridgeTo": "Rendering works great for one user, but what about millions? CDNs solve the scale problem."
     },
     {
@@ -96,7 +96,7 @@
       "color": "#84cc16",
       "icon": "\uD83C\uDF10",
       "concepts": ["edge-server", "origin-server", "pop"],
-      "vizType": "compute-wave",
+      "vizType": "bar-chart",
       "bridgeTo": "CDNs move data closer, but caching is what makes repeated access nearly instantaneous."
     },
     {

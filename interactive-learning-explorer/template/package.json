@@ -7,7 +7,8 @@
     "build": "vite build",
     "preview:data": "node scripts/preview-data.mjs",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "validate": "tsx scripts/validate.ts"
   },
   "dependencies": {
     "@dagrejs/dagre": "^2.0.4",
@@ -30,6 +31,7 @@
     "storybook": "^10.2.19",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vite": "^7.0.0",
     "vite-plugin-checker": "^0.12.0",

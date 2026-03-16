@@ -41,7 +41,7 @@ RESEARCH NOTES:
 
 1. VISUALIZATION
    Create data matching the "{vizType}" type.
-   Data shape: {exact data shape from content-rendering-catalog.md}
+   Data shape: Read `template/src/schemas/viz-types.ts` for the exact Zod schema of the "{vizType}" type.
    The visualization should illustrate the section's core concept visually.
    Use the section color ({color}) as the primary color.
 
@@ -95,3 +95,4 @@ Retry any failed agents individually.
 - [ ] Reference IDs are sequential starting from 1
 - [ ] Every citation `[N]` in the levels has a matching reference
 - [ ] Deep dives add value beyond what's in the levels (not repetition)
+- [ ] Visualization data validates against the Zod schema in `template/src/schemas/viz-types.ts`

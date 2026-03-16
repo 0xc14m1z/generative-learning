@@ -56,6 +56,8 @@ For each section, for each concept defined in its `enrichment.json`:
 
 ### 5. Quality gates
 
+> **Note:** Validate all data against Zod schemas: `template/src/schemas/structure.ts` for structure, `template/src/schemas/content.ts` for content.
+
 Check each section against these rules:
 
 | Check | Rule | Action if fails |
@@ -76,6 +78,8 @@ Verify that the same concept is referred to consistently across levels:
 - If Level 2 calls it "lactic acid" and Level 3 calls it "lactate" inconsistently, normalize
 
 ### 7. Save
+
+Run validation against Zod schemas before writing the final file.
 
 Write the final merged and verified file to `/tmp/explorer-data/content.json`.
 
