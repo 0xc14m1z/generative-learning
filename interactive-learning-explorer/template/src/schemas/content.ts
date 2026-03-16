@@ -5,7 +5,7 @@ const htmlContent = z.string().describe('HTML content. Allowed tags: <p>, <h3>, 
 
 export const ConceptDef = z.object({
   title: z.string().describe('Full name of the concept'),
-  body: z.string().min(50).max(500).describe('50-150 word explanation of the concept'),
+  body: z.string().min(50).max(1500).describe('50-150 word explanation of the concept'),
   context: z.string().optional().describe('Why this concept matters in this section (1-2 sentences)'),
   linkedSectionId: z.string().nullable().optional().describe('ID of a section that covers this concept in depth, or null'),
 })
