@@ -24,9 +24,9 @@ Wave 4: Inject       →  output.html
 ## Reference files
 
 Read before starting:
-- `references/content-rendering-catalog.md` — All 16 viz types, all content patterns, data shapes, decision guides. **Read first.**
-- `references/schema.md` — JSON schema contract for structure.json and content.json
-- `references/architecture-content-pipeline.md` — Detailed wave architecture, prompt templates, event protocol
+- `template/src/schemas/` — **Zod schemas: the single source of truth** for all data shapes. `viz-types.ts` (21 viz types), `structure.ts` (structure.json with outlines), `content.ts` (content.json with levels, concepts, refs). **Read first.**
+- `references/content-rendering-catalog.md` — Decision guides for choosing viz types and content patterns.
+- `references/architecture-content-pipeline.md` — Detailed wave architecture, prompt templates, event protocol.
 
 Sub-skill guides:
 - `references/skill-0-structure.md` — Wave 0: Research & produce structure.json
