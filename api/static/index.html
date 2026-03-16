@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Explorer Generator</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0f1117; --surface: #1a1d27; --border: #2a2d3a;
+      --text: #e4e4e7; --muted: #71717a; --primary: #6366f1;
+      --green: #22c55e; --yellow: #eab308; --red: #ef4444; --blue: #3b82f6;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+
+    /* Input area */
+    .input-row { display: flex; gap: 10px; margin-bottom: 40px; }
+    .input-row input {
+      flex: 1; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-size: 15px; outline: none;
+    }
+    .input-row input:focus { border-color: var(--primary); }
+    .input-row input::placeholder { color: var(--muted); }
+    .input-row button {
+      padding: 12px 24px; background: var(--primary); color: white; border: none;
+      border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .input-row button:hover { opacity: 0.9; }
+    .input-row button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Topic list */
+    .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; margin-bottom: 12px; }
+    .topic-list { display: flex; flex-direction: column; gap: 8px; }
+    .topic-card {
+      display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .topic-card:hover { border-color: var(--primary); }
+    .topic-card.active { border-color: var(--primary); background: #6366f108; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.pending { background: var(--muted); }
+    .status-dot.generating { background: var(--yellow); animation: pulse 1.5s ease-in-out infinite; }
+    .status-dot.completed { background: var(--green); }
+    .status-dot.failed { background: var(--red); }
+    @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+    .topic-title { flex: 1; font-size: 14px; font-weight: 500; }
+    .topic-time { font-size: 11px; color: var(--muted); }
+
+    /* Detail panel */
+    .detail-panel { margin-top: 32px; display: none; }
+    .detail-panel.visible { display: block; }
+    .detail-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .detail-title { font-size: 18px; font-weight: 600; }
+    .detail-status { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
+    .detail-status.generating { background: #eab30818; color: var(--yellow); }
+    .detail-status.completed { background: #22c55e18; color: var(--green); }
+    .detail-status.failed { background: #ef444418; color: var(--red); }
+    .detail-status.pending { background: #71717a18; color: var(--muted); }
+
+    /* Event log */
+    .event-log { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; max-height: 300px; overflow-y: auto; font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.8; }
+    .event-line { display: flex; gap: 8px; }
+    .event-wave { color: var(--primary); min-width: 24px; }
+    .event-type { color: var(--green); min-width: 160px; }
+    .event-data { color: var(--muted); }
+
+    /* Progress grid */
+    .progress-grid { display: grid; grid-template-columns: auto repeat(4, 40px) 40px; gap: 4px; margin-bottom: 16px; font-size: 11px; }
+    .progress-grid .header { color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; text-align: center; padding: 4px; }
+    .progress-grid .section-name { padding: 4px 8px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .progress-cell { text-align: center; padding: 4px; border-radius: 4px; }
+    .progress-cell.done { background: #22c55e18; color: var(--green); }
+    .progress-cell.pending { background: var(--surface); color: var(--muted); }
+
+    /* Iframe */
+    .preview-frame { width: 100%; height: 600px; border: 1px solid var(--border); border-radius: 10px; background: white; }
+    .open-btn { display: inline-block; margin-bottom: 12px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
+    .open-btn:hover { opacity: 0.9; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-state p { font-size: 14px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Learning Explorer Generator</h1>
+    <p class="subtitle">Generate interactive, multi-depth learning experiences on any topic</p>
+
+    <div class="input-row">
+      <input type="text" id="topic-input" placeholder="Enter a topic... (e.g., 'How DNS Works', 'Italian Cuisine', 'Quantum Computing')" />
+      <button id="generate-btn" onclick="createTopic()">Generate</button>
+    </div>
+
+    <div class="section-label">Library</div>
+    <div class="topic-list" id="topic-list"></div>
+
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-header">
+        <span class="detail-title" id="detail-title"></span>
+        <span class="detail-status" id="detail-status"></span>
+      </div>
+
+      <div id="progress-container"></div>
+      <div class="event-log" id="event-log"></div>
+      <div id="preview-container"></div>
+    </div>
+
+    <div class="empty-state" id="empty-state">
+      <p>No topics yet. Enter a topic above to generate your first explorer.</p>
+    </div>
+  </div>
+
+  <script>
+    let selectedTopicId = null;
+    let eventSource = null;
+    let sectionProgress = {};
+
+    // ─── API ─────────────────────────────────────────────
+    async function createTopic() {
+      const input = document.getElementById('topic-input');
+      const btn = document.getElementById('generate-btn');
+      const title = input.value.trim();
+      if (!title) return;
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/topics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title }),
+        });
+        const topic = await res.json();
+        input.value = '';
+        await loadTopics();
+        selectTopic(topic.id);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function loadTopics() {
+      const res = await fetch('/api/topics');
+      const topics = await res.json();
+      renderTopicList(topics);
+    }
+
+    // ─── Rendering ───────────────────────────────────────
+    function renderTopicList(topics) {
+      const list = document.getElementById('topic-list');
+      const empty = document.getElementById('empty-state');
+      empty.style.display = topics.length ? 'none' : 'block';
+
+      list.innerHTML = topics.map(t => `
+        <div class="topic-card ${t.id === selectedTopicId ? 'active' : ''}" onclick="selectTopic('${t.id}')">
+          <div class="status-dot ${t.status}"></div>
+          <span class="topic-title">${esc(t.title)}</span>
+          <span class="topic-time">${timeAgo(t.created_at)}</span>
+        </div>
+      `).join('');
+    }
+
+    async function selectTopic(id) {
+      selectedTopicId = id;
+      sectionProgress = {};
+
+      const panel = document.getElementById('detail-panel');
+      const log = document.getElementById('event-log');
+      const progressContainer = document.getElementById('progress-container');
+      const previewContainer = document.getElementById('preview-container');
+
+      panel.classList.add('visible');
+      log.innerHTML = '';
+      progressContainer.innerHTML = '';
+      previewContainer.innerHTML = '';
+
+      // Fetch topic
+      const res = await fetch(`/api/topics/${id}`);
+      const topic = await res.json();
+
+      document.getElementById('detail-title').textContent = topic.title;
+      setStatus(topic.status);
+
+      // Load existing events
+      const eventsRes = await fetch(`/api/topics/${id}/events`);
+      const reader = eventsRes.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      // Highlight active card
+      loadTopics();
+
+      // Read SSE stream
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const event = JSON.parse(line.slice(6));
+              handleEvent(event, topic);
+            } catch {}
+          }
+        }
+      }
+
+      // Final refresh
+      loadTopics();
+    }
+
+    function handleEvent(event, topic) {
+      const log = document.getElementById('event-log');
+      const type = event.type;
+      const data = event.data || {};
+
+      // Update status
+      if (type === 'generation_started') setStatus('generating');
+      if (type === 'generation_complete') {
+        setStatus('completed');
+        showPreview(data.outputPath);
+      }
+      if (type === 'error') setStatus('failed');
+
+      // Build progress grid on structure_complete
+      if (type === 'structure_complete' && data.sections) {
+        for (const s of data.sections) {
+          sectionProgress[s.id] = { title: s.title, levels: {}, enrichment: false };
+        }
+        renderProgress();
+      }
+
+      // Update progress cells
+      if (type === 'level_complete') {
+        const sp = sectionProgress[data.sectionId];
+        if (sp) { sp.levels[data.level] = true; renderProgress(); }
+      }
+      if (type === 'enrichment_complete') {
+        const sp = sectionProgress[data.sectionId];
+        if (sp) { sp.enrichment = true; renderProgress(); }
+      }
+
+      // Show preview on completion
+      if (type === 'inject_complete') {
+        showPreview(data.outputPath);
+      }
+
+      // Append to log
+      const line = document.createElement('div');
+      line.className = 'event-line';
+      line.innerHTML = `
+        <span class="event-wave">${event.wave ?? '-'}</span>
+        <span class="event-type">${type}</span>
+        <span class="event-data">${summarizeData(data)}</span>
+      `;
+      log.appendChild(line);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function renderProgress() {
+      const container = document.getElementById('progress-container');
+      const ids = Object.keys(sectionProgress);
+      if (!ids.length) return;
+
+      let html = '<div class="progress-grid">';
+      html += '<div class="header"></div><div class="header">L1</div><div class="header">L2</div><div class="header">L3</div><div class="header">L4</div><div class="header">Viz</div>';
+
+      for (const id of ids) {
+        const sp = sectionProgress[id];
+        html += `<div class="section-name">${esc(sp.title)}</div>`;
+        for (let l = 1; l <= 4; l++) {
+          html += `<div class="progress-cell ${sp.levels[l] ? 'done' : 'pending'}">${sp.levels[l] ? '✓' : '·'}</div>`;
+        }
+        html += `<div class="progress-cell ${sp.enrichment ? 'done' : 'pending'}">${sp.enrichment ? '✓' : '·'}</div>`;
+      }
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function showPreview(outputPath) {
+      const container = document.getElementById('preview-container');
+      container.innerHTML = `
+        <a class="open-btn" href="/outputs/${outputPath}" target="_blank">Open in new tab</a>
+        <iframe class="preview-frame" src="/outputs/${outputPath}"></iframe>
+      `;
+    }
+
+    function setStatus(status) {
+      const el = document.getElementById('detail-status');
+      el.textContent = status;
+      el.className = 'detail-status ' + status;
+    }
+
+    // ─── Helpers ──────────────────────────────────────────
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function timeAgo(iso) {
+      const d = new Date(iso);
+      const now = new Date();
+      const mins = Math.floor((now - d) / 60000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return `${mins}m ago`;
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return `${hrs}h ago`;
+      return d.toLocaleDateString();
+    }
+    function summarizeData(data) {
+      if (!data) return '';
+      const parts = [];
+      if (data.sectionId) parts.push(data.sectionId);
+      if (data.level) parts.push(`L${data.level}`);
+      if (data.sectionCount) parts.push(`${data.sectionCount} sections`);
+      if (data.totalWords) parts.push(`${data.totalWords} words`);
+      if (data.fileSize) parts.push(`${(data.fileSize/1024).toFixed(0)}KB`);
+      if (data.message) parts.push(data.message);
+      if (data.vizType) parts.push(data.vizType);
+      return parts.join(' · ');
+    }
+
+    // ─── Init ────────────────────────────────────────────
+    document.getElementById('topic-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') createTopic();
+    });
+    loadTopics();
+  </script>
+</body>
+</html>

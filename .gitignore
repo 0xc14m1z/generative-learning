@@ -6,3 +6,7 @@ dist/
 
 # Dev data preview (drop generated JSON here, don't commit)
 interactive-learning-explorer/template/public/dev-data/*.json
+__pycache__/
+api/explorer.db
+api/outputs/*.html
+*.explorer.html
