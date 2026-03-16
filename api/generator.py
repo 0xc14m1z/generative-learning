@@ -1,5 +1,5 @@
 """
-Wave-based content generation pipeline using Anthropic API.
+Wave-based content generation pipeline using OpenRouter API.
 
 Emits events to the database for SSE streaming to the frontend.
 """
@@ -10,7 +10,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-import anthropic
+from openai import AsyncOpenAI
 
 from db import add_event, update_topic
 
@@ -18,27 +18,36 @@ SKILL_PATH = Path(__file__).parent.parent / "interactive-learning-explorer"
 SHELL_PATH = SKILL_PATH / "prebuild" / "shell.html"
 INJECT_SCRIPT = SKILL_PATH / "prebuild" / "inject.py"
 OUTPUTS_DIR = Path(__file__).parent / "outputs"
-MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+MODEL = os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-20250514")
+
+
+def _get_client() -> AsyncOpenAI:
+    return AsyncOpenAI(
+        base_url=os.getenv("LLM_BASE_URL", "https://openrouter.ai/api/v1"),
+        api_key=os.getenv("LLM_API_KEY", os.getenv("OPENROUTER_API_KEY", "")),
+    )
 
 
 async def emit(topic_id: str, wave: int | None, event_type: str, data: dict | None = None):
     await add_event(topic_id, wave, event_type, data)
 
 
-async def call_claude(system: str, prompt: str) -> str:
-    client = anthropic.AsyncAnthropic()
-    msg = await client.messages.create(
+async def call_llm(system: str, prompt: str) -> str:
+    client = _get_client()
+    response = await client.chat.completions.create(
         model=MODEL,
         max_tokens=8192,
-        system=system,
-        messages=[{"role": "user", "content": prompt}],
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ],
     )
-    return msg.content[0].text
+    return response.choices[0].message.content or ""
 
 
-async def call_claude_json(system: str, prompt: str) -> dict:
-    """Call Claude and parse JSON from response. Handles markdown code fences."""
-    text = await call_claude(system, prompt)
+async def call_llm_json(system: str, prompt: str) -> dict:
+    """Call LLM and parse JSON from response. Handles markdown code fences."""
+    text = await call_llm(system, prompt)
     # Strip markdown code fences if present
     text = text.strip()
     if text.startswith("```"):
@@ -90,7 +99,7 @@ The JSON must match this Zod schema (structure.ts):
 
 Output the complete structure.json. ONLY valid JSON, nothing else."""
 
-    structure = await call_claude_json(system, prompt)
+    structure = await call_llm_json(system, prompt)
 
     structure_path = work_dir / "structure.json"
     structure_path.write_text(json.dumps(structure, ensure_ascii=False, indent=2))
@@ -149,7 +158,7 @@ Citation format: <a class="citation" href="#ref-{sid}-N">[N]</a>
 Output ONLY this JSON (no fences):
 {{"sectionId": "{sid}", "level": {level}, "html": "<p>Your HTML content here...</p>"}}"""
 
-        data = await call_claude_json(system, prompt)
+        data = await call_llm_json(system, prompt)
         (section_dir / f"level-{level}.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
 
         await emit(topic_id, 1, "level_complete", {"sectionId": sid, "level": level})
@@ -213,7 +222,7 @@ Output ONLY this JSON structure:
   "references": [{{ "id": 1, "text": "Author — Title (Year)", "url": "https://..." }}]
 }}"""
 
-    data = await call_claude_json(system, prompt)
+    data = await call_llm_json(system, prompt)
     (section_dir / "enrichment.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
 
     await emit(topic_id, 2, "enrichment_complete", {
