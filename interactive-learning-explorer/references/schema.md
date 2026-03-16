@@ -53,6 +53,13 @@ The contract between Skills 1, 2, and 3. Both JSON files must conform exactly.
 | `timeline` | Historical events, milestones, evolution |
 | `flowchart` | Decision trees, branching processes, troubleshooting |
 | `pros-cons` | Trade-off analysis, option comparison with +/- |
+| `cycle` | Feedback loops, iterative processes, habit loops |
+| `quadrant` | 2×2 categorization, prioritization matrices |
+| `xy-plot` | Continuous trends, curves, correlations, growth |
+| `concept-map` | Concept relationships, ecosystems, taxonomies |
+| `composition-stack` | Part-of-whole: budgets, nutrition, portfolio |
+| `continuum-scale` | Spectrums, scales, ranges (pH, ideology, risk) |
+| `sankey-flow` | Weighted flows: budgets, energy, calories |
 
 ## content.json
 
@@ -141,3 +148,10 @@ The contract between Skills 1, 2, and 3. Both JSON files must conform exactly.
 **timeline:** `{ "events": [{ "date": "str", "label": "str", "detail?": "str", "color": "#hex" }] }`
 **flowchart:** `{ "nodes": [{ "id": "str", "label": "str", "type": "decision"|"outcome"|"step", "color?": "#hex" }], "edges": [{ "from": "str", "to": "str", "label?": "str" }] }`
 **pros-cons:** `{ "options": [{ "title": "str", "color": "#hex", "pros": ["str"], "cons": ["str"] }] }`
+**cycle:** `{ "nodes": [{ "label": "str", "detail?": "str", "color": "#hex" }], "centerLabel?": "str" }`
+**quadrant:** `{ "axisX": { "low": "str", "high": "str" }, "axisY": { "low": "str", "high": "str" }, "quadrants": [{ "label": "str", "items": ["str"], "color": "#hex" }] }` (order: top-left, top-right, bottom-left, bottom-right)
+**xy-plot:** `{ "xAxis": { "label": "str", "min": n, "max": n }, "yAxis": { "label": "str", "min": n, "max": n }, "series": [{ "label": "str", "color?": "#hex", "mode": "line"|"scatter"|"area", "points": [{ "x": n, "y": n }] }], "annotations?": [{ "x": n, "label": "str" }] }`
+**concept-map:** `{ "nodes": [{ "id": "str", "label": "str", "color?": "#hex" }], "edges": [{ "from": "str", "to": "str", "label?": "str" }] }`
+**composition-stack:** `{ "totalLabel": "str", "segments": [{ "label": "str", "value": number, "color": "#hex" }], "unit?": "str" }`
+**continuum-scale:** `{ "axis": { "label": "str", "min": n, "max": n }, "bands": [{ "from": n, "to": n, "label": "str", "color?": "#hex" }], "markers": [{ "value": n, "label": "str" }] }`
+**sankey-flow:** `{ "nodes": [{ "id": "str", "label": "str", "color": "#hex" }], "links": [{ "source": "str", "target": "str", "value": number, "label?": "str" }] }`

@@ -4,7 +4,7 @@ Complete reference for all available visualization types and content patterns. U
 
 ---
 
-## Visualization Types (16 total)
+## Visualization Types (21 total)
 
 Each section has exactly ONE visualization. Choose based on what the section explains.
 
@@ -31,12 +31,16 @@ Each section has exactly ONE visualization. Choose based on what the section exp
 | `bar-chart` | Quantities, distributions, comparisons over categories | `{ "bars": [{ "label": str, "value": number, "color?": "#hex" }], "unit?": str, "maxValue?": number }` |
 | `utilization-bars` | Percentages, resource usage, progress toward goals | `{ "bars": [{ "label": str, "value": number (0-100), "color": "#hex" }], "legend?": str }` |
 | `heatmap` | Schedules, correlations, frequency/intensity data | `{ "xLabels": [str], "yLabels": [str], "cells": [[number 0-1]], "color": "#hex", "legend?": str }` |
+| `xy-plot` | Continuous data: trends, curves, correlations, growth | `{ "xAxis": { "label": str, "min": n, "max": n }, "yAxis": { "label": str, "min": n, "max": n }, "series": [{ "label": str, "color?": "#hex", "mode": "line"\|"scatter"\|"area", "points": [{ "x": n, "y": n }] }], "annotations?": [{ "x": n, "label": str }] }` |
+| `composition-stack` | Part-of-whole: budgets, nutrition, portfolio, time | `{ "totalLabel": str, "segments": [{ "label": str, "value": number, "color": "#hex" }], "unit?": str }` |
 
 **Choosing between them:**
 - 2-4 key numbers → `stat-cards`
 - Comparing quantities across categories → `bar-chart`
 - Showing percentages/completion → `utilization-bars`
 - 2D grid of intensity values → `heatmap`
+- Continuous trend/curve over time or range → `xy-plot`
+- Showing how a total is divided into parts → `composition-stack`
 
 ### Comparison & Analysis
 
@@ -61,6 +65,23 @@ Each section has exactly ONE visualization. Choose based on what the section exp
 |---------|----------|------------|
 | `tiered-hierarchy` | Layers, stacks, hierarchies (fast→slow, abstract→concrete) | `{ "tiers": [{ "label": str, "detail": str, "color": "#hex", "width": number (100→40) }] }` |
 | `timeline` | Historical events, milestones, evolution | `{ "events": [{ "date": str, "label": str, "detail?": str, "color": "#hex" }] }` |
+| `continuum-scale` | Spectrums, scales, ranges (pH, ideology, risk) | `{ "axis": { "label": str, "min": n, "max": n }, "bands": [{ "from": n, "to": n, "label": str, "color?": "#hex" }], "markers": [{ "value": n, "label": str }] }` |
+
+**Choosing between them:**
+- Stacked layers (abstract→concrete, fast→slow) → `tiered-hierarchy`
+- Events over time → `timeline`
+- Ordered spectrum with regions and markers → `continuum-scale`
+
+### Relationships
+
+| vizType | Best for | Data shape |
+|---------|----------|------------|
+| `concept-map` | Concept relationships, ecosystems, taxonomies | `{ "nodes": [{ "id": str, "label": str, "color?": "#hex" }], "edges": [{ "from": str, "to": str, "label?": str }] }` |
+| `sankey-flow` | Weighted flows: budgets, energy, calories, supply chains | `{ "nodes": [{ "id": str, "label": str, "color": "#hex" }], "links": [{ "source": str, "target": str, "value": number, "label?": str }] }` |
+
+**Choosing between them:**
+- Showing how concepts relate (non-quantitative) → `concept-map`
+- Showing how quantities flow from source to destination → `sankey-flow`
 
 ### Specialized
 
@@ -264,7 +285,9 @@ Is it quantitative data?
 ├── 2-4 key numbers? → stat-cards
 ├── Comparing values across categories? → bar-chart
 ├── Showing percentages (0-100%)? → utilization-bars
-└── 2D grid of values? → heatmap
+├── 2D grid of values? → heatmap
+├── Continuous trend/curve? → xy-plot
+└── How a total is divided into parts? → composition-stack
 
 Is it a comparison?
 ├── Feature-by-feature specs? → comparison-cards
@@ -274,7 +297,12 @@ Is it a comparison?
 
 Is it structural?
 ├── Layered hierarchy (top→bottom)? → tiered-hierarchy
-└── Events over time? → timeline
+├── Events over time? → timeline
+└── Ordered spectrum with regions? → continuum-scale
+
+Is it about relationships?
+├── How concepts relate (non-quantitative)? → concept-map
+└── How quantities flow from source to destination? → sankey-flow
 
 Is it a sequence of discrete items? → token-stream
 Nothing fits? → inline-svg (escape hatch)
