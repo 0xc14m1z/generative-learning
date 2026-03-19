@@ -90,11 +90,15 @@ generative-learning-experiences/
 | `learning-website/SKILL.md` | `products/topic-explorer/SKILL.md` | git mv + update paths |
 | `repo-explorer/SKILL.md` | `products/repo-explorer/SKILL.md` | git mv + update paths |
 | `repo-explorer/references/skill-0-analysis.md` | `products/repo-explorer/references/` | git mv |
-| `repo-explorer/references/skill-{1,2,3,4}*.md` | delete | redundant — point to core |
+| `repo-explorer/references/skill-{1,2,3,4}*.md` | migrate overrides → `products/repo-explorer/SKILL.md`, then delete | These files contain ~200 lines of product-specific guidance (code-oriented level adjustments, viz-to-code mapping, file-path citation format, agent prompt modifications). Extract all product-specific content into the SKILL.md overrides section before deleting. |
 
 ### Core reference files: what they contain
 
-The existing `learning-website` Wave 1-4 reference files become the core versions. They already contain the shared logic. Each product's SKILL.md will specify product-specific overrides (see "Product SKILL.md structure" below).
+The existing `learning-website` Wave 1-4 reference files become the core versions. Before moving them, review each file and extract any topic-explorer-specific content (e.g., web-research prompt templates, URL-based citation examples) into `products/topic-explorer/SKILL.md` overrides. The core versions must be product-neutral.
+
+Similarly, `repo-explorer`'s Wave 1-4 files contain product-specific overrides (~200 lines total: code-oriented level adjustments, viz-to-code-concept mapping, file-path citation examples, agent prompt modifications). Extract all of this into `products/repo-explorer/SKILL.md` overrides before deleting those files.
+
+Each product's SKILL.md will specify product-specific overrides (see "Product SKILL.md structure" below).
 
 **Shared in core references:**
 - Prompt templates and agent spawning instructions
@@ -143,6 +147,13 @@ Same core principles + any product additions.
 Same core voice + any product-specific adjustments.
 ```
 
+### Skill packaging (.skill files)
+
+The repo root contains `learning-website.skill`, a zip bundle of the `learning-website/` directory. After refactoring:
+- Delete `learning-website.skill` — it references a directory that no longer exists
+- Create new `.skill` bundles per product if needed (e.g., `topic-explorer.skill`). Each bundle must include both `core/` and the product's `products/{name}/` directory, since the product depends on core.
+- Alternatively, defer `.skill` packaging until the packaging approach is clarified. The skills work fine without bundles when used locally.
+
 ### Path updates required
 
 All references to paths must be updated in:
@@ -150,7 +161,7 @@ All references to paths must be updated in:
 2. **Wave 0 reference files** — any cross-references to other waves
 3. **Wave 3 validation command** — `cd [this-skill-path]/template` → `cd [core-path]/template`
 4. **Wave 4 inject command** — shell and inject.py paths → `core/prebuild/`
-5. **api/generator.py** — if it references learning-website paths directly
+5. **api/generator.py** — contains `SKILL_PATH = Path(__file__).parent.parent / "learning-website"` (line ~17). This **will break** after the rename. Update to point to the new structure: `CORE_PATH = Path(__file__).parent.parent / "core"` and `PRODUCT_PATH = Path(__file__).parent.parent / "products" / product_name`. The API currently only supports topic-explorer generation; multi-product API support is out of scope for this spec but the path must not be broken.
 
 ### What does NOT change
 
@@ -159,7 +170,7 @@ All references to paths must be updated in:
 - The shell.html — only its location changes
 - The Zod schemas — only their location changes
 - The content pipeline logic — Waves 1-4 work identically
-- The API — may need path updates but logic is unchanged
+- The API — needs path updates (`SKILL_PATH` → `CORE_PATH` + `PRODUCT_PATH`) but generation logic is unchanged
 
 ---
 
