@@ -14,9 +14,9 @@ from openai import AsyncOpenAI
 
 from db import add_event, update_topic
 
-SKILL_PATH = Path(__file__).parent.parent / "learning-website"
-SHELL_PATH = SKILL_PATH / "prebuild" / "shell.html"
-INJECT_SCRIPT = SKILL_PATH / "prebuild" / "inject.py"
+CORE_PATH = Path(__file__).parent.parent / "core"
+SHELL_PATH = CORE_PATH / "prebuild" / "shell.html"
+INJECT_SCRIPT = CORE_PATH / "prebuild" / "inject.py"
 OUTPUTS_DIR = Path(__file__).parent / "outputs"
 MODEL = os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-20250514")
 
@@ -62,14 +62,14 @@ def read_schema_files() -> str:
     """Read Zod schemas as context for the LLM."""
     schemas = []
     for name in ["viz-types.ts", "structure.ts", "content.ts"]:
-        path = SKILL_PATH / "template" / "src" / "schemas" / name
+        path = CORE_PATH / "template" / "src" / "schemas" / name
         if path.exists():
             schemas.append(f"=== {name} ===\n{path.read_text()}")
     return "\n\n".join(schemas)
 
 
 def read_catalog() -> str:
-    path = SKILL_PATH / "references" / "content-rendering-catalog.md"
+    path = CORE_PATH / "references" / "content-rendering-catalog.md"
     return path.read_text() if path.exists() else ""
 
 
