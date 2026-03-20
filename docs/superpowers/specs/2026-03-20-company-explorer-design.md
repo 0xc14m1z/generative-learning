@@ -38,7 +38,7 @@ Fetch key pages from the site. Target these paths (adapt based on what exists):
 - Blog/News (`/blog`, `/news` — latest 3-5 posts only)
 - Careers (`/careers`, `/jobs`)
 
-Maximum 10-15 pages total. Stop if a path returns 404.
+Maximum 10-15 pages total. Stop if a path returns 404. If the site blocks automated fetching (Cloudflare, JS-rendered SPA), fall back to web search cached/indexed versions of those pages.
 
 Write everything to `source-notes.md`:
 
@@ -70,7 +70,7 @@ Perform 5-8 web searches:
 2. `"{company name}" crunchbase OR funding OR series` — funding history
 3. `"{company name}" competitor OR alternative OR vs` — competitive landscape
 4. `"{company name}" glassdoor OR employee reviews` — culture signals
-5. `"{company name}" site:linkedin.com` — company page, key people
+5. `"{company name}" site:linkedin.com` — company page, key people (best effort — LinkedIn often blocks fetching; use search snippets)
 6. `"{company name}" news {current_year}` — recent developments
 7. `"{company name}" G2 OR trustpilot OR reviews` — customer reviews
 8. `"{company name}" revenue OR ARR OR valuation` — financial estimates (if available)
