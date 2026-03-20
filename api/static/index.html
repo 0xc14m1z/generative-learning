@@ -30,6 +30,11 @@
     }
     .input-row button:hover { opacity: 0.9; }
     .input-row button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .input-row select {
+      padding: 12px 12px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-size: 13px; outline: none; cursor: pointer;
+    }
+    .input-row select:focus { border-color: var(--primary); }
 
     /* Topic list */
     .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; margin-bottom: 12px; }
@@ -48,6 +53,7 @@
     .status-dot.failed { background: var(--red); }
     @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
     .topic-title { flex: 1; font-size: 14px; font-weight: 500; }
+    .topic-badge { font-size: 10px; color: var(--muted); background: var(--border); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
     .topic-time { font-size: 11px; color: var(--muted); }
 
     /* Detail panel */
@@ -91,7 +97,13 @@
     <p class="subtitle">Generate interactive, multi-depth learning experiences on any topic</p>
 
     <div class="input-row">
-      <input type="text" id="topic-input" placeholder="Enter a topic... (e.g., 'How DNS Works', 'Italian Cuisine', 'Quantum Computing')" />
+      <input type="text" id="topic-input" placeholder="e.g. How DNS Works" />
+      <select id="productSelect">
+        <option value="topic-explorer">Topic Explorer</option>
+        <option value="paper-explainer">Paper Explainer</option>
+        <option value="repo-explorer">Repo Explorer</option>
+        <option value="company-explorer">Company Explorer</option>
+      </select>
       <button id="generate-btn" onclick="createTopic()">Generate</button>
     </div>
 
@@ -128,10 +140,11 @@
 
       btn.disabled = true;
       try {
+        const product = document.getElementById('productSelect').value;
         const res = await fetch('/api/topics', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title }),
+          body: JSON.stringify({ title, product }),
         });
         const topic = await res.json();
         input.value = '';
@@ -158,6 +171,7 @@
         <div class="topic-card ${t.id === selectedTopicId ? 'active' : ''}" onclick="selectTopic('${t.id}')">
           <div class="status-dot ${t.status}"></div>
           <span class="topic-title">${esc(t.title)}</span>
+          ${t.product && t.product !== 'topic-explorer' ? `<span class="topic-badge">${esc(t.product.replace('-explorer','').replace('-explainer',''))}</span>` : ''}
           <span class="topic-time">${timeAgo(t.created_at)}</span>
         </div>
       `).join('');
@@ -326,6 +340,15 @@
     // ─── Init ────────────────────────────────────────────
     document.getElementById('topic-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') createTopic();
+    });
+    document.getElementById('productSelect').addEventListener('change', function() {
+      const placeholders = {
+        'topic-explorer': 'e.g. How DNS Works',
+        'paper-explainer': 'e.g. https://arxiv.org/abs/2401.12345',
+        'repo-explorer': 'e.g. https://github.com/org/repo',
+        'company-explorer': 'e.g. https://acme.com',
+      };
+      document.getElementById('topic-input').placeholder = placeholders[this.value] || '';
     });
     loadTopics();
   </script>
