@@ -11,3 +11,4 @@ __pycache__/
 api/explorer.db
 api/outputs/*.html
 *.explorer.html
+eval/results/
