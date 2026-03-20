@@ -9,7 +9,7 @@ load_dotenv()
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from db import init_db, create_topic, get_topic, list_topics, get_events
 from generator import generate_explorer
@@ -33,7 +33,7 @@ app.mount("/outputs", StaticFiles(directory=str(OUTPUTS_DIR)), name="outputs")
 # ─── API Models ──────────────────────────────────────────────────
 
 class TopicCreate(BaseModel):
-    title: str
+    title: str = Field(..., min_length=2, max_length=200, description="Topic to generate")
 
 
 # ─── API Routes ──────────────────────────────────────────────────
