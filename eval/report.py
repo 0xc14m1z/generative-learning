@@ -4,25 +4,25 @@ from datetime import date
 from judge import CRITERIA
 
 
-def compute_summary(section_results: list[dict]) -> dict:
-    """Compute average scores per criterion across all sections."""
-    summary = {}
-    for key, name, _ in CRITERIA:
-        scores_a = [r["scores"][key]["a"] for r in section_results if key in r.get("scores", {})]
-        scores_b = [r["scores"][key]["b"] for r in section_results if key in r.get("scores", {})]
-        summary[key] = {
-            "name": name,
-            "avg_a": sum(scores_a) / len(scores_a) if scores_a else 0,
-            "avg_b": sum(scores_b) / len(scores_b) if scores_b else 0,
-        }
-    return summary
-
-
 def format_winner(avg_a: float, avg_b: float, tolerance: float = 0.2) -> str:
     """Determine winner. Returns 'A', 'B', or '≈' for tie."""
     if abs(avg_a - avg_b) <= tolerance:
         return "≈"
     return "A" if avg_a > avg_b else "B"
+
+
+def compute_summary(judge_results: dict) -> dict:
+    """Extract summary from judge aggregates."""
+    aggregates = judge_results.get("aggregates", {})
+    summary = {}
+    for key, name, _ in CRITERIA:
+        agg = aggregates.get(key, {})
+        summary[key] = {
+            "name": name,
+            "avg_a": agg.get("a_mean", 0),
+            "avg_b": agg.get("b_mean", 0),
+        }
+    return summary
 
 
 def generate_report(
@@ -35,7 +35,7 @@ def generate_report(
     config_a = judge_results["config_a"]
     config_b = judge_results["config_b"]
     section_results = judge_results["section_results"]
-    summary = compute_summary(section_results)
+    summary = compute_summary(judge_results)
 
     wins_a, wins_b, ties = 0, 0, 0
     for key in summary:
@@ -83,9 +83,9 @@ def generate_report(
     lines.append("")
     lines.append("| Wave | A tokens (in/out) | B tokens (in/out) |")
     lines.append("|------|-------------------|-------------------|")
-    for wave in ["wave0", "wave1", "wave2", "wave3"]:
-        ta = stats_a.get("waves", {}).get(wave, {})
-        tb = stats_b.get("waves", {}).get(wave, {})
+    for wave in ["wave_0", "wave_1", "wave_2"]:
+        ta = stats_a.get(wave, {})
+        tb = stats_b.get(wave, {})
         lines.append(
             f"| {wave} | {ta.get('input', 0):,}/{ta.get('output', 0):,} "
             f"| {tb.get('input', 0):,}/{tb.get('output', 0):,} |"
@@ -96,19 +96,23 @@ def generate_report(
     lines.append("## Per-section breakdown")
     lines.append("")
 
-    for result in section_results:
-        idx = result.get("section_index", 0)
-        title_a = result.get("title_a", "?")
-        title_b = result.get("title_b", "?")
+    for i, result in enumerate(section_results):
+        title_a = result.get("section_id_a", "?")
+        title_b = result.get("section_id_b", "?")
         title = title_a if title_a == title_b else f"{title_a} / {title_b}"
-        lines.append(f"### Section {int(idx) + 1}: {title}")
+        lines.append(f"### Section {i + 1}: {title}")
         lines.append("")
-        lines.append("| Criterion | A | B | Notes |")
-        lines.append("|-----------|---|---|-------|")
+        lines.append("| Criterion | A | B | A notes | B notes |")
+        lines.append("|-----------|---|---|---------|---------|")
+        criteria = result.get("criteria", {})
         for key, name, _ in CRITERIA:
-            if key in result.get("scores", {}):
-                s = result["scores"][key]
-                lines.append(f"| {name} | {s['a']} | {s['b']} | {s.get('justification', '')[:80]} |")
+            if key in criteria:
+                c = criteria[key]
+                a_score = c.get("a_score", "?")
+                b_score = c.get("b_score", "?")
+                a_just = c.get("a_justification", "")[:60]
+                b_just = c.get("b_justification", "")[:60]
+                lines.append(f"| {name} | {a_score} | {b_score} | {a_just} | {b_just} |")
         lines.append("")
 
     return "\n".join(lines)

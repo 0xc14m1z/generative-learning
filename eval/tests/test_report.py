@@ -2,20 +2,20 @@ from report import compute_summary, format_winner
 
 
 def test_compute_summary():
-    section_results = [
-        {
-            "scores": {
-                "l1_clarity": {"a": 4, "b": 3, "justification": "A is better"},
-                "l2_practicality": {"a": 3, "b": 4, "justification": "B is better"},
-                "l3_depth": {"a": 4, "b": 4, "justification": "Tie"},
-                "l4_analysis": {"a": 5, "b": 3, "justification": "A is much better"},
-                "viz_quality": {"a": 3, "b": 3, "justification": "Tie"},
-                "concepts": {"a": 4, "b": 3, "justification": "A is better"},
-                "references": {"a": 4, "b": 4, "justification": "Tie"},
-            }
-        }
-    ]
-    summary = compute_summary(section_results)
+    judge_results = {
+        "config_a": "all-sonnet",
+        "config_b": "haiku-wave1",
+        "aggregates": {
+            "l1_clarity": {"a_mean": 4.0, "b_mean": 3.0},
+            "l2_practicality": {"a_mean": 3.0, "b_mean": 4.0},
+            "l3_depth": {"a_mean": 4.0, "b_mean": 4.0},
+            "l4_analysis": {"a_mean": 5.0, "b_mean": 3.0},
+            "viz_quality": {"a_mean": 3.0, "b_mean": 3.0},
+            "concepts": {"a_mean": 4.0, "b_mean": 3.0},
+            "references": {"a_mean": 4.0, "b_mean": 4.0},
+        },
+    }
+    summary = compute_summary(judge_results)
     assert summary["l1_clarity"]["avg_a"] == 4.0
     assert summary["l1_clarity"]["avg_b"] == 3.0
 
