@@ -62,7 +62,18 @@ def _extract_json(text: str) -> dict:
     return obj
 
 
-async def call_llm_json(system: str, prompt: str, model: str = "sonnet") -> tuple[dict, dict]:
-    """Call LLM and parse JSON from response. Returns (parsed_json, token_usage)."""
-    text, tokens = await call_llm(system, prompt, model)
-    return _extract_json(text), tokens
+async def call_llm_json(system: str, prompt: str, model: str = "sonnet", max_retries: int = 3) -> tuple[dict, dict]:
+    """Call LLM and parse JSON from response. Retries on malformed JSON."""
+    total_tokens = {"input": 0, "output": 0}
+    last_error = None
+    for attempt in range(max_retries):
+        text, tokens = await call_llm(system, prompt, model)
+        total_tokens["input"] += tokens["input"]
+        total_tokens["output"] += tokens["output"]
+        try:
+            return _extract_json(text), total_tokens
+        except (json.JSONDecodeError, ValueError) as e:
+            last_error = e
+            if attempt < max_retries - 1:
+                print(f"    [retry {attempt + 1}/{max_retries}] JSON parse failed: {e}")
+    raise last_error
