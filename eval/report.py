@@ -97,11 +97,11 @@ def generate_report(
     lines.append("")
 
     for result in section_results:
-        idx = result.get("section_index", "?")
+        idx = result.get("section_index", 0)
         title_a = result.get("title_a", "?")
         title_b = result.get("title_b", "?")
         title = title_a if title_a == title_b else f"{title_a} / {title_b}"
-        lines.append(f"### Section {idx + 1}: {title}")
+        lines.append(f"### Section {int(idx) + 1}: {title}")
         lines.append("")
         lines.append("| Criterion | A | B | Notes |")
         lines.append("|-----------|---|---|-------|")
