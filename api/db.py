@@ -98,3 +98,12 @@ async def get_events(topic_id: str, after_id: int = 0) -> list[dict]:
                     d["data"] = json.loads(d["data"])
                 rows.append(d)
             return rows
+
+
+async def delete_topic(topic_id: str) -> bool:
+    async with aiosqlite.connect(DB_PATH) as db:
+        # Delete events first (foreign key)
+        await db.execute("DELETE FROM events WHERE topic_id = ?", (topic_id,))
+        cur = await db.execute("DELETE FROM topics WHERE id = ?", (topic_id,))
+        await db.commit()
+        return cur.rowcount > 0

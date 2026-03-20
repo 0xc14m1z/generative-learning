@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from db import init_db, create_topic, get_topic, list_topics, get_events
+from db import init_db, create_topic, get_topic, list_topics, get_events, delete_topic
 from generator import generate_explorer
 
 OUTPUTS_DIR = Path(__file__).parent / "outputs"
@@ -100,6 +100,22 @@ async def stream_events(topic_id: str):
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
     )
+
+
+@app.delete("/api/topics/{topic_id}")
+async def remove_topic(topic_id: str):
+    topic = await get_topic(topic_id)
+    if not topic:
+        raise HTTPException(404, "Topic not found")
+    if topic["status"] == "generating":
+        raise HTTPException(409, "Cannot delete a topic that is currently generating")
+    # Delete output file if exists
+    if topic.get("output_path"):
+        output_file = OUTPUTS_DIR / topic["output_path"]
+        if output_file.exists():
+            output_file.unlink()
+    await delete_topic(topic_id)
+    return {"deleted": True}
 
 
 # ─── Frontend ────────────────────────────────────────────────────

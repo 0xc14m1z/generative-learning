@@ -87,6 +87,10 @@
     .open-btn { display: inline-block; margin-bottom: 12px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
     .open-btn:hover { opacity: 0.9; }
 
+    .delete-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; line-height: 1; opacity: 0; transition: opacity 0.15s; }
+    .topic-card:hover .delete-btn { opacity: 1; }
+    .delete-btn:hover { color: var(--red); background: #ef444418; }
+
     .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty-state p { font-size: 14px; margin-top: 8px; }
   </style>
@@ -161,6 +165,16 @@
       renderTopicList(topics);
     }
 
+    async function deleteTopic(id) {
+      if (!confirm('Delete this topic and its output?')) return;
+      await fetch(`/api/topics/${id}`, { method: 'DELETE' });
+      if (selectedTopicId === id) {
+        selectedTopicId = null;
+        document.getElementById('detail-panel').classList.remove('visible');
+      }
+      await loadTopics();
+    }
+
     // ─── Rendering ───────────────────────────────────────
     function renderTopicList(topics) {
       const list = document.getElementById('topic-list');
@@ -173,6 +187,7 @@
           <span class="topic-title">${esc(t.title)}</span>
           ${t.product && t.product !== 'topic-explorer' ? `<span class="topic-badge">${esc(t.product.replace('-explorer','').replace('-explainer',''))}</span>` : ''}
           <span class="topic-time">${timeAgo(t.created_at)}</span>
+          ${t.status !== 'generating' ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteTopic('${t.id}')" title="Delete">&#x2715;</button>` : ''}
         </div>
       `).join('');
     }
