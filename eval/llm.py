@@ -1,0 +1,51 @@
+"""OpenRouter LLM client with per-call model selection."""
+import json
+import os
+
+from openai import AsyncOpenAI
+
+
+# Map short names to OpenRouter model IDs
+MODEL_MAP = {
+    "opus": "anthropic/claude-opus-4",
+    "sonnet": "anthropic/claude-sonnet-4",
+    "haiku": "anthropic/claude-haiku-4",
+}
+
+
+def _get_client() -> AsyncOpenAI:
+    return AsyncOpenAI(
+        base_url=os.getenv("LLM_BASE_URL", "https://openrouter.ai/api/v1"),
+        api_key=os.getenv("LLM_API_KEY", os.getenv("OPENROUTER_API_KEY", "")),
+    )
+
+
+async def call_llm(system: str, prompt: str, model: str = "sonnet") -> tuple[str, dict]:
+    """Call LLM with a specific model. Returns (text, token_usage)."""
+    client = _get_client()
+    model_id = MODEL_MAP.get(model, model)
+    response = await client.chat.completions.create(
+        model=model_id,
+        max_tokens=8192,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ],
+    )
+    usage = response.usage
+    tokens = {
+        "input": usage.prompt_tokens if usage else 0,
+        "output": usage.completion_tokens if usage else 0,
+    }
+    return response.choices[0].message.content or "", tokens
+
+
+async def call_llm_json(system: str, prompt: str, model: str = "sonnet") -> tuple[dict, dict]:
+    """Call LLM and parse JSON from response. Returns (parsed_json, token_usage)."""
+    text, tokens = await call_llm(system, prompt, model)
+    text = text.strip()
+    if text.startswith("```"):
+        lines = text.split("\n")
+        lines = [l for l in lines[1:] if l.strip() != "```"]
+        text = "\n".join(lines)
+    return json.loads(text), tokens
