@@ -1,0 +1,7 @@
+name: opus-haiku-mix
+description: Opus judgment + Haiku speed — best of both
+models:
+  wave0: opus
+  wave1: haiku
+  wave2: sonnet
+  wave3: sonnet

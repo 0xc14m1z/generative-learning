@@ -1,0 +1,7 @@
+name: opus-premium
+description: Opus for structure (Wave 0), Sonnet for execution
+models:
+  wave0: opus
+  wave1: sonnet
+  wave2: sonnet
+  wave3: sonnet

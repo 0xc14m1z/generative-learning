@@ -1,0 +1,7 @@
+name: haiku-wave1
+description: Haiku for constrained Wave 1 writing, Sonnet for everything else
+models:
+  wave0: sonnet
+  wave1: haiku
+  wave2: sonnet
+  wave3: sonnet

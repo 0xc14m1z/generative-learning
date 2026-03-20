@@ -1,0 +1,7 @@
+name: all-sonnet
+description: Baseline — Sonnet for all waves
+models:
+  wave0: sonnet
+  wave1: sonnet
+  wave2: sonnet
+  wave3: sonnet
