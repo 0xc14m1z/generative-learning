@@ -92,6 +92,19 @@ python3 [core-path]/prebuild/inject.py \
 
 Present the file to the user. Done.
 
+## Model routing (opus-premium)
+
+Use different models per wave for optimal quality/cost:
+
+| Wave | Model | Why |
+|------|-------|-----|
+| Wave 0 (Structure) | **Opus** | High judgment — topic decomposition, outline, viz selection |
+| Wave 1 (Content) | **Sonnet** | Constrained writing with good technical depth |
+| Wave 2 (Enrichment) | **Sonnet** | Schema-aware data generation |
+| Wave 3 (Merge) | No LLM | Pure file I/O |
+
+This config was validated by eval comparison: better quality than all-Sonnet with ~30% fewer tokens.
+
 ## Operating principles
 
 1. **Fully autonomous.** Never ask for confirmation. Deliver a complete website.

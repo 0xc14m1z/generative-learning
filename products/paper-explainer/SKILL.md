@@ -120,6 +120,17 @@ References combine the paper's own bibliography with external context:
 { "id": 1, "text": "Vaswani et al. — \"Attention Is All You Need\" (2017)", "url": "https://arxiv.org/abs/1706.03762" }
 ```
 
+## Model routing (opus-premium)
+
+Use different models per wave for optimal quality/cost:
+
+| Wave | Model | Why |
+|------|-------|-----|
+| Wave 0 (Paper Analysis) | **Opus** | High judgment — paper decomposition, section mapping, viz selection |
+| Wave 1 (Content) | **Sonnet** | Constrained writing with good technical depth |
+| Wave 2 (Enrichment) | **Sonnet** | Schema-aware data generation |
+| Wave 3 (Merge) | No LLM | Pure file I/O |
+
 ## Operating principles
 
 1. **Fully autonomous.** Never ask for confirmation. Deliver a complete website.

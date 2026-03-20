@@ -187,6 +187,17 @@ npm run validate -- /tmp/repo-explorer-data/structure.json /tmp/repo-explorer-da
 
 Uses `[core-path]/prebuild/` shell and inject script. Output to `~/Desktop/{repo-name}-explorer.html`.
 
+## Model routing (opus-premium)
+
+Use different models per wave for optimal quality/cost:
+
+| Wave | Model | Why |
+|------|-------|-----|
+| Wave 0 (Codebase Analysis) | **Opus** | High judgment — architecture decomposition, module mapping |
+| Wave 1 (Content) | **Sonnet** | Constrained writing with good technical depth |
+| Wave 2 (Enrichment) | **Sonnet** | Schema-aware data generation |
+| Wave 3 (Merge) | No LLM | Pure file I/O |
+
 ## Operating principles
 
 1. **Fully autonomous.** Never ask for confirmation. Deliver a complete explorer.
