@@ -31,17 +31,24 @@ async def init_db():
         """)
         await db.commit()
 
+        # Add product column if it doesn't exist (migration for existing DBs)
+        try:
+            await db.execute("ALTER TABLE topics ADD COLUMN product TEXT NOT NULL DEFAULT 'topic-explorer'")
+            await db.commit()
+        except Exception:
+            pass  # Column already exists
 
-async def create_topic(title: str) -> dict:
+
+async def create_topic(title: str, product: str = "topic-explorer") -> dict:
     topic_id = uuid.uuid4().hex[:12]
     now = datetime.now(timezone.utc).isoformat()
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute(
-            "INSERT INTO topics (id, title, status, created_at) VALUES (?, ?, 'pending', ?)",
-            (topic_id, title, now),
+            "INSERT INTO topics (id, title, product, status, created_at) VALUES (?, ?, ?, 'pending', ?)",
+            (topic_id, title, product, now),
         )
         await db.commit()
-    return {"id": topic_id, "title": title, "status": "pending", "created_at": now}
+    return {"id": topic_id, "title": title, "product": product, "status": "pending", "created_at": now}
 
 
 async def get_topic(topic_id: str) -> dict | None:
