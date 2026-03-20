@@ -40,12 +40,29 @@ async def call_llm(system: str, prompt: str, model: str = "sonnet") -> tuple[str
     return response.choices[0].message.content or "", tokens
 
 
-async def call_llm_json(system: str, prompt: str, model: str = "sonnet") -> tuple[dict, dict]:
-    """Call LLM and parse JSON from response. Returns (parsed_json, token_usage)."""
-    text, tokens = await call_llm(system, prompt, model)
+def _extract_json(text: str) -> dict:
+    """Extract the first valid JSON object from text, ignoring trailing content."""
     text = text.strip()
+    # Strip markdown code fences
     if text.startswith("```"):
         lines = text.split("\n")
         lines = [l for l in lines[1:] if l.strip() != "```"]
-        text = "\n".join(lines)
-    return json.loads(text), tokens
+        text = "\n".join(lines).strip()
+    # Try direct parse first
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    # Find the first { and try incremental parsing
+    start = text.find("{")
+    if start == -1:
+        raise json.JSONDecodeError("No JSON object found", text, 0)
+    decoder = json.JSONDecoder()
+    obj, _ = decoder.raw_decode(text, start)
+    return obj
+
+
+async def call_llm_json(system: str, prompt: str, model: str = "sonnet") -> tuple[dict, dict]:
+    """Call LLM and parse JSON from response. Returns (parsed_json, token_usage)."""
+    text, tokens = await call_llm(system, prompt, model)
+    return _extract_json(text), tokens
