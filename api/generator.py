@@ -28,7 +28,9 @@ CORE_PATH = Path(__file__).parent.parent / "core"
 SHELL_PATH = CORE_PATH / "prebuild" / "shell.html"
 INJECT_SCRIPT = CORE_PATH / "prebuild" / "inject.py"
 OUTPUTS_DIR = Path(__file__).parent / "outputs"
-MODEL = os.getenv("LLM_MODEL", "anthropic/claude-sonnet-4-20250514")
+MODEL_OPUS = os.getenv("LLM_MODEL_OPUS", "anthropic/claude-opus-4")
+MODEL_SONNET = os.getenv("LLM_MODEL_SONNET", "anthropic/claude-sonnet-4")
+MODEL = MODEL_SONNET  # default for backward compat
 
 
 def _get_client() -> AsyncOpenAI:
@@ -137,7 +139,8 @@ The JSON must match this Zod schema (structure.ts):
 
 Output the complete structure.json. ONLY valid JSON, nothing else."""
 
-    structure = await call_llm_json(system, prompt)
+    log.info(f"Wave 0: using {MODEL_OPUS}")
+    structure = await call_llm_json(system, prompt, model=MODEL_OPUS)
 
     structure_path = work_dir / "structure.json"
     structure_path.write_text(json.dumps(structure, ensure_ascii=False, indent=2))
