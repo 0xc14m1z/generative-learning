@@ -84,16 +84,18 @@ Default product is `topic-explorer`. The `--product` flag selects which product'
 6. Skip Wave 4 (inject) — eval only needs `content.json`, not the HTML
 7. Save `structure.json` and `content.json` in the work directory
 
-The generation reuses the core functions from `api/generator.py` (call_llm, call_llm_json, read_schema_files, read_catalog) but overrides the MODEL constant per wave.
-
-**Important:** Wave 0 runs once and its output (`structure.json`) is shared across all configs. This ensures the comparison is fair — all configs work from the same structure, only the content generation differs. Exception: if a config uses a different model for Wave 0, it gets its own structure.
-
-Wait — actually, if we share structure.json, we can't measure the impact of using Opus for Wave 0. Let me reconsider.
-
-**Decision:** Each config generates independently from scratch (including Wave 0). This means:
+Each config generates independently from scratch (including Wave 0). This means:
 - Configs with different Wave 0 models produce different structures
 - The judge evaluates each output holistically, not section-by-section matching
 - This measures the full pipeline impact of each config
+
+### Reuse from api/generator.py
+
+The eval script reuses the pure utility functions from `api/generator.py`: `call_llm_json`, `read_schema_files`, `read_catalog`. However, two issues must be addressed:
+
+1. **Model override:** `call_llm` and `call_llm_json` use a module-level `MODEL` constant. The eval script must NOT monkey-patch this global. Instead, `eval/generate.py` should have its own `call_llm(system, prompt, model)` wrapper that accepts a model parameter and creates the OpenAI client directly. This avoids modifying `api/generator.py` and keeps the API unchanged.
+
+2. **DB/SSE decoupling:** The wave functions in `generator.py` (`wave_0_structure`, `wave_1_content`, etc.) call `emit()` which writes to the database. The eval script should NOT reuse these wave functions. Instead, `eval/generate.py` reimplements the wave orchestration using only the pure utilities (`call_llm_json`, `read_schema_files`, `read_catalog`) and the same prompt templates, but without any DB/event dependencies. This is a clean separation — the eval pipeline is independent from the web API.
 
 ## LLM-as-judge evaluation
 
