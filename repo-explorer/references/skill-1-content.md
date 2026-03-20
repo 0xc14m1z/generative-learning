@@ -3,7 +3,7 @@
 **Input:** `structure.json` + `analysis-notes.md`
 **Output:** `sections/{id}/level-{1,2,3,4}.json` for every section
 
-Same architecture as `interactive-learning-explorer/references/skill-1-content.md` with these adaptations for codebase content:
+Same architecture as `learning-website/references/skill-1-content.md` with these adaptations for codebase content:
 
 ## Level adjustments for code
 
@@ -42,7 +42,7 @@ Same constraints, adapted:
 
 ## Agent prompt template
 
-Same as learning explorer (`interactive-learning-explorer/references/skill-1-content.md`) with:
+Same as learning explorer (`learning-website/references/skill-1-content.md`) — including the WRITING VOICE block — with:
 - Replace "research notes" with "analysis notes"
 - Replace "citations" with "code references"
 - L3 agents should read actual source files to produce accurate content

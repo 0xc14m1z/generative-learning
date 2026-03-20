@@ -3,7 +3,7 @@
 **Input:** `structure.json` + `analysis-notes.md` + all level JSONs per section
 **Output:** `sections/{id}/enrichment.json` for every section
 
-Same architecture as `interactive-learning-explorer/references/skill-2-enrichment.md` with these adaptations:
+Same architecture as `learning-website/references/skill-2-enrichment.md` with these adaptations:
 
 ## Visualization guidance for code
 

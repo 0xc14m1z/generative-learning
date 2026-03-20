@@ -14,7 +14,7 @@ from openai import AsyncOpenAI
 
 from db import add_event, update_topic
 
-SKILL_PATH = Path(__file__).parent.parent / "interactive-learning-explorer"
+SKILL_PATH = Path(__file__).parent.parent / "learning-website"
 SHELL_PATH = SKILL_PATH / "prebuild" / "shell.html"
 INJECT_SCRIPT = SKILL_PATH / "prebuild" / "inject.py"
 OUTPUTS_DIR = Path(__file__).parent / "outputs"
@@ -81,12 +81,12 @@ async def wave_0_structure(topic_id: str, topic: str, work_dir: Path) -> dict:
     catalog = read_catalog()
     schemas = read_schema_files()
 
-    system = """You are a learning experience architect. You create structure.json files for interactive learning explorers.
+    system = """You are a learning experience architect. You create structure.json files for learning websites.
 You must output ONLY valid JSON — no markdown, no explanation, no code fences. Just the raw JSON object."""
 
-    prompt = f"""Create a structure.json for an interactive learning explorer about: "{topic}"
+    prompt = f"""Create a structure.json for a learning website about: "{topic}"
 
-Use 8-12 sections following the learning arc: orientation → prerequisites → core → optimization → ecosystem → synthesis.
+Use 6-16 sections following the learning arc: orientation → prerequisites → core → advanced → ecosystem → synthesis. Not all phases are required — only orientation and synthesis are mandatory. Size the number of sections to the topic complexity.
 
 For each section include an outline with core, keyPoints, L1_angle through L4_angle.
 Choose vizType from: pipeline, flowchart, cycle, routing-diagram, stat-cards, bar-chart, utilization-bars, heatmap, xy-plot, composition-stack, comparison-cards, pros-cons, tabbed-view, quadrant, tiered-hierarchy, timeline, continuum-scale, concept-map, sankey-flow, token-stream, inline-svg.
@@ -134,7 +134,7 @@ async def wave_1_section_levels(topic_id: str, topic: str, structure: dict, sect
         (4, "Researcher", "300-600", outline.get("L4_angle", ""), "<p>, <h3>, <strong>, <em>, <code>, <ul>. Citations required. Named authors/papers with years. Quote callout. Key takeaway box. NO how-to."),
     ]
 
-    system = "You write educational content as HTML for interactive learning explorers. Output ONLY valid JSON — no markdown fences, no explanation."
+    system = "You write educational content as HTML for learning websites. Output ONLY valid JSON — no markdown fences, no explanation."
 
     for level, label, word_range, angle, constraints in level_configs:
         prompt = f"""Write Level {level} ({label}) content for section "{section['title']}" in a learning explorer about "{topic}".

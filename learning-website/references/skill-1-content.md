@@ -18,13 +18,11 @@ done
 
 For each section and each level, spawn ONE agent. All agents run in the same turn.
 
-A 12-section explorer spawns 48 agents simultaneously.
-
 ### Agent prompt template
 
 ```
 You are writing Level {LEVEL} content for Section {INDEX} of {TOTAL}
-in a learning explorer about "{TOPIC}".
+in a learning website about "{TOPIC}".
 
 Section: {id} — {title} — {subtitle}
 Phase: {phase}
@@ -42,6 +40,14 @@ Full section list (for cross-reference context only):
 
 Relevant research notes:
 {research-notes.md filtered to this section}
+
+=== WRITING VOICE ===
+
+- Technically accurate, no marketing fluff
+- Explain jargon before using it — never assume the reader already knows a term
+- Use analogies where helpful (e.g. OS virtual memory for PagedAttention, air traffic controller for scheduling)
+- Honest about trade-offs — state what you gain AND what you lose
+- Concise but substantive — every sentence should teach something
 
 === LEVEL {LEVEL} CONSTRAINTS ===
 
@@ -71,12 +77,14 @@ Save to: /tmp/explorer-data/sections/{id}/level-{LEVEL}.json
 **Allowed HTML:** `<p>`, `<strong>`, `<em>`, `<span class="concept-trigger">`.
 **Allowed content patterns:** 1 callout (insight type only).
 **Tone:** Conversational, visual, engaging. Make the reader curious to learn more.
+**Note on citations:** Level 1 is intentionally citation-free. Its purpose is to build intuition through analogy, not to make verifiable claims. Factual precision comes at Level 2+.
 
 #### Level 2 — Practitioner (200-400 words)
 
 **You are writing for:** Someone who needs to use/apply this knowledge.
 **You MUST include:** Step-by-step mechanism, trade-offs ("gain X but lose Y"), practical implications. At least 1 citation.
-**You MUST NOT include:** Implementation specifics, benchmarks, code, research papers, analogies from Level 1.
+**You MUST NOT include:** Implementation specifics, benchmarks, code, research papers.
+**Analogies:** Do NOT repeat the analogy from Level 1. You may use a *different, brief* analogy if it clarifies a mechanism, but prefer direct explanation. L2 is about practical understanding, not metaphor.
 **Allowed HTML:** `<p>`, `<h3>`, `<strong>`, `<em>`, `<ul>`, `<ol>`, `<li>`, `<span class="concept-trigger">`, `<a class="citation">`.
 **Allowed content patterns:** Callout (tip or warning), do-dont blocks.
 **Tone:** Clear, practical, action-oriented.

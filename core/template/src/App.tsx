@@ -90,7 +90,7 @@ export default function App() {
     return () => clearInterval(t)
   }, [autoPlay, sections.length])
 
-  useEffect(() => { document.title = `${structureData.topic} — Interactive Learning Explorer` }, [structureData.topic])
+  useEffect(() => { document.title = structureData.topic }, [structureData.topic])
 
   return (
     <div className="flex min-h-screen">

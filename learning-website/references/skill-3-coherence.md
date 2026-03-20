@@ -39,14 +39,28 @@ Order sections by `index` from structure.json.
 
 ### 3. Insert concept triggers
 
-The level agents may have already included `<span class="concept-trigger">` tags. But the coherence agent MUST verify and add missing ones:
+The level agents may have already included `<span class="concept-trigger">` tags. The coherence agent MUST verify and add missing ones.
 
 For each section, for each concept defined in its `enrichment.json`:
 1. Find occurrences of the concept term in all 4 levels' HTML
 2. Ensure at least the FIRST occurrence is wrapped:
    `<span class="concept-trigger" data-concept="{concept-id}">{term}</span>`
-3. Do NOT wrap terms inside headings, table headers, or other concept triggers
-4. Do NOT wrap every occurrence — only the first in each level
+3. Do NOT wrap every occurrence — only the first in each level
+
+**Edge cases — do NOT insert concept triggers inside:**
+- `<code>` or `<code>...</code>` blocks — the term is being used as literal code
+- `<a>` tags (including `<a class="citation">`) — nested links break HTML
+- `<h3>` or `<h4>` headings — clutters the heading with interactive elements
+- Other `<span class="concept-trigger">` — never nest triggers
+- HTML tag attributes — never match inside `class="..."` or `data-*="..."`
+
+**Safe insertion:** Only insert triggers in text content within `<p>`, `<li>`, `<td>`, or `<div>` elements. Use a simple state machine or regex that skips HTML tags:
+
+```
+Match: (?<![<\w])(?<!data-concept=")TERM(?![^<]*>)
+```
+
+When in doubt, skip the insertion rather than risk broken HTML.
 
 ### 4. Verify cross-references
 
@@ -55,8 +69,6 @@ For each section, for each concept defined in its `enrichment.json`:
 - Every `bridgeTo` in structure.json is narratively consistent with the next section's Level 1
 
 ### 5. Quality gates
-
-> **Note:** Validate all data against Zod schemas: `template/src/schemas/structure.ts` for structure, `template/src/schemas/content.ts` for content.
 
 Check each section against these rules:
 
@@ -77,21 +89,36 @@ Verify that the same concept is referred to consistently across levels:
 - If Level 1 calls it "wild yeast" and Level 3 calls it "Saccharomyces cerevisiae", that's fine (different audiences)
 - If Level 2 calls it "lactic acid" and Level 3 calls it "lactate" inconsistently, normalize
 
-### 7. Save
+### 7. Validate against Zod schemas
 
-Run validation against Zod schemas before writing the final file.
+Run the validation script before writing the final file:
+
+```bash
+cd [this-skill-path]/template
+npm run validate -- /tmp/explorer-data/structure.json /tmp/explorer-data/content.json
+```
+
+This validates both structure.json and content.json against the Zod schemas in `template/src/schemas/`. Fix any validation errors before proceeding.
+
+If npm/node is not available in the current environment, perform manual validation:
+- Check all required fields are present per `structure.ts` and `content.ts`
+- Verify viz data shape matches the expected type from `viz-types.ts`
+- Verify section IDs in content.json match structure.json
+- Verify reference IDs are sequential integers starting from 1
+
+### 8. Save
 
 Write the final merged and verified file to `/tmp/explorer-data/content.json`.
 
 Report a summary:
 ```
 ✓ content.json written
-  Sections: 12
-  Total words: ~15,000
-  Citations: 48
-  Concepts: 36
-  Deep dives: 18
-  Warnings: 2 (list them)
+  Sections: N
+  Total words: ~X
+  Citations: Y
+  Concepts: Z
+  Deep dives: W
+  Warnings: N (list them)
   Errors: 0
 ```
 

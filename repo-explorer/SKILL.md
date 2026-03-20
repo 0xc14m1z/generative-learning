@@ -9,7 +9,7 @@ Generate an interactive, multi-depth learning experience that explains how a Git
 
 ## How it works
 
-This skill **reuses the Interactive Learning Explorer UI** (same shell, same 21 viz types, same content patterns) but replaces web research with **codebase analysis**. Instead of searching the web, it reads the actual code to produce a learning experience tailored to a specific repository.
+This skill **reuses the Learning Website UI** (same shell, same 21 viz types, same content patterns) but replaces web research with **codebase analysis**. Instead of searching the web, it reads the actual code to produce a learning experience tailored to a specific repository.
 
 ```
 Wave 0: Analysis     →  structure.json + analysis-notes.md
@@ -21,12 +21,12 @@ Wave 4: Inject       →  output.html
 
 ## Shared infrastructure
 
-This skill uses the pre-built shell from `interactive-learning-explorer`:
-- **Shell:** `interactive-learning-explorer/prebuild/shell.html`
-- **Inject script:** `interactive-learning-explorer/prebuild/inject.py`
-- **Zod schemas:** `interactive-learning-explorer/template/src/schemas/`
-- **Content catalog:** `interactive-learning-explorer/references/content-rendering-catalog.md`
-- **Validate script:** `cd interactive-learning-explorer/template && npm run validate`
+This skill uses the pre-built shell from `learning-website`:
+- **Shell:** `learning-website/prebuild/shell.html`
+- **Inject script:** `learning-website/prebuild/inject.py`
+- **Zod schemas:** `learning-website/template/src/schemas/`
+- **Content catalog:** `learning-website/references/content-rendering-catalog.md`
+- **Validate script:** `cd learning-website/template && npm run validate`
 
 ## Reference files
 
@@ -36,7 +36,7 @@ This skill uses the pre-built shell from `interactive-learning-explorer`:
 - `references/skill-3-coherence.md` — Wave 3: Merge, verify, produce content.json
 - `references/skill-4-inject.md` — Wave 4: Inject into shell
 
-Waves 1-4 follow the same architecture as `interactive-learning-explorer`. The key difference is **Wave 0**: instead of web research, it performs codebase analysis.
+Waves 1-4 follow the same architecture as `learning-website`. The key difference is **Wave 0**: instead of web research, it performs codebase analysis.
 
 ## Workflow (fully autonomous)
 
@@ -61,7 +61,7 @@ Follow `references/skill-0-analysis.md`:
 ### Wave 1: Level Content (PARALLEL — N×4 agents)
 
 Follow `references/skill-1-content.md`:
-- Same constraints as interactive-learning-explorer
+- Same constraints as `learning-website`
 - Content references actual code paths, functions, and patterns
 - Citations reference specific files and line numbers instead of URLs
 
@@ -74,17 +74,17 @@ Follow `references/skill-2-enrichment.md`:
 
 ### Wave 3: Coherence & Merge
 
-Follow `references/skill-3-coherence.md` (same as learning explorer)
+Follow `references/skill-3-coherence.md` (same as `learning-website`)
 
 ### Wave 4: Inject & Deliver
 
 Follow `references/skill-4-inject.md`:
 ```bash
-python3 [interactive-learning-explorer-path]/prebuild/inject.py \
-  [interactive-learning-explorer-path]/prebuild/shell.html \
+python3 [learning-website-path]/prebuild/inject.py \
+  [learning-website-path]/prebuild/shell.html \
   /tmp/repo-explorer-data/structure.json \
   /tmp/repo-explorer-data/content.json \
-  /mnt/user-data/outputs/[repo-name]-explorer.html
+  ~/Desktop/[repo-name]-explorer.html
 ```
 
 ## Operating principles
@@ -110,8 +110,8 @@ The learning arc for a repo explorer:
 | core | Data models & key abstractions | comparison-cards (model comparison) |
 | core | Main flow (request/pipeline/workflow) | flowchart (flow with decision points) |
 | core | Core module deep dive (most important) | bar-chart, heatmap, or stat-cards |
-| scale | Patterns & conventions | pros-cons (pattern trade-offs) |
-| optimization | Performance & optimization | xy-plot or utilization-bars |
+| advanced | Patterns & conventions | pros-cons (pattern trade-offs) |
+| advanced | Performance & optimization | xy-plot or utilization-bars |
 | ecosystem | Testing & CI/CD | pipeline (test pipeline) |
 | ecosystem | Configuration & deployment | flowchart (deploy flow) |
 | synthesis | Contributing & next steps | timeline (roadmap) or pros-cons |

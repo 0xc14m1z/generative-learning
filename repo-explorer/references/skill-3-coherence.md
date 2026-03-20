@@ -1,6 +1,6 @@
 # Wave 3: Coherence & Merge
 
-Same as `interactive-learning-explorer/references/skill-3-coherence.md`.
+Same as `learning-website/references/skill-3-coherence.md`.
 
 **Input:** All files from Waves 0-2 in `/tmp/repo-explorer-data/`
 **Output:** `/tmp/repo-explorer-data/content.json`
@@ -16,7 +16,7 @@ Beyond the standard coherence checks:
 
 ## Merge process
 
-Same as learning explorer:
+Same as `learning-website`:
 ```bash
 # Read all section files, merge into content.json ordered by structure.json index
 python3 -c "
@@ -37,6 +37,6 @@ print(f'Merged {len(sections)} sections')
 ## Validate
 
 ```bash
-cd [interactive-learning-explorer-path]/template
-npx tsx scripts/validate.ts /tmp/repo-explorer-data/structure.json /tmp/repo-explorer-data/content.json
+cd [learning-website-path]/template
+npm run validate -- /tmp/repo-explorer-data/structure.json /tmp/repo-explorer-data/content.json
 ```

@@ -1,7 +1,7 @@
 [project]
-name = "learning-explorer-api"
+name = "learning-website-api"
 version = "0.1.0"
-description = "Web app for generating interactive learning explorers"
+description = "Web app for generating learning websites"
 requires-python = ">=3.12"
 dependencies = [
     "aiosqlite>=0.22.1",

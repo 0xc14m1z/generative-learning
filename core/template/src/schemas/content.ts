@@ -32,7 +32,7 @@ export const SectionContent = z.object({
   }).describe('Content at four depth levels. Each level targets a different audience and MUST NOT overlap with other levels.'),
   visualization: VizData.describe('The section visualization. Type must match vizType from structure.json.'),
   concepts: z.record(z.string(), ConceptDef).describe('Expandable concept definitions. Keys must match the concept IDs listed in structure.json for this section.'),
-  deepDives: z.array(DeepDiveDef).min(0).max(3).describe('1-2 collapsible deep-dive panels'),
+  deepDives: z.array(DeepDiveDef).min(0).max(3).describe('0-3 collapsible deep-dive panels. Include as many as the section warrants.'),
   references: z.array(ReferenceDef).describe('All sources cited in the level content. IDs must be sequential starting from 1.'),
 })
 

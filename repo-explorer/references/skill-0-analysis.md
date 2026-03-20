@@ -55,9 +55,8 @@ Follow the repo learning arc:
 | orientation | What is this? Who is it for? | Always (1 section) |
 | prerequisites | Tech stack, dependencies, project structure | Always (1-2 sections) |
 | core | Architecture, data models, main flows, key modules | Always (2-5 sections) |
-| scale | Patterns, conventions, error handling | If repo is complex (1-2 sections) |
-| optimization | Performance, caching, optimization patterns | If relevant (0-1 sections) |
-| ecosystem | Testing, CI/CD, deployment, configuration | If present (1-2 sections) |
+| advanced | Patterns, conventions, error handling, performance | If repo is complex (0-4 sections) |
+| ecosystem | Testing, CI/CD, deployment, configuration | If present (0-2 sections) |
 | synthesis | Contributing guide, roadmap, how to start | Always (1 section) |
 
 **Sizing guide:**
@@ -99,7 +98,7 @@ Recommended mappings for code:
 
 ### 8. Write structure.json
 
-Same format as interactive-learning-explorer. Save to `/tmp/repo-explorer-data/structure.json`.
+Same format as learning-website. Save to `/tmp/repo-explorer-data/structure.json`.
 
 The `outline` field is critical — it's what guides all Wave 1 agents. Every L3_angle and L4_angle should reference specific files and functions.
 

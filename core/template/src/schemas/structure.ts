@@ -17,7 +17,7 @@ export const SectionMeta = z.object({
   index: z.number().int().min(0).describe('Section position (0-based)'),
   title: z.string().min(1).max(60).describe('Section title'),
   subtitle: z.string().min(1).max(120).describe('Section subtitle'),
-  phase: z.enum(['orientation', 'prerequisites', 'core', 'scale', 'optimization', 'ecosystem', 'synthesis']).describe('Learning arc phase'),
+  phase: z.enum(['orientation', 'prerequisites', 'core', 'advanced', 'ecosystem', 'synthesis']).describe('Learning arc phase'),
   color: hexColor.describe('Section accent color. Use the palette sequentially: #3b82f6 #8b5cf6 #a855f7 #6366f1 #06b6d4 #14b8a6 #22c55e #84cc16 #eab308 #f97316 #ef4444 #ec4899 #d946ef #64748b'),
   icon: z.string().max(2).describe('Single unicode character or emoji'),
   concepts: z.array(z.string()).describe('IDs of expandable concepts defined in this section. Must match keys in content.json concepts.'),
@@ -27,7 +27,7 @@ export const SectionMeta = z.object({
 })
 
 export const Phase = z.object({
-  id: z.enum(['orientation', 'prerequisites', 'core', 'scale', 'optimization', 'ecosystem', 'synthesis']),
+  id: z.enum(['orientation', 'prerequisites', 'core', 'advanced', 'ecosystem', 'synthesis']),
   label: z.string().describe('Display label for the phase, e.g. "Core Mechanism"'),
 })
 
@@ -35,7 +35,7 @@ export const StructureSchema = z.object({
   topic: z.string().min(1).describe('The topic of the learning experience, e.g. "How the Web Works"'),
   coreQuestion: z.string().describe('The central question this explorer answers'),
   coreTension: z.string().describe('The fundamental tension or trade-off in the topic'),
-  sections: z.array(SectionMeta).min(4).max(20).describe('Sections following the learning arc: orientation → prerequisites → core → scale → optimization → ecosystem → synthesis'),
+  sections: z.array(SectionMeta).min(4).max(20).describe('Sections following the learning arc: orientation → prerequisites → core → advanced → ecosystem → synthesis. Not all phases are required — only orientation and synthesis are mandatory.'),
   phases: z.array(Phase).min(2).describe('Phase definitions. Must include at least orientation and synthesis.'),
 })
 

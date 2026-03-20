@@ -12,7 +12,7 @@ I'm building a system that generates interactive learning experiences on ANY top
 1. A per-section VISUALIZATION (one per section, parametric, data-driven)
 2. CONTENT PATTERNS inside the text (HTML elements styled via CSS)
 
-Here are the 16 visualization types we currently support:
+Here are the 21 visualization types we currently support:
 
 FLOW & PROCESS:
 - pipeline: linear sequential stages (A → B → C)
@@ -21,10 +21,12 @@ FLOW & PROCESS:
 - routing-diagram: fan-in → router → fan-out
 
 DATA & METRICS:
-- stat-cards: 2-4 key numbers with units
+- stat-cards: 2-6 key numbers with units
 - bar-chart: categorical bar chart with values
 - utilization-bars: horizontal progress bars (0-100%)
 - heatmap: 2D grid with intensity values (rows × columns)
+- xy-plot: continuous line/scatter/area chart with series and annotations
+- composition-stack: horizontal stacked bar for part-of-whole breakdowns
 
 COMPARISON & ANALYSIS:
 - comparison-cards: side-by-side feature/spec comparison
@@ -35,6 +37,11 @@ COMPARISON & ANALYSIS:
 STRUCTURE & HIERARCHY:
 - tiered-hierarchy: stacked layers (wide → narrow)
 - timeline: events on a vertical timeline with dates
+- continuum-scale: ordered spectrum with colored bands and point markers
+
+RELATIONSHIPS:
+- concept-map: node-edge graph for concept relationships (via React Flow)
+- sankey-flow: weighted 2-column flow diagram
 
 SPECIALIZED:
 - token-stream: sequence of labeled tokens
@@ -68,7 +75,7 @@ TASK: Think about topics across ALL domains — not just tech. Consider:
 - Geography, travel, cultural studies
 - Mathematics, statistics
 
-For each domain, think: "What kind of visual or content element would I NEED to teach this effectively that ISN'T covered by the 16 viz types and content patterns above?"
+For each domain, think: "What kind of visual or content element would I NEED to teach this effectively that ISN'T covered by the 21 viz types and content patterns above?"
 
 Give me:
 1. A list of MISSING visualization types, each with:
