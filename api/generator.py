@@ -380,14 +380,14 @@ async def wave_4_inject(topic_id: str, structure: dict, work_dir: Path) -> str:
 
 # ─── Main Pipeline ───────────────────────────────────────────────
 
-async def generate_explorer(topic_id: str, topic: str):
+async def generate_explorer(topic_id: str, topic: str, product: str = "topic-explorer"):
     """Run the full generation pipeline for a topic."""
-    log.info(f"Pipeline started: '{topic}'")
+    log.info(f"Pipeline started: '{topic}' (product={product})")
     work_dir = Path(tempfile.mkdtemp(prefix="explorer-"))
 
     try:
         await update_topic(topic_id, status="generating")
-        await emit(topic_id, None, "generation_started", {"topic": topic})
+        await emit(topic_id, None, "generation_started", {"topic": topic, "product": product})
 
         # Wave 0
         structure = await wave_0_structure(topic_id, topic, work_dir)

@@ -33,15 +33,20 @@ app.mount("/outputs", StaticFiles(directory=str(OUTPUTS_DIR)), name="outputs")
 # ─── API Models ──────────────────────────────────────────────────
 
 class TopicCreate(BaseModel):
-    title: str = Field(..., min_length=2, max_length=200, description="Topic to generate")
+    title: str = Field(..., min_length=2, max_length=200, description="Topic or URL to generate")
+    product: str = Field(default="topic-explorer", description="Product type")
 
 
 # ─── API Routes ──────────────────────────────────────────────────
 
+VALID_PRODUCTS = {"topic-explorer", "paper-explainer", "repo-explorer", "company-explorer"}
+
 @app.post("/api/topics")
 async def create_new_topic(body: TopicCreate, background_tasks: BackgroundTasks):
-    topic = await create_topic(body.title)
-    background_tasks.add_task(generate_explorer, topic["id"], body.title)
+    if body.product not in VALID_PRODUCTS:
+        raise HTTPException(400, f"Invalid product. Must be one of: {', '.join(sorted(VALID_PRODUCTS))}")
+    topic = await create_topic(body.title, body.product)
+    background_tasks.add_task(generate_explorer, topic["id"], body.title, body.product)
     return topic
 
 
