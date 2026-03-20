@@ -16,7 +16,7 @@ export default function App() {
   const [expandedPanels, setExpandedPanels] = useState<Set<string>>(new Set())
   const [expandedConcepts, setExpandedConcepts] = useState<Set<string>>(new Set())
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [dark, setDark] = useState(true)
+  const [dark, setDark] = useState(false)
 
   // In dev mode, load external data from public/dev-data/ if available
   useEffect(() => {
