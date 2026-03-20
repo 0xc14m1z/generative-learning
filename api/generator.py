@@ -10,9 +10,19 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+import logging
+import time
+
 from openai import AsyncOpenAI
 
 from db import add_event, update_topic
+
+log = logging.getLogger("generator")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(name)s] %(levelname)s %(message)s",
+    datefmt="%H:%M:%S",
+)
 
 CORE_PATH = Path(__file__).parent.parent / "core"
 SHELL_PATH = CORE_PATH / "prebuild" / "shell.html"
@@ -32,16 +42,22 @@ async def emit(topic_id: str, wave: int | None, event_type: str, data: dict | No
     await add_event(topic_id, wave, event_type, data)
 
 
-async def call_llm(system: str, prompt: str) -> str:
+async def call_llm(system: str, prompt: str, model: str = MODEL) -> str:
     client = _get_client()
+    t0 = time.monotonic()
     response = await client.chat.completions.create(
-        model=MODEL,
+        model=model,
         max_tokens=8192,
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": prompt},
         ],
     )
+    elapsed = time.monotonic() - t0
+    usage = response.usage
+    tokens_in = usage.prompt_tokens if usage else 0
+    tokens_out = usage.completion_tokens if usage else 0
+    log.info(f"LLM call: model={model} tokens={tokens_in}/{tokens_out} time={elapsed:.1f}s")
     return response.choices[0].message.content or ""
 
 
@@ -76,6 +92,7 @@ def read_catalog() -> str:
 # ─── Wave 0: Structure ─────────────────────────────────────────
 
 async def wave_0_structure(topic_id: str, topic: str, work_dir: Path) -> dict:
+    log.info(f"Wave 0: starting structure for '{topic}'")
     await emit(topic_id, 0, "wave_started", {"wave": 0, "description": "Research & Structure"})
 
     catalog = read_catalog()
@@ -105,6 +122,7 @@ Output the complete structure.json. ONLY valid JSON, nothing else."""
     structure_path.write_text(json.dumps(structure, ensure_ascii=False, indent=2))
 
     section_count = len(structure.get("sections", []))
+    log.info(f"Wave 0: {section_count} sections")
     await emit(topic_id, 0, "structure_complete", {
         "sectionCount": section_count,
         "sections": [{"id": s["id"], "title": s["title"]} for s in structure["sections"]],
@@ -169,6 +187,7 @@ async def wave_1_content(topic_id: str, topic: str, structure: dict, work_dir: P
 
     # Run all sections in parallel (batched to avoid rate limits)
     sections = structure["sections"]
+    log.info(f"Wave 1: generating {len(sections)} sections × 4 levels")
     batch_size = 4
     for i in range(0, len(sections), batch_size):
         batch = sections[i:i + batch_size]
@@ -177,6 +196,7 @@ async def wave_1_content(topic_id: str, topic: str, structure: dict, work_dir: P
             for sec in batch
         ])
 
+    log.info(f"Wave 1: complete")
     await emit(topic_id, 1, "wave_complete", {"sectionsCompleted": len(sections)})
 
 
@@ -235,6 +255,7 @@ async def wave_2_enrichment(topic_id: str, topic: str, structure: dict, work_dir
     await emit(topic_id, 2, "wave_started", {"wave": 2, "description": "Enrichment"})
 
     sections = structure["sections"]
+    log.info(f"Wave 2: enriching {len(sections)} sections")
     batch_size = 4
     for i in range(0, len(sections), batch_size):
         batch = sections[i:i + batch_size]
@@ -243,6 +264,7 @@ async def wave_2_enrichment(topic_id: str, topic: str, structure: dict, work_dir
             for sec in batch
         ])
 
+    log.info(f"Wave 2: complete")
     await emit(topic_id, 2, "wave_complete", {"sectionsCompleted": len(sections)})
 
 
@@ -292,6 +314,7 @@ async def wave_3_merge(topic_id: str, structure: dict, work_dir: Path):
     total_concepts = sum(len(s["concepts"]) for s in sections)
     total_refs = sum(len(s["references"]) for s in sections)
 
+    log.info(f"Wave 3: merging {len(sections)} sections, {total_words} words")
     await emit(topic_id, 3, "coherence_complete", {
         "totalSections": len(sections),
         "totalWords": total_words,
@@ -322,6 +345,7 @@ async def wave_4_inject(topic_id: str, structure: dict, work_dir: Path) -> str:
         raise RuntimeError(f"Injection failed: {result.stderr}")
 
     file_size = output_path.stat().st_size
+    log.info(f"Wave 4: injected {file_size} bytes → {output_filename}")
     await emit(topic_id, 4, "inject_complete", {
         "outputPath": output_filename,
         "fileSize": file_size,
@@ -334,6 +358,7 @@ async def wave_4_inject(topic_id: str, structure: dict, work_dir: Path) -> str:
 
 async def generate_explorer(topic_id: str, topic: str):
     """Run the full generation pipeline for a topic."""
+    log.info(f"Pipeline started: '{topic}'")
     work_dir = Path(tempfile.mkdtemp(prefix="explorer-"))
 
     try:
@@ -361,9 +386,11 @@ async def generate_explorer(topic_id: str, topic: str):
             output_path=output_filename,
             completed_at=__import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
         )
+        log.info(f"Pipeline complete: {output_filename}")
         await emit(topic_id, None, "generation_complete", {"outputPath": output_filename})
 
     except Exception as e:
+        log.exception(f"Pipeline failed: {e}")
         await update_topic(topic_id, status="failed", error=str(e))
         await emit(topic_id, None, "error", {"message": str(e)})
         raise
