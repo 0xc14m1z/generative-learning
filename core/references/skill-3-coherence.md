@@ -7,7 +7,7 @@
 
 ### 1. Read all section files
 
-For each section directory in `/tmp/explorer-data/sections/{id}/`:
+For each section directory in `{work-dir}/sections/{id}/`:
 - `level-1.json`, `level-2.json`, `level-3.json`, `level-4.json`
 - `enrichment.json`
 
@@ -94,8 +94,8 @@ Verify that the same concept is referred to consistently across levels:
 Run the validation script before writing the final file:
 
 ```bash
-cd [this-skill-path]/template
-npm run validate -- /tmp/explorer-data/structure.json /tmp/explorer-data/content.json
+cd [core-path]/template
+npm run validate -- {work-dir}/structure.json {work-dir}/content.json
 ```
 
 This validates both structure.json and content.json against the Zod schemas in `template/src/schemas/`. Fix any validation errors before proceeding.
@@ -108,7 +108,7 @@ If npm/node is not available in the current environment, perform manual validati
 
 ### 8. Save
 
-Write the final merged and verified file to `/tmp/explorer-data/content.json`.
+Write the final merged and verified file to `{work-dir}/content.json`.
 
 Report a summary:
 ```

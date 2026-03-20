@@ -10,10 +10,10 @@ This wave does NOT compile anything. The HTML shell is pre-built and shipped wit
 ### 1. Run the injection script
 
 ```bash
-python3 [this-skill-path]/prebuild/inject.py \
-  [this-skill-path]/prebuild/shell.html \
-  /tmp/explorer-data/structure.json \
-  /tmp/explorer-data/content.json \
+python3 [core-path]/prebuild/inject.py \
+  [core-path]/prebuild/shell.html \
+  {work-dir}/structure.json \
+  {work-dir}/content.json \
   ~/Desktop/[topic-slug]-explorer.html
 ```
 
@@ -44,10 +44,10 @@ Present the file to the user. Done.
 The shell only needs rebuilding if you change the UI — components, styling, layout, new visualization types. To rebuild:
 
 ```bash
-cd [this-skill-path]/template
+cd [core-path]/template
 npm install
 npx vite build
-cp dist/index.html [this-skill-path]/prebuild/shell.html
+cp dist/index.html [core-path]/prebuild/shell.html
 ```
 
 This is a skill maintenance task, NOT a content generation task. Content generation never touches npm or Vite.

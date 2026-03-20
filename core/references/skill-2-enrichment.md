@@ -1,6 +1,6 @@
 # Wave 2: Enrichment (Parallel)
 
-**Input:** `structure.json` + `research-notes.md` + all level JSONs per section
+**Input:** `structure.json` + `{source-notes}` + all level JSONs per section
 **Output:** `sections/{id}/enrichment.json` for every section
 
 ## Process
@@ -11,12 +11,12 @@ Each agent receives:
 - The full `structure.json` (for cross-section context)
 - The section's metadata (vizType, concepts list, color)
 - All 4 level JSONs for its section (to read, NOT rewrite)
-- Relevant research notes
-- **The viz data schema for this section's vizType** — extracted from `template/src/schemas/viz-types.ts` and passed inline in the prompt. Agents cannot read files from disk; the schema MUST be included in the prompt text.
+- Relevant source notes
+- **The viz data schema for this section's vizType** — extracted from `[core-path]/template/src/schemas/viz-types.ts` and passed inline in the prompt. Agents cannot read files from disk; the schema MUST be included in the prompt text.
 
 ### Preparing the viz schema for the prompt
 
-Before spawning agents, read `template/src/schemas/viz-types.ts` and extract the Zod schema for each section's `vizType`. Include ONLY the relevant schema in each agent's prompt — not all 21.
+Before spawning agents, read `[core-path]/template/src/schemas/viz-types.ts` and extract the Zod schema for each section's `vizType`. Include ONLY the relevant schema in each agent's prompt — not all 21.
 
 Example: if `vizType` is `"cycle"`, include:
 ```
@@ -36,7 +36,7 @@ The enrichment agent must compile the reference list by scanning all 4 level HTM
 
 1. Parse all `<a class="citation" href="#ref-{sectionId}-{N}">[N]</a>` from level 1-4 HTML
 2. Collect every unique citation number `N` used
-3. For each `N`, create a reference entry with the matching source from research notes
+3. For each `N`, create a reference entry with the matching source from source notes
 4. Ensure sequential numbering (1, 2, 3...) — if levels skip numbers, renumber and note the mapping
 
 If a level references `[3]` but there's no `[1]` or `[2]`, that's a Wave 1 error. The enrichment agent should still produce valid sequential references and flag the gap.
@@ -61,8 +61,8 @@ Level 2: {level-2.json html}
 Level 3: {level-3.json html}
 Level 4: {level-4.json html}
 
-RESEARCH NOTES:
-{filtered research notes}
+SOURCE NOTES:
+{filtered source notes}
 
 === TASKS ===
 
@@ -106,14 +106,14 @@ Output ONLY valid JSON:
   "references": [ { "id": 1, "text": "...", "url": "..." } ]
 }
 
-Save to: /tmp/explorer-data/sections/{id}/enrichment.json
+Save to: {work-dir}/sections/{id}/enrichment.json
 ```
 
 ### 2. Verify outputs
 
 ```bash
-for id in $(python3 -c "import json; [print(s['id']) for s in json.load(open('/tmp/explorer-data/structure.json'))['sections']]"); do
-  FILE="/tmp/explorer-data/sections/$id/enrichment.json"
+for id in $(python3 -c "import json; [print(s['id']) for s in json.load(open('{work-dir}/structure.json'))['sections']]"); do
+  FILE="{work-dir}/sections/$id/enrichment.json"
   python3 -c "import json; d=json.load(open('$FILE')); print(f'✓ $id — viz:{d[\"visualization\"][\"type\"]}, concepts:{len(d[\"concepts\"])}, refs:{len(d[\"references\"])}')" 2>/dev/null || echo "✗ MISSING: $id/enrichment"
 done
 ```

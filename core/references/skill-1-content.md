@@ -1,6 +1,6 @@
 # Wave 1: Level Content (Parallel)
 
-**Input:** `structure.json` + `research-notes.md`
+**Input:** `structure.json` + `{source-notes}`
 **Output:** `sections/{id}/level-{1,2,3,4}.json` for every section
 
 ## Process
@@ -9,8 +9,8 @@
 
 ```bash
 # For each section in structure.json
-for id in $(python3 -c "import json; [print(s['id']) for s in json.load(open('/tmp/explorer-data/structure.json'))['sections']]"); do
-  mkdir -p /tmp/explorer-data/sections/$id
+for id in $(python3 -c "import json; [print(s['id']) for s in json.load(open('{work-dir}/structure.json'))['sections']]"); do
+  mkdir -p {work-dir}/sections/$id
 done
 ```
 
@@ -38,8 +38,8 @@ Your specific angle for this level:
 Full section list (for cross-reference context only):
 {all sections: index, title, phase — one per line}
 
-Relevant research notes:
-{research-notes.md filtered to this section}
+Relevant source notes:
+{{source-notes} filtered to this section}
 
 === WRITING VOICE ===
 
@@ -64,7 +64,7 @@ Output ONLY valid JSON:
   "html": "<p>Your content here...</p>"
 }
 
-Save to: /tmp/explorer-data/sections/{id}/level-{LEVEL}.json
+Save to: {work-dir}/sections/{id}/level-{LEVEL}.json
 ```
 
 ### Level-specific constraints
@@ -114,9 +114,9 @@ For the complete list of allowed HTML content patterns (callouts, practice-block
 After all agents complete, verify each file exists and is valid JSON:
 
 ```bash
-for id in $(python3 -c "import json; [print(s['id']) for s in json.load(open('/tmp/explorer-data/structure.json'))['sections']]"); do
+for id in $(python3 -c "import json; [print(s['id']) for s in json.load(open('{work-dir}/structure.json'))['sections']]"); do
   for level in 1 2 3 4; do
-    FILE="/tmp/explorer-data/sections/$id/level-$level.json"
+    FILE="{work-dir}/sections/$id/level-$level.json"
     python3 -c "import json; json.load(open('$FILE')); print('✓ $id/level-$level')" 2>/dev/null || echo "✗ MISSING: $id/level-$level"
   done
 done
