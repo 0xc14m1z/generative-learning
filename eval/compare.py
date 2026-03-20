@@ -7,10 +7,10 @@ import tempfile
 from datetime import date
 from pathlib import Path
 
-from eval.config import load_config, ConfigError
-from eval.generate import generate
-from eval.judge import judge
-from eval.report import generate_report
+from config import load_config, ConfigError
+from generate import generate
+from judge import judge
+from report import generate_report
 
 CONFIGS_DIR = Path(__file__).parent / "configs"
 RESULTS_DIR = Path(__file__).parent / "results"

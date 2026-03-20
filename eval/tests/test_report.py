@@ -1,4 +1,4 @@
-from eval.report import compute_summary, format_winner
+from report import compute_summary, format_winner
 
 
 def test_compute_summary():

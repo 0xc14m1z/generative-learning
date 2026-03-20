@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-from eval.config import load_config, ConfigError
+from config import load_config, ConfigError
 
 CONFIGS_DIR = Path(__file__).parent.parent / "configs"
 

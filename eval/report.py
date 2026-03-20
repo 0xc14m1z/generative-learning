@@ -1,7 +1,7 @@
 """Generate markdown comparison reports from judge results."""
 from datetime import date
 
-from eval.judge import CRITERIA
+from judge import CRITERIA
 
 
 def compute_summary(section_results: list[dict]) -> dict:

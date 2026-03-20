@@ -9,7 +9,7 @@ import asyncio
 import json
 from pathlib import Path
 
-from eval.llm import call_llm_json
+from llm import call_llm_json
 
 CORE_PATH = Path(__file__).parent.parent / "core"
 
