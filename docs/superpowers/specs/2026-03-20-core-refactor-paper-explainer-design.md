@@ -257,7 +257,7 @@ Use the core's 21 viz types. Paper-specific guidance for matching:
 | Data flow | SankeyFlow or RoutingDiagram |
 | Mathematical relationships | InlineSvg |
 
-**Output:** `structure.json` (same schema as core) + `research-notes.md`
+**Output:** `structure.json` (same schema as core) + `source-notes.md`
 
 ### Waves 1-3: Core pipeline
 

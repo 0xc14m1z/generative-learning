@@ -111,7 +111,7 @@ The level constraints (L1-L4) stay exactly as-is — they are already product-ne
 - [ ] **Step 2: Update skill-2-enrichment.md**
 
 Changes:
-- Line 3: `research-notes.md` → `source-notes.md`
+- Line 3: `research-notes.md` → `{source-notes}`
 - Line 15: `template/src/schemas/viz-types.ts` → `Read from [core-path]/template/src/schemas/viz-types.ts`
 - Line 64: `/tmp/explorer-data/` → `{work-dir}/`
 - Line 109: Same path
