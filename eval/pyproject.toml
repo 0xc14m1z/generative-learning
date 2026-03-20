@@ -5,6 +5,7 @@ description = "Model comparison eval tool for learning website generation"
 requires-python = ">=3.12"
 dependencies = [
     "openai>=2.28.0",
+    "python-dotenv>=1.2.0",
     "pyyaml>=6.0",
 ]
 

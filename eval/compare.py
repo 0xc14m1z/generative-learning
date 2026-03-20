@@ -7,6 +7,12 @@ import tempfile
 from datetime import date
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+# Load .env from eval/ dir, then fall back to repo root api/.env
+load_dotenv(Path(__file__).parent / ".env")
+load_dotenv(Path(__file__).parent.parent / "api" / ".env")
+
 from config import load_config, ConfigError
 from generate import generate
 from judge import judge
