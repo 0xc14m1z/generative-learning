@@ -9,7 +9,7 @@ from openai import AsyncOpenAI
 MODEL_MAP = {
     "opus": "anthropic/claude-opus-4",
     "sonnet": "anthropic/claude-sonnet-4",
-    "haiku": "anthropic/claude-haiku-4",
+    "haiku": "anthropic/claude-haiku-4.5",
 }
 
 

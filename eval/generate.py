@@ -278,21 +278,21 @@ async def wave_3(structure: dict, work_dir: Path) -> None:
 
 async def generate(topic: str, config: dict, work_dir: Path) -> dict:
     """Orchestrate all waves. Returns usage stats dict."""
-    model = config["model"]
-    print(f"Generating explorer for '{topic}' with model={model}")
+    models = config["models"]
+    print(f"Generating explorer for '{topic}' with models={models}")
 
     usage = {"wave_0": {}, "wave_1": {}, "wave_2": {}}
 
     # Wave 0: Structure
-    structure, tokens_0 = await wave_0(topic, work_dir, model)
+    structure, tokens_0 = await wave_0(topic, work_dir, models["wave0"])
     usage["wave_0"] = tokens_0
 
     # Wave 1: Level content
-    tokens_1 = await wave_1(topic, structure, work_dir, model)
+    tokens_1 = await wave_1(topic, structure, work_dir, models["wave1"])
     usage["wave_1"] = tokens_1
 
     # Wave 2: Enrichment
-    tokens_2 = await wave_2(topic, structure, work_dir, model)
+    tokens_2 = await wave_2(topic, structure, work_dir, models["wave2"])
     usage["wave_2"] = tokens_2
 
     # Wave 3: Merge (no LLM)
