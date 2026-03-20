@@ -59,7 +59,7 @@ When in doubt: more sections, more prerequisites, more depth.
 
 **This is critical.** Each section needs an `outline` object that guides ALL downstream agents. The outline prevents content overlap between levels by giving each level a specific, exclusive angle.
 
-See `template/src/schemas/structure.ts` → `SectionOutline` for exact field requirements.
+See `core/template/src/schemas/structure.ts` → `SectionOutline` for exact field requirements.
 
 For each section, write:
 
@@ -76,7 +76,7 @@ For each section, write:
 
 ### 5. Assign visualization types
 
-Pick from the 21 types defined in `template/src/schemas/viz-types.ts`. Read `references/content-rendering-catalog.md` for the decision guide and all data shapes.
+Pick from the 21 types defined in `core/template/src/schemas/viz-types.ts`. Read `core/references/content-rendering-catalog.md` for the decision guide and all data shapes.
 
 Viz types work for any domain:
 
@@ -116,7 +116,7 @@ Use this palette sequentially. For topics with more than 14 sections, cycle back
 
 Save to `/tmp/explorer-data/structure.json`.
 
-> **Note:** The structure.json must conform to the Zod schema in `template/src/schemas/structure.ts`. Read it for exact field constraints.
+> **Note:** The structure.json must conform to the Zod schema in `core/template/src/schemas/structure.ts`. Read it for exact field constraints.
 
 Every section needs: `id`, `index`, `title`, `subtitle`, `phase`, `color`, `icon`, `concepts` (list of concept IDs), `vizType`, `bridgeTo`, `outline` (with `core`, `keyPoints`, `L1_angle`, `L2_angle`, `L3_angle`, `L4_angle`).
 

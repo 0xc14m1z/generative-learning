@@ -1,17 +1,17 @@
 ---
-name: learning-website
+name: topic-explorer
 description: Build comprehensive, multi-layered interactive learning experiences on any topic, delivered as a single self-contained HTML file. Use this skill whenever the user wants to create an educational app, interactive explainer, learning module, step-by-step tutorial, progressive-disclosure walkthrough, or deep-dive learning platform — especially if they mention terms like "explorer", "learning experience", "interactive guide", "explain X to me interactively", "teach me about Y", "build a course on Z", or want to turn a complex topic into a navigable educational resource. Also triggers when the user wants a presentation-ready breakdown with citations and multiple depth levels. Always use this skill even for casual requests like "help me understand X deeply" or "build something that teaches Y".
 ---
 
-# Learning Website
+# Topic Explorer
 
 Build comprehensive, citation-backed, multi-depth interactive learning websites on any topic — delivered as a single self-contained HTML file.
 
 ## Architecture
 
-The skill ships a **pre-compiled HTML shell** (`prebuild/shell.html`) containing the entire React app — UI components, 21 visualization types, depth slider, expandable concepts, dark/light theme, sidebar, animations. Pre-built, never modified during content generation.
+The skill ships a **pre-compiled HTML shell** (`core/prebuild/shell.html`) containing the entire React app — UI components, 21 visualization types, depth slider, expandable concepts, dark/light theme, sidebar, animations. Pre-built, never modified during content generation.
 
-Content generation produces **two JSON files** (`structure.json` and `content.json`) via a **wave-based parallel pipeline**. A Python script injects them into the shell.
+Content generation produces **two JSON files** (`structure.json` and `content.json`) via a **wave-based parallel pipeline**. A Python script (`core/prebuild/inject.py`) injects them into the shell.
 
 ```
 Wave 0: Structure    →  structure.json + research-notes.md
@@ -24,16 +24,16 @@ Wave 4: Inject       →  output.html
 ## Reference files
 
 Read before starting:
-- `template/src/schemas/` — **Zod schemas: the single source of truth** for all data shapes. `viz-types.ts` (21 viz types), `structure.ts` (structure.json with outlines), `content.ts` (content.json with levels, concepts, refs). **Read first.**
-- `references/content-rendering-catalog.md` — Decision guides for choosing viz types and content patterns.
-- `references/architecture-content-pipeline.md` — Detailed wave architecture, prompt templates, event protocol.
+- `core/template/src/schemas/` — **Zod schemas: the single source of truth** for all data shapes. `viz-types.ts` (21 viz types), `structure.ts` (structure.json with outlines), `content.ts` (content.json with levels, concepts, refs). **Read first.**
+- `core/references/content-rendering-catalog.md` — Decision guides for choosing viz types and content patterns.
+- `core/references/architecture-content-pipeline.md` — Detailed wave architecture, prompt templates, event protocol.
 
 Sub-skill guides:
-- `references/skill-0-structure.md` — Wave 0: Research & produce structure.json
-- `references/skill-1-content.md` — Wave 1: Parallel level content agents
-- `references/skill-2-enrichment.md` — Wave 2: Viz, concepts, deep dives, references
-- `references/skill-3-coherence.md` — Wave 3: Merge, verify, produce content.json
-- `references/skill-4-inject.md` — Wave 4: Inject into shell, deliver HTML
+- `references/skill-0-structure.md` — Wave 0: Research & produce structure.json (product-specific)
+- `core/references/skill-1-content.md` — Wave 1: Parallel level content agents
+- `core/references/skill-2-enrichment.md` — Wave 2: Viz, concepts, deep dives, references
+- `core/references/skill-3-coherence.md` — Wave 3: Merge, verify, produce content.json
+- `core/references/skill-4-inject.md` — Wave 4: Inject into shell, deliver HTML
 
 ## Workflow (fully autonomous)
 
@@ -75,7 +75,7 @@ Follow `references/skill-2-enrichment.md`:
 Follow `references/skill-3-coherence.md`:
 1. Merge all section files into content.json
 2. Insert concept triggers into level HTML
-3. Run Zod validation: `cd [this-skill-path]/template && npm run validate -- /tmp/explorer-data/structure.json /tmp/explorer-data/content.json`
+3. Run Zod validation: `cd [core-path]/template && npm run validate -- /tmp/explorer-data/structure.json /tmp/explorer-data/content.json`
 4. Verify cross-references, terminology, quality gates
 5. Output: `/tmp/explorer-data/content.json`
 
@@ -83,11 +83,11 @@ Follow `references/skill-3-coherence.md`:
 
 Follow `references/skill-4-inject.md`:
 ```bash
-python3 [this-skill-path]/prebuild/inject.py \
-  [this-skill-path]/prebuild/shell.html \
+python3 [core-path]/prebuild/inject.py \
+  [core-path]/prebuild/shell.html \
   /tmp/explorer-data/structure.json \
   /tmp/explorer-data/content.json \
-  ~/Desktop/[topic-slug]-explorer.html
+  ~/Desktop/{topic-slug}-explorer.html
 ```
 
 Present the file to the user. Done.
@@ -127,12 +127,12 @@ Present the file to the user. Done.
 
 ## Developing the UI
 
-The `template/` directory contains the full TypeScript React source.
+The `core/template/` directory contains the full TypeScript React source.
 
 ### Quick start (dev server with sample data)
 
 ```bash
-cd [this-skill-path]/template
+cd [core-path]/template
 npm install
 npm run dev
 ```
@@ -157,10 +157,22 @@ npm run dev
 ### Rebuilding the shell (after UI changes)
 
 ```bash
-cd [this-skill-path]/template
+cd [core-path]/template
 npm install
 npx vite build
-cp dist/index.html [this-skill-path]/prebuild/shell.html
+cp dist/index.html [core-path]/prebuild/shell.html
 ```
 
 This is a skill maintenance task. Content generation never rebuilds the shell.
+
+## Product-specific overrides
+
+These settings distinguish the topic-explorer from other products that share the same core infrastructure.
+
+- **Source notes filename:** `research-notes.md` (from web research)
+- **Work directory:** `/tmp/explorer-data/`
+- **Output:** `~/Desktop/{topic-slug}-explorer.html`
+- **Citations:** Web URLs — format as `"Author — Title (Year)"` with `"url": "https://..."`
+- **Writing voice examples:** Use domain-appropriate analogies (e.g. OS virtual memory for PagedAttention, air traffic controller for scheduling)
+- **Wave 1 override — L4 angle:** Should reference "Named papers with authors and years, historical evolution"
+- **Coherence terminology:** When checking terminology consistency, verify both colloquial and technical forms are introduced properly (e.g. "wild yeast" alongside "Saccharomyces cerevisiae")
