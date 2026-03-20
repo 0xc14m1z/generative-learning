@@ -61,17 +61,38 @@ async def call_llm(system: str, prompt: str, model: str = MODEL) -> str:
     return response.choices[0].message.content or ""
 
 
-async def call_llm_json(system: str, prompt: str) -> dict:
-    """Call LLM and parse JSON from response. Handles markdown code fences."""
-    text = await call_llm(system, prompt)
-    # Strip markdown code fences if present
+def _extract_json(text: str) -> dict:
+    """Extract the first valid JSON object from text."""
     text = text.strip()
     if text.startswith("```"):
         lines = text.split("\n")
-        # Remove first line (```json) and last line (```)
         lines = [l for l in lines[1:] if l.strip() != "```"]
-        text = "\n".join(lines)
-    return json.loads(text)
+        text = "\n".join(lines).strip()
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    start = text.find("{")
+    if start == -1:
+        raise json.JSONDecodeError("No JSON object found", text, 0)
+    decoder = json.JSONDecoder()
+    obj, _ = decoder.raw_decode(text, start)
+    return obj
+
+
+async def call_llm_json(system: str, prompt: str, model: str = MODEL, max_retries: int = 3) -> dict:
+    """Call LLM and parse JSON. Retries on malformed JSON."""
+    last_error = None
+    for attempt in range(max_retries):
+        text = await call_llm(system, prompt, model)
+        try:
+            return _extract_json(text)
+        except (json.JSONDecodeError, ValueError) as e:
+            last_error = e
+            if attempt < max_retries - 1:
+                log.warning(f"JSON parse failed (attempt {attempt + 1}/{max_retries}): {e}")
+    log.error(f"JSON parse failed after {max_retries} attempts")
+    raise last_error
 
 
 def read_schema_files() -> str:
