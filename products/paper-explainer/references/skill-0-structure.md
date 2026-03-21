@@ -105,7 +105,7 @@ For each section, write the outline:
 {
   "core": "One paragraph summarizing what this section covers",
   "keyPoints": ["3-5 key points"],
-  "L1_angle": "Explain [X] using analogy of [Y] — zero field knowledge assumed",
+  "L1_angle": "Explain [X] directly for someone with zero field knowledge — what it is and why it matters",
   "L2_angle": "Step-by-step: how [method] works in practice, with simplified examples",
   "L3_angle": "Equations [N]-[M], architecture details from Fig [X], training specifics from Table [Y]",
   "L4_angle": "Compare to [prior work], discuss assumption [Z], connect to [research trend]"

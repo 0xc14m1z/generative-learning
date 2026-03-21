@@ -105,7 +105,7 @@ Each level has strict scope boundaries to prevent overlap:
 #### Level 1 — Intuition (~150-250 words)
 
 **Audience:** Curious person who knows nothing about this.
-**Must include:** One clear analogy or mental model. Why this matters. The core takeaway.
+**Must include:** A clear, direct explanation. Why this matters. The core takeaway. No "Imagine..." openings.
 **Must NOT include:** Technical details, how-to steps, code, tables, citations, benchmarks.
 **Allowed HTML:** `<p>`, `<strong>`, `<em>`, concept triggers.
 **Tone:** Conversational, visual, engaging.

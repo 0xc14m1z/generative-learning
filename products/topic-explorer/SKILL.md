@@ -122,7 +122,7 @@ This config was validated by eval comparison: better quality than all-Sonnet wit
 
 - Technically accurate, no marketing fluff
 - Explain jargon before using it — never assume the reader already knows a term
-- Use analogies where helpful (e.g. OS virtual memory for PagedAttention, air traffic controller for scheduling)
+- Explain concepts directly — no forced analogies, no "Imagine..." openings. Brief comparisons OK mid-paragraph if they genuinely clarify.
 - Honest about trade-offs — state what you gain AND what you lose
 - Concise but substantive — every sentence should teach something
 
@@ -186,6 +186,6 @@ These settings distinguish the topic-explorer from other products that share the
 - **Work directory:** `/tmp/explorer-data/`
 - **Output:** `~/Desktop/{topic-slug}-explorer.html`
 - **Citations:** Web URLs — format as `"Author — Title (Year)"` with `"url": "https://..."`
-- **Writing voice examples:** Use domain-appropriate analogies (e.g. OS virtual memory for PagedAttention, air traffic controller for scheduling)
+- **Writing voice:** Explain directly, no forced analogies. Never open sections with "Imagine..." or "Think of..."
 - **Wave 1 override — L4 angle:** Should reference "Named papers with authors and years, historical evolution"
 - **Coherence terminology:** When checking terminology consistency, verify both colloquial and technical forms are introduced properly (e.g. "wild yeast" alongside "Saccharomyces cerevisiae")

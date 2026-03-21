@@ -65,7 +65,7 @@ For each section, write:
 
 - `core`: One sentence — the essential truth of this section
 - `keyPoints`: 3-5 factual bullets that ALL levels should be aware of
-- `L1_angle`: What the intuition/analogy level should cover. NO technical detail.
+- `L1_angle`: What the intuition level should cover. Direct explanation, no forced analogies. NO technical detail.
 - `L2_angle`: What the practitioner level should cover. Practical, step-by-step.
 - `L3_angle`: What the builder level should cover. Implementation, benchmarks, tables.
 - `L4_angle`: What the researcher level should cover. Papers, history, open problems.

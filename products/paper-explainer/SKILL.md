@@ -91,7 +91,7 @@ python3 [core-path]/prebuild/inject.py \
 
 ### Level angle guidance for papers
 
-- **L1 (Intuition):** Explain as if the reader has zero background in this field. Use analogies. No math, no jargon. Answer "what" and "why it matters."
+- **L1 (Intuition):** Explain as if the reader has zero background in this field. No math, no jargon. Answer "what" and "why it matters." Explain directly — no "Imagine..." openings.
 - **L2 (Practitioner):** How the method works concretely. Simplified diagrams, step-by-step process, practical implications. Light math where it helps.
 - **L3 (Technical):** Full technical detail. Key equations, architecture specifics, algorithm pseudocode, training details. Reference specific sections/figures/tables from the paper.
 - **L4 (Research):** Critical analysis. Compare to related work, discuss assumptions and limitations, identify open questions, connect to broader research trends.

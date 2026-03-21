@@ -45,7 +45,7 @@ Relevant source notes:
 
 - Technically accurate, no marketing fluff
 - Explain jargon before using it — never assume the reader already knows a term
-- Use analogies where helpful (e.g. OS virtual memory for PagedAttention, air traffic controller for scheduling)
+- Explain concepts directly — do NOT open with "Imagine..." or forced analogies. A brief comparison is OK mid-paragraph if it genuinely clarifies, but never as the opening or structure of a section.
 - Honest about trade-offs — state what you gain AND what you lose
 - Concise but substantive — every sentence should teach something
 
@@ -72,12 +72,13 @@ Save to: {work-dir}/sections/{id}/level-{LEVEL}.json
 #### Level 1 — Intuition (150-250 words)
 
 **You are writing for:** A curious person who knows nothing about this.
-**You MUST include:** One clear analogy or mental model. Why this matters. A core takeaway.
+**You MUST include:** Why this matters. A core takeaway. A clear, direct explanation.
 **You MUST NOT include:** Technical details, how-to steps, code, tables, citations, benchmarks, numbered steps.
+**You MUST NOT open with:** "Imagine...", "Think of...", "Picture this...", or any forced analogy. Start with what the thing IS, not what it's like.
 **Allowed HTML:** `<p>`, `<strong>`, `<em>`, `<span class="concept-trigger">`.
 **Allowed content patterns:** 1 callout (insight type only).
-**Tone:** Conversational, visual, engaging. Make the reader curious to learn more.
-**Note on citations:** Level 1 is intentionally citation-free. Its purpose is to build intuition through analogy, not to make verifiable claims. Factual precision comes at Level 2+.
+**Tone:** Clear, professional, engaging. Make the reader curious to learn more. Explain directly — a brief comparison is fine mid-paragraph if it genuinely helps, but the section should lead with substance, not metaphor.
+**Note on citations:** Level 1 is intentionally citation-free. Its purpose is to build intuition through direct explanation, not to make verifiable claims. Factual precision comes at Level 2+.
 
 #### Level 2 — Practitioner (200-400 words)
 
